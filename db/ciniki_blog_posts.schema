@@ -1,0 +1,65 @@
+#
+# Description
+# -----------
+# This table stores the blog entries for a business.
+#
+# Fields
+# ------
+# id:				The ID assigned to the event.
+# uuid:				The Universal Unique ID.
+# business_id:		The business the blog entry is attached to.
+#
+# title:			The title for the blog entry.
+# permalink:		The permalink for use in the website.
+#
+# format:			The format for the blog post.  This defines what information is attached
+#					to the blog post and how it should be formatted when presented on the website.
+#
+#					0 - Unknown
+#					10 - Single image, Single content block.  This is the basic blog post, the
+#						image may or may not be included, and multiple images can be located after the
+#						the post along with links to other module entries.
+#
+#					20 - **FUTURE** Multi Image, Multi block.  This will contain multiple images within
+#						the content instead of being listed at the end of the blog post.  This is an
+#						advanced feature and will not be enabled by default.
+#
+# excerpt:			The brief description/intro of the blog entry for use in the lists.
+#
+# content:			The full content of the blog entry.
+#
+# primary_image_id:	The ID of the main/highlight image for the blog post.
+# status:			The current status of the post.
+#
+#					0 - unknown
+#					10 - Draft
+#					40 - Published
+#					60 - Deleted
+#
+# publish_date:		The UTC date and time the blog post is to be published.  The post will not
+#					show up on the website until this date passes.
+#
+# user_id:			The ID of the user who published the post.
+#
+# date_added:		The UTC date and time the record was added.
+# last_updated:		The UTC date and time the record was last updated.
+#
+create table ciniki_blog_posts (
+	id bigint not null auto_increment,
+	uuid char(36) not null,
+	business_id int not null,
+	title varchar(150) not null,
+	permalink varchar(150) not null,
+	format tinyint not null,
+	excerpt varchar(6000) not null,
+	content varchar(40000) not null,
+	primary_image_id int not null,
+	status tinyint not null,
+	publish_date datetime not null,
+	user_id int not null,
+	date_added datetime not null,
+	last_updated datetime not null,
+	primary key (id),
+	index (business_id, title, publish_date),
+	index sync (business_id, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.01';
