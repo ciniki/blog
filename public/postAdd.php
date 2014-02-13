@@ -17,12 +17,17 @@ function ciniki_blog_postAdd(&$ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+		'format'=>array('required'=>'no', 'default'=>'10', 'blank'=>'no', 'name'=>'Format'),
 		'title'=>array('required'=>'yes', 'trimblanks'=>'yes', 'blank'=>'no', 'name'=>'Title'),
 		'permalink'=>array('required'=>'no', 'default'=>'', 'trimblanks'=>'yes', 'blank'=>'yes', 'name'=>'Permalink'),
-        'status'=>array('required'=>'no', 'default'=>'10', 'blank'=>'yes', 'name'=>'Status'), 
+        'status'=>array('required'=>'no', 'default'=>'10', 'blank'=>'yes', 'name'=>'Status',
+			'validlist'=>array('10', '40', '60')),
+        'primary_image_id'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Image'),
         'excerpt'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Excerpt'),
         'content'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Content'),
-        'publish_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Publish Date'),
+        'publish_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'datetimetoutc', 'name'=>'Publish Date'),
+		'categories'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Categories'),
+		'tags'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Tags'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -39,8 +44,11 @@ function ciniki_blog_postAdd(&$ciniki) {
         return $rc;
     }
 
+	$args['user_id'] = $ciniki['session']['user']['id'];
+
 	if( !isset($args['permalink']) || $args['permalink'] == '' ) {
-		$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 \-\/]/', '', strtolower($args['title'])));
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'makePermalink');
+		$args['permalink'] = ciniki_core_makePermalink($ciniki, $args['title']);
 	}
 
 	//
@@ -60,14 +68,87 @@ function ciniki_blog_postAdd(&$ciniki) {
 	}
 
 	//
-	// Add the post
+	// Check if publish_date was specified, and convert to local time and get year and month
 	//
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-	$rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.blog.post', $args, 0x07);
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
+	$rc = ciniki_businesses_intlSettings($ciniki, $args['business_id']);
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
+	$intl_timezone = $rc['settings']['intl-default-timezone'];
+	//
+	// Setup the year and month
+	//
+	$date = new DateTime($args['publish_date'], new DateTimeZone('UTC'));
+	$date->setTimezone(new DateTimeZone($intl_timezone));
+	$args['publish_year'] = $date->format('Y');
+	$args['publish_month'] = $date->format('m');
+
+	//  
+	// Turn off autocommit
+	//  
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionStart');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionRollback');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionCommit');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
+	$rc = ciniki_core_dbTransactionStart($ciniki, 'ciniki.blog');
+	if( $rc['stat'] != 'ok' ) { 
+		return $rc;
+	}   
+
+	//
+	// Add the post
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
+	$rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.blog.post', $args, 0x04);
+	if( $rc['stat'] != 'ok' ) {
+		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
+		return $rc;
+	}
 	$post_id = $rc['id'];
+
+	//
+	// Update the categories
+	//
+	if( isset($args['categories']) ) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsUpdate');
+		$rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.blog', 'tag', $args['business_id'],
+			'ciniki_blog_post_tags', 'ciniki_blog_history',
+			'post_id', $post_id, 10, $args['categories']);
+		if( $rc['stat'] != 'ok' ) {
+			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
+			return $rc;
+		}
+	}
+
+	//
+	// Update the tags
+	//
+	if( isset($args['tags']) ) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsUpdate');
+		$rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.blog', 'tag', $args['business_id'],
+			'ciniki_blog_post_tags', 'ciniki_blog_history',
+			'post_id', $post_id, 20, $args['tags']);
+		if( $rc['stat'] != 'ok' ) {
+			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
+			return $rc;
+		}
+	}
+
+	//
+	// Commit the database changes
+	//
+    $rc = ciniki_core_dbTransactionCommit($ciniki, 'ciniki.blog');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+
+	//
+	// Update the last_change date in the business modules
+	// Ignore the result, as we don't want to stop user updates if this fails.
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
+	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'blog');
 
 	return array('stat'=>'ok', 'id'=>$post_id);
 }

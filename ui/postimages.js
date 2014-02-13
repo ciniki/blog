@@ -8,7 +8,7 @@ function ciniki_blog_postimages() {
 		//
 		this.edit = new M.panel('Edit Image',
 			'ciniki_blog_postimages', 'edit',
-			'mc', 'medium', 'sectioned', 'ciniki.blog.images.edit');
+			'mc', 'medium', 'sectioned', 'ciniki.blog.postimages.edit');
 		this.edit.default_data = {};
 		this.edit.data = {};
 		this.edit.post_id = 0;

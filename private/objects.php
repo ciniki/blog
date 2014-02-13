@@ -25,7 +25,21 @@ function ciniki_blog_objects($ciniki) {
 			'primary_image_id'=>array(),
 			'status'=>array(),
 			'publish_date'=>array(),
+			'publish_year'=>array(),
+			'publish_month'=>array(),
 			'user_id'=>array('ref'=>'ciniki.users.user'),
+			),
+		'history_table'=>'ciniki_blog_history',
+		);
+	$objects['tag'] = array(
+		'name'=>'Post Tag',
+		'sync'=>'yes',
+		'table'=>'ciniki_blog_post_tags',
+			'fields'=>array(
+			'post_id'=>array('ref'=>'ciniki.blog.post'),
+			'tag_type'=>array(),
+			'tag_name'=>array(),
+			'permalink'=>array(),
 			),
 		'history_table'=>'ciniki_blog_history',
 		);

@@ -22,8 +22,10 @@ function ciniki_blog_post() {
 				}},
 			'info':{'label':'', 'aside':'yes', 'list':{
 				'title':{'label':'Title'},
-				'publish_date':{'label':'Publish Date'},
-				'status':{'label':'Status', 'type':'select', 'options':this.statusOptions},
+				'publish_date':{'label':'Date'},
+				'status_text':{'label':'Status'},
+				'categories':{'label':'Categories', 'visible':'no'},
+				'tags':{'label':'Tags', 'visible':'no'},
 				}},
 			'excerpt':{'label':'Excerpt', 'type':'htmlcontent'},
 			'content':{'label':'Post', 'type':'htmlcontent'},
@@ -70,7 +72,7 @@ function ciniki_blog_post() {
 							return false;
 						}
 						var p = M.ciniki_blog_post.post;
-						p.data.images = rsp.blog.images;
+						p.data.images = rsp.post.images;
 						p.refreshSection('images');
 					});
 			}
@@ -120,7 +122,7 @@ function ciniki_blog_post() {
 			return 0;
 		};
 		this.post.thumbFn = function(s, i, d) {
-			return 'M.startApp(\'ciniki.blog.postimages\',null,\'M.ciniki_blog_post.showPost();\',\'mc\',{\'post_id\':\'' + d.image.id + '\'});';
+			return 'M.startApp(\'ciniki.blog.postimages\',null,\'M.ciniki_blog_post.showPost();\',\'mc\',{\'post_image_id\':\'' + d.image.id + '\'});';
 		};
 		this.post.addButton('edit', 'Edit', 'M.startApp(\'ciniki.blog.postedit\',null,\'M.ciniki_blog_post.showPost();\',\'mc\',{\'post_id\':M.ciniki_blog_post.post.post_id});');
 		this.post.addClose('Back');
@@ -142,9 +144,9 @@ function ciniki_blog_post() {
 
 	this.showPost = function(cb, pid) {
 		this.post.reset();
-		this.post.sections.recipes.visible=(M.curBusiness.modules['ciniki.recipes']!=null)?'yes':'no';
+//		this.post.sections.recipes.visible=(M.curBusiness.modules['ciniki.recipes']!=null)?'yes':'no';
 		if( pid != null ) { this.post.post_id = pid; }
-		M.api.getJSONCb('ciniki.post.postGet', {'business_id':M.curBusinessID,
+		M.api.getJSONCb('ciniki.blog.postGet', {'business_id':M.curBusinessID,
 			'post_id':this.post.post_id, 
 			'files':'yes', 'images':'yes', 'links':'yes', 'refs':'yes'}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
@@ -153,6 +155,14 @@ function ciniki_blog_post() {
 				}
 				var p = M.ciniki_blog_post.post;
 				p.data = rsp.post;
+				if( rsp.post.categories != null && rsp.post.categories != '' ) {
+					p.data.categories = rsp.post.categories.replace(/::/g, ', ');
+				}
+				if( rsp.post.tags != null && rsp.post.tags != '' ) {
+					p.data.tags = rsp.post.tags.replace(/::/g, ', ');
+				}
+				p.sections.info.list.categories.visible=(M.curBusiness.modules['ciniki.blog'].flags&0x01)>0?'yes':'no';
+				p.sections.info.list.tags.visible=(M.curBusiness.modules['ciniki.blog'].flags&0x02)>0?'yes':'no';
 				p.refresh();
 				p.show(cb);
 			});

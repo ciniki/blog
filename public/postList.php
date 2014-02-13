@@ -48,13 +48,18 @@ function ciniki_blog_postList(&$ciniki) {
 	$intl_currency_fmt = numfmt_create($rc['settings']['intl-default-locale'], NumberFormatter::CURRENCY);
 	$intl_currency = $rc['settings']['intl-default-currency'];
 
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'datetimeFormat');
-	$datetime_format = ciniki_users_datetimeFormat($ciniki, 'php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
+	$date_format = ciniki_users_dateFormat($ciniki, 'php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'timeFormat');
+	$time_format = ciniki_users_timeFormat($ciniki, 'php');
 
 	//
 	// Get the list of posts
 	//
-	$strsql = "SELECT id, title, publish_date "
+	$strsql = "SELECT id, title, "
+		. "publish_date, "
+		. "publish_date AS publish_time, "
+		. "excerpt "
 		. "FROM ciniki_blog_posts "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "";
@@ -87,11 +92,14 @@ function ciniki_blog_postList(&$ciniki) {
 	}
 	$strsql .= "ORDER BY publish_date DESC "
 		. "";
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.blog', array(
 		array('container'=>'posts', 'fname'=>'id', 'name'=>'post',
-			'fields'=>array('id', 'title', 'publish_date'),
-			'utctotz'=>array('publish_date'=>array('timezone'=>$intl_timezone, 'format'=>$datetime_format)),
-			),
+			'fields'=>array('id', 'title', 'publish_date', 'publish_time', 'excerpt'),
+			'utctotz'=>array(
+				'publish_date'=>array('timezone'=>$intl_timezone, 'format'=>$date_format),
+				'publish_time'=>array('timezone'=>$intl_timezone, 'format'=>$time_format),
+			)),
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -102,6 +110,6 @@ function ciniki_blog_postList(&$ciniki) {
 		$posts = array();
 	}
 
-	return $rsp;
+	return array('stat'=>'ok', 'posts'=>$posts);
 }
 ?>

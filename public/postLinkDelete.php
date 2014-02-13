@@ -48,7 +48,7 @@ function ciniki_blog_postLinkDelete(&$ciniki) {
 		return $rc;
 	}
 	if( !isset($rc['item']) ) {
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1562', 'msg'=>'Post link does not exist'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1498', 'msg'=>'Post link does not exist'));
 	}
 	$item = $rc['item'];
 
@@ -56,7 +56,7 @@ function ciniki_blog_postLinkDelete(&$ciniki) {
 	// Delete the object
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectDelete');
-	return ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.products.postlink', 
+	return ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.blog.postlink', 
 		$args['post_link_id'], $item['uuid'], 0x07);
 }
 ?>

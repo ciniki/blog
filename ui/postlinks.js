@@ -9,7 +9,7 @@ function ciniki_blog_postlinks() {
 		//
 		this.edit = new M.panel('Link',
 			'ciniki_blog_postlinks', 'edit',
-			'mc', 'medium', 'sectioned', 'ciniki.blog.recipes.edit');
+			'mc', 'medium', 'sectioned', 'ciniki.blog.postlinks.edit');
 		this.edit.data = {};
 		this.edit.link_id = 0;
 		this.edit.sections = {

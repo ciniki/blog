@@ -18,7 +18,7 @@ function ciniki_blog_postFileDelete(&$ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
-		'post_file_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'File'),
+		'file_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'File'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -41,14 +41,14 @@ function ciniki_blog_postFileDelete(&$ciniki) {
 	$strsql = "SELECT id, uuid "
 		. "FROM ciniki_blog_post_files "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-		. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['post_file_id']) . "' "
+		. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['file_id']) . "' "
 		. "";
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.blog', 'item');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
 	if( !isset($rc['item']) ) {
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1562', 'msg'=>'Post file does not exist'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1497', 'msg'=>'Post file does not exist'));
 	}
 	$item = $rc['item'];
 
@@ -56,7 +56,7 @@ function ciniki_blog_postFileDelete(&$ciniki) {
 	// Delete the object
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectDelete');
-	return ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.products.postfile', 
-		$args['post_file_id'], $item['uuid'], 0x07);
+	return ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.blog.postfile', 
+		$args['file_id'], $item['uuid'], 0x07);
 }
 ?>

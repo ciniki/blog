@@ -22,6 +22,8 @@ function ciniki_blog_postGet($ciniki) {
 		'files'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Files'),
 		'links'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Links'),
 		'refs'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'References'),
+		'categories'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Categories'),
+		'tags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Tags'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -72,6 +74,7 @@ function ciniki_blog_postGet($ciniki) {
 	//
 	$strsql = "SELECT ciniki_blog_posts.id, "
 		. "ciniki_blog_posts.title, "
+		. "permalink, "
 		. "format, "
 		. "excerpt, "
 		. "content, "
@@ -99,6 +102,34 @@ function ciniki_blog_postGet($ciniki) {
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1560', 'msg'=>'Unable to find the requested post'));
 	}
 	$post = $rc['posts'][0]['post'];
+
+	//
+	// Get the categories and tags for the post
+	//
+	if( ($modules['ciniki.blog']['flags']&0x03) > 0 ) {
+		$strsql = "SELECT tag_type, tag_name AS lists "
+			. "FROM ciniki_blog_post_tags "
+			. "WHERE post_id = '" . ciniki_core_dbQuote($ciniki, $args['post_id']) . "' "
+			. "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "ORDER BY tag_type, tag_name "
+			. "";
+		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.blog', array(
+			array('container'=>'tags', 'fname'=>'tag_type', 'name'=>'tags',
+				'fields'=>array('tag_type', 'lists'), 'dlists'=>array('lists'=>'::')),
+			));
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( isset($rc['tags']) ) {
+			foreach($rc['tags'] as $tags) {
+				if( $tags['tags']['tag_type'] == 10 ) {
+					$post['categories'] = $tags['tags']['lists'];
+				} elseif( $tags['tags']['tag_type'] == 20 ) {
+					$post['tags'] = $tags['tags']['lists'];
+				}
+			}
+		}
+	}
 
 	//
 	// Get the images for the post
@@ -214,6 +245,44 @@ function ciniki_blog_postGet($ciniki) {
 		}
 	}
 
-	return array('stat'=>'ok', 'post'=>$post);
+	//
+	// Check if all categories should be returned
+	//
+	$categories = array();
+	if( isset($args['categories']) && $args['categories'] == 'yes' ) {
+		//
+		// Get the available tags
+		//
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsList');
+		$rc = ciniki_core_tagsList($ciniki, 'ciniki.blog', $args['business_id'], 
+			'ciniki_blog_post_tags', 10);
+		if( $rc['stat'] != 'ok' ) {
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1595', 'msg'=>'Unable to get list of categories', 'err'=>$rc['err']));
+		}
+		if( isset($rc['tags']) ) {
+			$categories = $rc['tags'];
+		}
+	}
+
+	//
+	// Check if all tags should be returned
+	//
+	$tags = array();
+	if( isset($args['tags']) && $args['tags'] == 'yes' ) {
+		//
+		// Get the available tags
+		//
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsList');
+		$rc = ciniki_core_tagsList($ciniki, 'ciniki.blog', $args['business_id'], 
+			'ciniki_blog_post_tags', 20);
+		if( $rc['stat'] != 'ok' ) {
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1596', 'msg'=>'Unable to get list of tags', 'err'=>$rc['err']));
+		}
+		if( isset($rc['tags']) ) {
+			$tags = $rc['tags'];
+		}
+	}
+
+	return array('stat'=>'ok', 'post'=>$post, 'categories'=>$categories, 'tags'=>$tags);
 }
 ?>

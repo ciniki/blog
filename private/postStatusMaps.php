@@ -15,7 +15,7 @@ function ciniki_blog_postStatusMaps($ciniki) {
 	$status_maps = array(
 		'10'=>'Draft',
 		'40'=>'Published',
-		'60'=>'Deleted',
+		'60'=>'Removed',
 		);
 	
 	return array('stat'=>'ok', 'maps'=>$status_maps);

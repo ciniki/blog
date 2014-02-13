@@ -31,7 +31,7 @@ function ciniki_blog_postFileHistory($ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
 	$rc = ciniki_core_prepareArgs($ciniki, 'no', array(
 		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
-		'post_file_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'File'), 
+		'file_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'File'), 
 		'field'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Field'), 
 		));
 	if( $rc['stat'] != 'ok' ) {
@@ -50,6 +50,6 @@ function ciniki_blog_postFileHistory($ciniki) {
 
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistory');
 	return ciniki_core_dbGetModuleHistory($ciniki, 'ciniki.blog', 'ciniki_blog_history', 
-		$args['business_id'], 'ciniki_blog_post_files', $args['post_file_id'], $args['field']);
+		$args['business_id'], 'ciniki_blog_post_files', $args['file_id'], $args['field']);
 }
 ?>

@@ -8,7 +8,7 @@ function ciniki_blog_postfiles() {
 		//
 		this.add = new M.panel('Add File',
 			'ciniki_blog_postfiles', 'add',
-			'mc', 'medium', 'sectioned', 'ciniki.blog.info.edit');
+			'mc', 'medium', 'sectioned', 'ciniki.blog.postfiles.edit');
 		this.add.default_data = {'type':'20'};
 		this.add.data = {};	
 		this.add.sections = {

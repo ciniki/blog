@@ -48,6 +48,12 @@ function ciniki_blog_postHistory($ciniki) {
 		return $rc;
 	}
 
+	if( $args['field'] == 'publish_date' ) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistoryReformat');
+		return ciniki_core_dbGetModuleHistoryReformat($ciniki, 'ciniki.blog', 'ciniki_blog_history', 
+			$args['business_id'], 'ciniki_blog_posts', $args['post_id'], $args['field'], 'utcdatetime');
+	}
+
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistory');
 	return ciniki_core_dbGetModuleHistory($ciniki, 'ciniki.blog', 'ciniki_blog_history', 
 		$args['business_id'], 'ciniki_blog_posts', $args['post_id'], $args['field']);

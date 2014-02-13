@@ -56,7 +56,7 @@ function ciniki_blog_postImageDelete(&$ciniki) {
 	// Delete the object
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectDelete');
-	return ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.products.postimage', 
+	return ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.blog.postimage', 
 		$args['post_image_id'], $item['uuid'], 0x07);
 }
 ?>
