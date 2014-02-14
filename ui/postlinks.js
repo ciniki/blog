@@ -5,7 +5,7 @@ function ciniki_blog_postlinks() {
 	//
 	this.init = function() {
 		//
-		// The panel to edit an existing reference
+		// The panel to edit an existing link
 		//
 		this.edit = new M.panel('Link',
 			'ciniki_blog_postlinks', 'edit',
@@ -17,7 +17,7 @@ function ciniki_blog_postlinks() {
 				'name':{'label':'Name', 'hint':'', 'type':'text'},
 				'url':{'label':'URL', 'hint':'Enter the http:// address', 'type':'text'},
 				}},
-			'_description':{'label':{'Additional Information', 'fields':{
+			'_description':{'label':'Additional Information', 'fields':{
 				'description':{'label':'', 'hidelabel':'yes', 'hint':'Add additional information about your link', 'type':'textarea'},
 				}},
 			'_buttons':{'label':'', 'buttons':{
@@ -53,10 +53,10 @@ function ciniki_blog_postlinks() {
 		} 
 
 		if( args.link_id != null && args.link_id > 0 ) {
-			// Edit an existing reference
+			// Edit an existing link
 			this.showEdit(cb, 0, args.link_id);
 		} else if( args.post_id != null && args.post_id > 0 ) {
-			// Add a new reference for a post
+			// Add a new link for a post
 			this.showEdit(cb, args.post_id, 0);
 		}
 	};
@@ -73,7 +73,7 @@ function ciniki_blog_postlinks() {
 						return false;
 					}
 					var p = M.ciniki_blog_postlinks.edit;
-					p.data = rsp.ref;
+					p.data = rsp.link;
 					p.refresh();
 					p.show(cb);
 				});

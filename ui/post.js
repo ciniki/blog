@@ -34,6 +34,13 @@ function ciniki_blog_post() {
 				'addTxt':'Add Additional Image',
 				'addFn':'M.startApp(\'ciniki.blog.postimages\',null,\'M.ciniki_blog_post.showPost();\',\'mc\',{\'post_id\':M.ciniki_blog_post.post.post_id,\'add\':\'yes\'});',
 				},
+			'links':{'label':'Links', 'type':'simplegrid', 'num_cols':1,
+				'headerValues':null,
+				'cellClasses':['multiline'],
+				'noData':'No post links',
+				'addTxt':'Add Link',
+				'addFn':'M.startApp(\'ciniki.blog.postlinks\',null,\'M.ciniki_blog_post.showPost();\',\'mc\',{\'post_id\':M.ciniki_blog_post.post.post_id,\'add\':\'yes\'});',
+				},
 			'files':{'label':'Files', 'type':'simplegrid', 'num_cols':1,
 				'headerValues':null,
 				'cellClasses':['multiline'],
@@ -85,6 +92,9 @@ function ciniki_blog_post() {
 			return this.data[i];
 		};
 		this.post.cellValue = function(s, i, j, d) {
+			if( s == 'links' && j == 0 ) {
+				return '<span class="maintext">' + d.link.name + '</span><span class="subtext">' + d.link.url + '</span>';
+			}
 			if( s == 'files' && j == 0 ) {
 				return '<span class="maintext">' + d.file.name + '</span>';
 			}
@@ -96,6 +106,9 @@ function ciniki_blog_post() {
 			}
 		};
 		this.post.rowFn = function(s, i, d) {	
+			if( s == 'links' ) {
+				return 'M.startApp(\'ciniki.blog.postlinks\',null,\'M.ciniki_blog_post.showPost();\',\'mc\',{\'link_id\':\'' + d.link.id + '\'});';
+			}
 			if( s == 'files' ) {
 				return 'M.startApp(\'ciniki.blog.postfiles\',null,\'M.ciniki_blog_post.showPost();\',\'mc\',{\'file_id\':\'' + d.file.id + '\'});';
 			}

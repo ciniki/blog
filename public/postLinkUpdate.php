@@ -44,7 +44,7 @@ function ciniki_blog_postLinkUpdate(&$ciniki) {
 		//
 		// Get the existing link
 		//
-		$strsql = "SELECT post_id, name, url, description "
+		$strsql = "SELECT id, post_id, name, url, description "
 			. "FROM ciniki_blog_post_links "
 			. "WHERE id = '" . ciniki_core_dbQuote($ciniki, $args['link_id']) . "' "
 			. "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
@@ -66,6 +66,7 @@ function ciniki_blog_postLinkUpdate(&$ciniki) {
 			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 			. "AND url = '" . ciniki_core_dbQuote($ciniki, $args['url']) . "' "
 			. "AND post_id = '" . ciniki_core_dbQuote($ciniki, $link['post_id']) . "' "
+			. "AND id <> '" . ciniki_core_dbQuote($ciniki, $link['id']) . "' "
 			. "";
 		$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.blog', 'link');
 		if( $rc['stat'] != 'ok' ) {
@@ -79,8 +80,8 @@ function ciniki_blog_postLinkUpdate(&$ciniki) {
 	//
 	// Upate the post link
 	//
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-	$rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.blog.postlink', 
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
+	$rc = ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.blog.postlink', 
 		$args['link_id'], $args, 0x07);
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
