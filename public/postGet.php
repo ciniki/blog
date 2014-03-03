@@ -80,6 +80,7 @@ function ciniki_blog_postGet($ciniki) {
 		. "content, "
 		. "primary_image_id, "
 		. "status, status AS status_text, "
+		. "publish_to, publish_to AS publish_to_text, "
 		. "publish_date "
 		. "FROM ciniki_blog_posts "
 		. "WHERE ciniki_blog_posts.id = '" . ciniki_core_dbQuote($ciniki, $args['post_id']) . "' "
@@ -90,7 +91,7 @@ function ciniki_blog_postGet($ciniki) {
 		array('container'=>'posts', 'fname'=>'id', 'name'=>'post',
 			'fields'=>array('id', 'title', 'permalink', 'format', 'excerpt', 'content', 
 				'primary_image_id', 'status', 'status_text',
-				'publish_date'),
+				'publish_to', 'publish_date'),
 			'utctotz'=>array('publish_date'=>array('timezone'=>$intl_timezone, 'format'=>$datetime_format)),
 			'maps'=>array('status_text'=>$status_maps),
 			),
@@ -131,6 +132,17 @@ function ciniki_blog_postGet($ciniki) {
 		}
 	}
 
+	if( ($modules['ciniki.blog']['flags']&0x30) > 0 ) {
+		$post['publish_to_text'] = '';
+		if( $post['publish_to']&0x01 > 0 ) {
+			$post['publish_to_text'] .= ($post['publish_to_text']!=''?', ':'') . 'Public';
+		} elseif( $post['publish_to']&0x02 > 0 ) {
+			$post['publish_to_text'] .= ($post['publish_to_text']!=''?', ':'') . 'Customers';
+		} elseif( $post['publish_to']&0x04 > 0 ) {
+			$post['publish_to_text'] .= ($post['publish_to_text']!=''?', ':'') . 'Members';
+		}
+		
+	}
 	//
 	// Get the images for the post
 	//

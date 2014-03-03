@@ -36,6 +36,13 @@
 #					40 - Published
 #					60 - Deleted
 #
+# publish_to:		Where the blog post can be seen.
+#
+#					0x01 - Public, available to everybody on the public blog
+#					0x02 - Customer, availalbe only to customers who are logged in **future**
+#					0x04 - Members, available only to members who are logged in
+#					0x08 - 
+#
 # publish_date:		The UTC date and time the blog post is to be published.  The post will not
 #					show up on the website until this date passes.
 #
@@ -58,6 +65,7 @@ create table ciniki_blog_posts (
 	content varchar(40000) not null,
 	primary_image_id int not null,
 	status tinyint not null,
+	publish_to tinyint unsigned not null,
 	publish_date datetime not null,
 	publish_year int not null,
 	publish_month int not null,
@@ -65,7 +73,7 @@ create table ciniki_blog_posts (
 	date_added datetime not null,
 	last_updated datetime not null,
 	primary key (id),
-	index (business_id, title, publish_date),
+	index (business_id, title, publish_to, publish_date),
 	index (permalink),
 	index sync (business_id, uuid, last_updated)
-) ENGINE='InnoDB', COMMENT='v1.01';
+) ENGINE='InnoDB', COMMENT='v1.02';

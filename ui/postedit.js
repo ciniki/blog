@@ -7,6 +7,11 @@ function ciniki_blog_postedit() {
 		'40':'Published',
 		'60':'Removed',
 		};
+	this.publishtoFlags = {
+		'1':{'name':'Public'},
+//		'2':{'name':'Customers'},
+		'3':{'name':'Members'},
+		};
 	this.init = function() {
 		//
 		// The edit panel
@@ -31,6 +36,7 @@ function ciniki_blog_postedit() {
 				'title':{'label':'Title', 'hint':'', 'type':'text'},
 				'publish_date':{'label':'Date', 'type':'text', 'size':'medium'},
 				'status':{'label':'Status', 'type':'toggle', 'default':'10', 'toggles':this.statusOptions},
+				'publish_to':{'label':'Publish To', 'active':'no', 'type':'flags', 'none':'no', 'join':'yes', 'flags':this.publishtoFlags},
 				}},
 			'_categories':{'label':'Categories', 'visible':'no', 'aside':'no', 'fields':{
 				'categories':{'label':'', 'hidelabel':'yes', 'active':'no', 'type':'tags', 'tags':[], 'hint':'Enter a new category:'},
@@ -85,10 +91,11 @@ function ciniki_blog_postedit() {
 	this.showEdit = function(cb, pid) {
 		this.edit.reset();
 		if( pid != null ) { this.edit.post_id = pid; }
-		this.edit.sections._categories.visible=((M.curBusiness.modules['ciniki.blog'].flags&0x01)>0)?'yes':'no';
-		this.edit.sections._categories.fields.categories.active=((M.curBusiness.modules['ciniki.blog'].flags&0x01)>0)?'yes':'no';
-		this.edit.sections._tags.visible=((M.curBusiness.modules['ciniki.blog'].flags&0x02)>0)?'yes':'no';
-		this.edit.sections._tags.fields.tags.active=((M.curBusiness.modules['ciniki.blog'].flags&0x02)>0)?'yes':'no';
+		this.edit.sections._categories.visible=((M.curBusiness.modules['ciniki.blog'].flags&0x222)>0)?'yes':'no';
+		this.edit.sections._categories.fields.categories.active=((M.curBusiness.modules['ciniki.blog'].flags&0x222)>0)?'yes':'no';
+		this.edit.sections._tags.visible=((M.curBusiness.modules['ciniki.blog'].flags&0x444)>0)?'yes':'no';
+		this.edit.sections._tags.fields.tags.active=((M.curBusiness.modules['ciniki.blog'].flags&0x444)>0)?'yes':'no';
+		this.edit.sections.info.fields.publish_to.active = ((M.curBusiness.modules['ciniki.blog'].flags&0x111)>0)?'yes':'no';
 		if( this.edit.post_id > 0 ) {
 			M.api.getJSONCb('ciniki.blog.postGet', {'business_id':M.curBusinessID,
 				'post_id':this.edit.post_id, 'categories':'yes', 'tags':'yes'}, function(rsp) {
@@ -99,13 +106,13 @@ function ciniki_blog_postedit() {
 					var p = M.ciniki_blog_postedit.edit;
 					p.data = rsp.post;
 					p.sections._categories.fields.categories.tags = [];
-					if( (M.curBusiness.modules['ciniki.blog'].flags&0x01)>0 && rsp.categories != null ) {
+					if( (M.curBusiness.modules['ciniki.blog'].flags&0x222)>0 && rsp.categories != null ) {
 						for(i in rsp.categories) {
 							p.sections._categories.fields.categories.tags.push(rsp.categories[i].tag.name);
 						}
 					}
 					p.sections._tags.fields.tags.tags = [];
-					if( (M.curBusiness.modules['ciniki.blog'].flags&0x02)>0 && rsp.tags != null ) {
+					if( (M.curBusiness.modules['ciniki.blog'].flags&0x222)>0 && rsp.tags != null ) {
 						for(i in rsp.tags) {
 							p.sections._tags.fields.tags.tags.push(rsp.tags[i].tag.name);
 						}
@@ -115,8 +122,8 @@ function ciniki_blog_postedit() {
 				});
 		} else {
 			this.edit.post_id = 0;
-			this.edit.data = {'status':'10'};
-			if( (M.curBusiness.modules['ciniki.blog'].flags&0x03)>0 ) {
+			this.edit.data = {'status':'10', 'publish_to':'1'};
+			if( (M.curBusiness.modules['ciniki.blog'].flags&0x0666)>0 ) {
 				M.api.getJSONCb('ciniki.blog.postTags', {'business_id':M.curBusinessID}, function(rsp) {
 					if( rsp.stat != 'ok' ) {
 						M.api.err(rsp);

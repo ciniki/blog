@@ -24,6 +24,7 @@ function ciniki_blog_post() {
 				'title':{'label':'Title'},
 				'publish_date':{'label':'Date'},
 				'status_text':{'label':'Status'},
+				'publish_to_text':{'label':'Publish_to', 'visible':'no'},
 				'categories':{'label':'Categories', 'visible':'no'},
 				'tags':{'label':'Tags', 'visible':'no'},
 				}},
@@ -174,8 +175,9 @@ function ciniki_blog_post() {
 				if( rsp.post.tags != null && rsp.post.tags != '' ) {
 					p.data.tags = rsp.post.tags.replace(/::/g, ', ');
 				}
-				p.sections.info.list.categories.visible=(M.curBusiness.modules['ciniki.blog'].flags&0x01)>0?'yes':'no';
-				p.sections.info.list.tags.visible=(M.curBusiness.modules['ciniki.blog'].flags&0x02)>0?'yes':'no';
+				p.sections.info.list.categories.visible=(M.curBusiness.modules['ciniki.blog'].flags&0x222)>0?'yes':'no';
+				p.sections.info.list.tags.visible=(M.curBusiness.modules['ciniki.blog'].flags&0x444)>0?'yes':'no';
+				p.sections.info.list.publish_to_text.visible=(M.curBusiness.modules['ciniki.blog'].flags&0x111)>0?'yes':'no';
 				p.refresh();
 				p.show(cb);
 			});
