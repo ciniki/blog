@@ -35,7 +35,7 @@ function ciniki_blog_objects($ciniki) {
 		'name'=>'Post Tag',
 		'sync'=>'yes',
 		'table'=>'ciniki_blog_post_tags',
-			'fields'=>array(
+		'fields'=>array(
 			'post_id'=>array('ref'=>'ciniki.blog.post'),
 			'tag_type'=>array(),
 			'tag_name'=>array(),
