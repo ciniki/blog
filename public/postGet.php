@@ -91,8 +91,9 @@ function ciniki_blog_postGet($ciniki) {
 		array('container'=>'posts', 'fname'=>'id', 'name'=>'post',
 			'fields'=>array('id', 'title', 'permalink', 'format', 'excerpt', 'content', 
 				'primary_image_id', 'status', 'status_text',
-				'publish_to', 'publish_date'),
+				'publish_to', 'publish_to_text', 'publish_date'),
 			'utctotz'=>array('publish_date'=>array('timezone'=>$intl_timezone, 'format'=>$datetime_format)),
+			'flags'=>array('publish_to_text'=>array(0x01=>'Public', 0x04=>'Members')),
 			'maps'=>array('status_text'=>$status_maps),
 			),
 		));

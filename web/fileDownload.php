@@ -7,7 +7,7 @@
 // Returns
 // -------
 //
-function ciniki_blog_web_fileDownload($ciniki, $business_id, $post_permalink, $file_permalink) {
+function ciniki_blog_web_fileDownload($ciniki, $business_id, $post_permalink, $file_permalink, $blogtype) {
 
 	//
 	// Get the file details
@@ -24,6 +24,11 @@ function ciniki_blog_web_fileDownload($ciniki, $business_id, $post_permalink, $f
 		. "AND ciniki_blog_post_files.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 		. "AND CONCAT_WS('.', ciniki_blog_post_files.permalink, ciniki_blog_post_files.extension) = '" . ciniki_core_dbQuote($ciniki, $file_permalink) . "' "
 		. "";
+	if( $blogtype == 'memberblog' ) {
+		$strsql .= "AND (ciniki_blog_posts.publish_to&0x04) > 0 ";
+	} else {
+		$strsql .= "AND (ciniki_blog_posts.publish_to&0x01) > 0 ";
+	}
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.blog', 'file');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;

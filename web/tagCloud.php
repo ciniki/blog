@@ -15,7 +15,7 @@
 // Returns
 // -------
 //
-function ciniki_blog_web_tagCloud($ciniki, $settings, $business_id, $type) {
+function ciniki_blog_web_tagCloud($ciniki, $settings, $business_id, $type, $blogtype) {
 
 	//
 	// Load the business settings
@@ -40,7 +40,13 @@ function ciniki_blog_web_tagCloud($ciniki, $settings, $business_id, $type) {
 		. "AND ciniki_blog_post_tags.post_id = ciniki_blog_posts.id "
 		. "AND ciniki_blog_posts.status = 40 "
 		. "AND ciniki_blog_posts.publish_date < UTC_TIMESTAMP() "
-		. "GROUP BY tag_name "
+		. "";
+	if( $blogtype == 'memberblog' ) {
+		$strsql .= "AND (ciniki_blog_posts.publish_to&0x04) > 0 ";
+	} else {
+		$strsql .= "AND (ciniki_blog_posts.publish_to&0x01) > 0 ";
+	}
+	$strsql .= "GROUP BY tag_name "
 		. "ORDER BY tag_name "
 		. "";
 	//

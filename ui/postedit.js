@@ -21,6 +21,7 @@ function ciniki_blog_postedit() {
 			'mc', 'medium mediumaside', 'sectioned', 'ciniki.blog.postedit.edit');
 		this.edit.data = {};
 		this.edit.post_id = 0;
+		this.edit.blogtype = 'blog';
 //		this.edit.formtab = 'generic';
 //		this.edit.formtabs = {'label':'', 'field':'type', 'tabs':{
 //			'generic':{'label':'Generic', 'field_id':1, 'form':'generic'},
@@ -85,17 +86,39 @@ function ciniki_blog_postedit() {
 			return false;
 		}
 
-		this.showEdit(cb, args.post_id);
+		this.showEdit(cb, args.post_id, args.blogtype);
 	}
 
-	this.showEdit = function(cb, pid) {
+	this.showEdit = function(cb, pid, blogtype) {
 		this.edit.reset();
 		if( pid != null ) { this.edit.post_id = pid; }
+		if( blogtype != null ) { this.edit.blogtype = blogtype; }
 		this.edit.sections._categories.visible=((M.curBusiness.modules['ciniki.blog'].flags&0x222)>0)?'yes':'no';
 		this.edit.sections._categories.fields.categories.active=((M.curBusiness.modules['ciniki.blog'].flags&0x222)>0)?'yes':'no';
 		this.edit.sections._tags.visible=((M.curBusiness.modules['ciniki.blog'].flags&0x444)>0)?'yes':'no';
 		this.edit.sections._tags.fields.tags.active=((M.curBusiness.modules['ciniki.blog'].flags&0x444)>0)?'yes':'no';
-		this.edit.sections.info.fields.publish_to.active = ((M.curBusiness.modules['ciniki.blog'].flags&0x111)>0)?'yes':'no';
+		this.publishToFlags = {};
+		var numBlogs = 0;
+		if( (M.curBusiness.modules['ciniki.blog'].flags&0x0001) > 0 ) {
+			this.publishToFlags['1'] = {'name':'Public'}; 
+			numBlogs++; 
+		}
+		if( (M.curBusiness.modules['ciniki.blog'].flags&0x0100) > 0 ) {
+			this.publishToFlags['3'] = {'name':'Members'}; 
+			numBlogs++; 
+		}
+		if( numBlogs > 1 && M.curBusiness.modules['ciniki.blog'].flags&0x111 > 0 ) {
+			this.edit.sections.info.fields.publish_to.active = ((M.curBusiness.modules['ciniki.blog'].flags&0x111)>0)?'yes':'no';
+			this.edit.sections.info.fields.publish_to.flags = this.publishToFlags;
+		} else {
+			this.edit.sections.info.fields.publish_to.active = 'no';
+		}
+		// Must be backwards so default is set to default to Public
+		if( this.edit.blogtype == 'memberblog' ) {
+			this.edit.data = {'status':'10', 'publish_to':'4'};
+		} else if( this.edit.blogtype == 'blog' ) { 
+			this.edit.data = {'status':'10', 'publish_to':'1'};
+		}
 		if( this.edit.post_id > 0 ) {
 			M.api.getJSONCb('ciniki.blog.postGet', {'business_id':M.curBusinessID,
 				'post_id':this.edit.post_id, 'categories':'yes', 'tags':'yes'}, function(rsp) {
@@ -122,7 +145,6 @@ function ciniki_blog_postedit() {
 				});
 		} else {
 			this.edit.post_id = 0;
-			this.edit.data = {'status':'10', 'publish_to':'1'};
 			if( (M.curBusiness.modules['ciniki.blog'].flags&0x0666)>0 ) {
 				M.api.getJSONCb('ciniki.blog.postTags', {'business_id':M.curBusinessID}, function(rsp) {
 					if( rsp.stat != 'ok' ) {
@@ -169,6 +191,9 @@ function ciniki_blog_postedit() {
 			}
 		} else {
 			var c = this.edit.serializeForm('yes');
+			if( this.edit.sections.info.fields.publish_to.active == 'no' ) {
+				c += '&publish_to=' + this.edit.data.publish_to;
+			}
 			M.api.postJSONCb('ciniki.blog.postAdd',
 				{'business_id':M.curBusinessID}, c, function(rsp) {
 					if( rsp.stat != 'ok' ) {

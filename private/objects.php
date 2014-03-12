@@ -24,6 +24,7 @@ function ciniki_blog_objects($ciniki) {
 			'content'=>array(),
 			'primary_image_id'=>array(),
 			'status'=>array(),
+			'publish_to'=>array(),
 			'publish_date'=>array(),
 			'publish_year'=>array(),
 			'publish_month'=>array(),

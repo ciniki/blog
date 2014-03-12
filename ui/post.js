@@ -24,7 +24,7 @@ function ciniki_blog_post() {
 				'title':{'label':'Title'},
 				'publish_date':{'label':'Date'},
 				'status_text':{'label':'Status'},
-				'publish_to_text':{'label':'Publish_to', 'visible':'no'},
+				'publish_to_text':{'label':'Publish To', 'visible':'no'},
 				'categories':{'label':'Categories', 'visible':'no'},
 				'tags':{'label':'Tags', 'visible':'no'},
 				}},
@@ -158,6 +158,18 @@ function ciniki_blog_post() {
 
 	this.showPost = function(cb, pid) {
 		this.post.reset();
+		var numBlogs = 0;
+		if( (M.curBusiness.modules['ciniki.blog'].flags&0x0001) > 0 ) {
+			numBlogs++; 
+		}
+		if( (M.curBusiness.modules['ciniki.blog'].flags&0x0100) > 0 ) {
+			numBlogs++; 
+		}
+		if( numBlogs > 1 ) {
+			this.post.sections.info.list.publish_to_text.visible = 'yes';
+		} else {
+			this.post.sections.info.list.publish_to_text.visible = 'no';
+		}
 //		this.post.sections.recipes.visible=(M.curBusiness.modules['ciniki.recipes']!=null)?'yes':'no';
 		if( pid != null ) { this.post.post_id = pid; }
 		M.api.getJSONCb('ciniki.blog.postGet', {'business_id':M.curBusinessID,
@@ -177,7 +189,6 @@ function ciniki_blog_post() {
 				}
 				p.sections.info.list.categories.visible=(M.curBusiness.modules['ciniki.blog'].flags&0x222)>0?'yes':'no';
 				p.sections.info.list.tags.visible=(M.curBusiness.modules['ciniki.blog'].flags&0x444)>0?'yes':'no';
-				p.sections.info.list.publish_to_text.visible=(M.curBusiness.modules['ciniki.blog'].flags&0x111)>0?'yes':'no';
 				p.refresh();
 				p.show(cb);
 			});

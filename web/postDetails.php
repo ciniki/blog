@@ -9,7 +9,7 @@
 // Returns
 // -------
 //
-function ciniki_blog_web_postDetails($ciniki, $settings, $business_id, $permalink) {
+function ciniki_blog_web_postDetails($ciniki, $settings, $business_id, $permalink, $blogtype) {
 
 	$modules = array();
 	if( isset($ciniki['business']['modules']) ) {
@@ -46,6 +46,11 @@ function ciniki_blog_web_postDetails($ciniki, $settings, $business_id, $permalin
 		. "WHERE ciniki_blog_posts.permalink = '" . ciniki_core_dbQuote($ciniki, $permalink) . "' "
 		. "AND ciniki_blog_posts.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 		. "";
+	if( $blogtype == 'memberblog' ) {
+		$strsql .= "AND (ciniki_blog_posts.publish_to&0x04) > 0 ";
+	} else {
+		$strsql .= "AND (ciniki_blog_posts.publish_to&0x01) > 0 ";
+	}
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.blog', array(
 		array('container'=>'posts', 'fname'=>'id',

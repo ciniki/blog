@@ -16,7 +16,7 @@
 // Returns
 // -------
 //
-function ciniki_blog_web_posts($ciniki, $settings, $business_id, $args) {
+function ciniki_blog_web_posts($ciniki, $settings, $business_id, $args, $blogtype) {
 
 	//
 	// Load the business settings
@@ -100,6 +100,12 @@ function ciniki_blog_web_posts($ciniki, $settings, $business_id, $args) {
 			. "AND ciniki_blog_posts.status = 40 "
 			. "AND ciniki_blog_posts.publish_date < UTC_TIMESTAMP() "
 			. "";
+	}
+
+	if( $blogtype == 'memberblog' ) {
+		$strsql .= "AND (ciniki_blog_posts.publish_to&0x04) > 0 ";
+	} else {
+		$strsql .= "AND (ciniki_blog_posts.publish_to&0x01) > 0 ";
 	}
 
 	$strsql .= "ORDER BY ciniki_blog_posts.publish_date DESC ";

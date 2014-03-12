@@ -12,7 +12,12 @@ function ciniki_blog_main() {
 		this.menu = new M.panel('Blog',
 			'ciniki_blog_main', 'menu',
 			'mc', 'medium', 'sectioned', 'ciniki.blog.main.menu');
+		this.menu.blogtype = 'blog';
         this.menu.sections = {
+//			'blogtypes':{'label':'', 'visible':'no', 'type':'paneltabs', 'selected':'blog', 'tabs':{
+//				'blog':{'label':'Public', 'fn':'M.ciniki_blog_main.showMenu(null,\'blog\');'},
+//				'memberblog':{'label':'Members', 'fn':'M.ciniki_blog_main.showMenu(null,\'memberblog\');'},
+//				}},
 			'search':{'label':'', 'type':'livesearchgrid', 'livesearchcols':2, 'hint':'search blog', 
 				'cellClasses':['multiline','multiline'],
 				'noData':'No blog posts found',
@@ -27,7 +32,7 @@ function ciniki_blog_main() {
 				'cellClasses':['multiline', 'multiline'],
 				'noData':'No draft posts',
 				'addTxt':'Add',
-				'addFn':'M.startApp(\'ciniki.blog.postedit\',null,\'M.ciniki_blog_main.showMenu();\',\'mc\',{\'post_id\':0});',
+				'addFn':'M.startApp(\'ciniki.blog.postedit\',null,\'M.ciniki_blog_main.showMenu();\',\'mc\',{\'post_id\':0,\'blogtype\':M.ciniki_blog_main.menu.blogtype});',
 				},
 			'past':{'label':'Posts', 'type':'simplegrid', 'num_cols':2,
 				'headerValues':null,
@@ -35,13 +40,13 @@ function ciniki_blog_main() {
 				'noData':'No posts',
 				'limit':5,
 				'moreTxt':'more',
-				'moreFn':'M.ciniki_blog_main.showPosts(\'M.ciniki_blog_main.showMenu();\',\'now\');',
+				'moreFn':'M.ciniki_blog_main.showPosts(\'M.ciniki_blog_main.showMenu();\',\'now\',M.ciniki_blog_main.menu.blogtype);',
 				},
 			};
 		this.menu.liveSearchCb = function(s, i, value) {
 			if( s == 'search' && value != '' ) {
 				M.api.getJSONBgCb('ciniki.blog.postSearch', {'business_id':M.curBusinessID, 
-					'start_needle':value, 'limit':'10'}, function(rsp) { 
+					'start_needle':value, 'limit':'10', 'blogtype':M.ciniki_blog_main.menu.blogtype}, function(rsp) { 
 						M.ciniki_blog_main.menu.liveSearchShow('search', null, M.gE(M.ciniki_blog_main.menu.panelUID + '_' + s), rsp.posts); 
 					});
 				return true;
@@ -55,7 +60,7 @@ function ciniki_blog_main() {
 			return '';
 		}
 		this.menu.liveSearchResultRowFn = function(s, f, i, j, d) { 
-			return 'M.startApp(\'ciniki.blog.post\',null,\'M.ciniki_blog_main.showMenu();\',\'mc\',{\'post_id\':\'' + d.post.id + '\'});';
+			return 'M.startApp(\'ciniki.blog.post\',null,\'M.ciniki_blog_main.showMenu();\',\'mc\',{\'post_id\':\'' + d.post.id + '\',\'blogtype\':M.ciniki_blog_main.menu.blogtype});';
 		};
 		this.menu.liveSearchSubmitFn = function(s, search_str) {
 			M.ciniki_blog_main.searchPosts('M.ciniki_blog_main.showMenu();', search_str);
@@ -69,9 +74,9 @@ function ciniki_blog_main() {
 			}
 		};
 		this.menu.rowFn = function(s, i, d) {
-			return 'M.startApp(\'ciniki.blog.post\',null,\'M.ciniki_blog_main.showMenu();\',\'mc\',{\'post_id\':\'' + d.post.id + '\'});';
+			return 'M.startApp(\'ciniki.blog.post\',null,\'M.ciniki_blog_main.showMenu();\',\'mc\',{\'post_id\':\'' + d.post.id + '\',\'blogtype\':M.ciniki_blog_main.menu.blogtype});';
 		};
-		this.menu.addButton('add', 'Add', 'M.startApp(\'ciniki.blog.postedit\',null,\'M.ciniki_blog_main.showMenu();\',\'mc\',{\'post_id\':0});');
+		this.menu.addButton('add', 'Add', 'M.startApp(\'ciniki.blog.postedit\',null,\'M.ciniki_blog_main.showMenu();\',\'mc\',{\'post_id\':0,\'blogtype\':M.ciniki_blog_main.menu.blogtype});');
 		this.menu.addClose('Back');
 
 		//
@@ -82,6 +87,7 @@ function ciniki_blog_main() {
 			'mc', 'medium', 'sectioned', 'ciniki.blog.main.posts');
 		this.posts.year = 0;
 		this.posts.month = 0;
+		this.posts.blogtype = 'blog';
 		this.posts.sections = {
 			'years':{'label':'', 'type':'paneltabs', 'selected':'', 'tabs':{}},
 			'months':{'label':'', 'visible':'yes', 'type':'paneltabs', 'selected':'0', 'tabs':{
@@ -112,7 +118,7 @@ function ciniki_blog_main() {
 			}
 		};
 		this.posts.rowFn = function(s, i, d) {
-			return 'M.startApp(\'ciniki.blog.post\',null,\'M.ciniki_blog_main.showPosts();\',\'mc\',{\'post_id\':\'' + d.post.id + '\'});';
+			return 'M.startApp(\'ciniki.blog.post\',null,\'M.ciniki_blog_main.showPosts();\',\'mc\',{\'post_id\':\'' + d.post.id + '\',\'blogtype\':M.ciniki_blog_main.posts.blogtype});';
 		};
 		this.posts.sectionData = function(s) { return this.data[s]; }
 		this.posts.addClose('Back');
@@ -136,14 +142,28 @@ function ciniki_blog_main() {
 			return false;
 		} 
 
-		this.showMenu(cb);
+//		if( (M.curBusiness.modules['ciniki.blog'].flags&0x0100) > 0 ) {
+//			this.menu.sections.blogtypes.visible = 'yes';
+//		} else {
+//			this.menu.sections.blogtypes.visible = 'yes';
+//		}
+
+		if( args.blogtype != null && args.blogtype != '' ) {
+			this.showMenu(cb, args.blogtype);
+		} else {
+			this.showMenu(cb, 'blog');
+		}
 	}
 
-	this.showMenu = function(cb) {
+	this.showMenu = function(cb, blogtype) {
 		this.menu.data = {};
+		if( blogtype != null && blogtype != '' ) {
+			this.menu.blogtype = blogtype;
+//			this.menu.sections.blogtypes.selected = blogtype;
+		}
 		M.api.getJSONCb('ciniki.blog.postStats', 
 			{'business_id':M.curBusinessID, 
-			'drafts':'yes', 'upcoming':'yes', 'past':11, 'years':'yes'}, function(rsp) {
+			'drafts':'yes', 'upcoming':'yes', 'past':11, 'years':'yes', 'blogtype':this.menu.blogtype}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
 					M.api.err(rsp);
 					return false;
@@ -173,7 +193,7 @@ function ciniki_blog_main() {
 		this.posts.sections.years.visible=(min_year==cur_year)?'no':'yes';
 	};
 
-	this.showPosts = function(cb, year, month) {
+	this.showPosts = function(cb, year, month, blogtype) {
 		if( year != null ) {
 			if( year == 'now' ) {
 				this.posts.year = new Date().getFullYear();
@@ -187,9 +207,13 @@ function ciniki_blog_main() {
 			this.posts.month = month;
 			this.posts.sections.months.selected = month;
 		}
+		if( blogtype != null ) {
+			this.posts.blogtype = blogtype;
+			this.posts.sections.blogtype.selected = blogtype;
+		}
 		this.posts.reset();
 		M.api.getJSONCb('ciniki.blog.postList', {'business_id':M.curBusinessID, 
-			'year':this.posts.year, 'month':this.posts.month, 'status':'40'}, function(rsp) {
+			'year':this.posts.year, 'month':this.posts.month, 'status':'40','blogtype':this.posts.blogtype}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
 					M.api.err(rsp);
 					return false;

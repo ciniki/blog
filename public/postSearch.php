@@ -22,6 +22,7 @@ function ciniki_blog_postSearch(&$ciniki) {
         'content_search'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Search Content'), 
         'status'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Status'), 
         'limit'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Limit'), 
+        'blogtype'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Blog Type'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -78,6 +79,12 @@ function ciniki_blog_postSearch(&$ciniki) {
 		. "";
 	if( isset($args['status']) && $args['status'] != '' ) {
 		$strsql .= "AND status = '" . ciniki_core_dbQuote($ciniki, $args['status']) . "' ";
+	}
+	if( isset($args['blogtype']) && $args['blogtype'] != '' ) {
+		switch($args['blogtype']) {
+			case 'blog': $strsql .= "AND (ciniki_blog_posts.publish_to&0x01) > 0 "; break;
+			case 'memberblog': $strsql .= "AND (ciniki_blog_posts.publish_to&0x04) > 0 "; break;
+		}
 	}
 	$strsql .= "ORDER BY publish_date DESC "
 		. "";

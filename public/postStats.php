@@ -22,6 +22,7 @@ function ciniki_blog_postStats(&$ciniki) {
         'upcoming'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Upcoming'), 
         'past'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Past'), 
         'years'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Years'), 
+        'blogtype'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Blog Type'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -70,7 +71,14 @@ function ciniki_blog_postStats(&$ciniki) {
 			. "FROM ciniki_blog_posts "
 			. "WHERE status = 10 "
 			. "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-			. "ORDER BY publish_date DESC "
+			. "";
+		if( isset($args['blogtype']) && $args['blogtype'] != '' ) {
+			switch($args['blogtype']) {
+				case 'blog': $strsql .= "AND (ciniki_blog_posts.publish_to&0x01) > 0 "; break;
+				case 'memberblog': $strsql .= "AND (ciniki_blog_posts.publish_to&0x04) > 0 "; break;
+			}
+		}
+		$strsql .= "ORDER BY publish_date DESC "
 			. "";
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.blog', array(
 			array('container'=>'posts', 'fname'=>'id', 'name'=>'post',
@@ -102,7 +110,14 @@ function ciniki_blog_postStats(&$ciniki) {
 			. "WHERE status = 40 "
 			. "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 			. "AND publish_date > UTC_TIMESTAMP() "
-			. "ORDER BY publish_date ASC "
+			. "";
+		if( isset($args['blogtype']) && $args['blogtype'] != '' ) {
+			switch($args['blogtype']) {
+				case 'blog': $strsql .= "AND (ciniki_blog_posts.publish_to&0x01) > 0 "; break;
+				case 'memberblog': $strsql .= "AND (ciniki_blog_posts.publish_to&0x04) > 0 "; break;
+			}
+		}
+		$strsql .= "ORDER BY publish_date ASC "
 			. "";
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.blog', array(
 			array('container'=>'posts', 'fname'=>'id', 'name'=>'post',
@@ -134,7 +149,14 @@ function ciniki_blog_postStats(&$ciniki) {
 			. "WHERE status = 40 "
 			. "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 			. "AND publish_date <= UTC_TIMESTAMP() "
-			. "ORDER BY publish_date DESC "
+			. "";
+		if( isset($args['blogtype']) && $args['blogtype'] != '' ) {
+			switch($args['blogtype']) {
+				case 'blog': $strsql .= "AND (ciniki_blog_posts.publish_to&0x01) > 0 "; break;
+				case 'memberblog': $strsql .= "AND (ciniki_blog_posts.publish_to&0x04) > 0 "; break;
+			}
+		}
+		$strsql .= "ORDER BY publish_date DESC "
 			. "";
 		if( $args['past'] > 0 ) {
 			$strsql .= "LIMIT " . $args['past'] . " ";
@@ -171,6 +193,12 @@ function ciniki_blog_postStats(&$ciniki) {
 			. "AND publish_date <> '0000-00-00 00:00:00' "
 //			. "AND (status = 40 || status = 10) "
 			. "";
+		if( isset($args['blogtype']) && $args['blogtype'] != '' ) {
+			switch($args['blogtype']) {
+				case 'blog': $strsql .= "AND (ciniki_blog_posts.publish_to&0x01) > 0 "; break;
+				case 'memberblog': $strsql .= "AND (ciniki_blog_posts.publish_to&0x04) > 0 "; break;
+			}
+		}
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.blog', array(
 			array('container'=>'posts', 'fname'=>'min_publish_date', 'name'=>'stats',
 				'fields'=>array('min_publish_date', 'max_publish_date'),

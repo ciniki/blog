@@ -22,6 +22,7 @@ function ciniki_blog_postAdd(&$ciniki) {
 		'permalink'=>array('required'=>'no', 'default'=>'', 'trimblanks'=>'yes', 'blank'=>'yes', 'name'=>'Permalink'),
         'status'=>array('required'=>'no', 'default'=>'10', 'blank'=>'yes', 'name'=>'Status',
 			'validlist'=>array('10', '40', '60')),
+        'publish_to'=>array('required'=>'no', 'default'=>'1', 'blank'=>'yes', 'name'=>'Publish To'),
         'primary_image_id'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Image'),
         'excerpt'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Excerpt'),
         'content'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Content'),
