@@ -144,6 +144,7 @@ function ciniki_blog_postGet($ciniki) {
 		}
 		
 	}
+
 	//
 	// Get the images for the post
 	//
