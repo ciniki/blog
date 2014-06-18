@@ -10,7 +10,7 @@
 // Returns
 // -------
 //
-function ciniki_blog_flags($ciniki) {
+function ciniki_blog_flags($ciniki, $modules) {
 	$flags = array(
 		array('flag'=>array('bit'=>'1', 'name'=>'Public Blog')),
 		array('flag'=>array('bit'=>'2', 'name'=>'Public Categories')),
