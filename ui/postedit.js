@@ -39,10 +39,10 @@ function ciniki_blog_postedit() {
 				'status':{'label':'Status', 'type':'toggle', 'default':'10', 'toggles':this.statusOptions},
 				'publish_to':{'label':'Publish To', 'active':'no', 'type':'flags', 'none':'no', 'join':'yes', 'flags':this.publishtoFlags},
 				}},
-			'_categories':{'label':'Categories', 'visible':'no', 'fields':{
+			'_categories':{'label':'Categories', 'aside':'yes', 'visible':'no', 'fields':{
 				'categories':{'label':'', 'hidelabel':'yes', 'active':'no', 'type':'tags', 'tags':[], 'hint':'Enter a new category:'},
 				}},
-			'_tags':{'label':'Tags', 'visible':'no', 'fields':{
+			'_tags':{'label':'Tags', 'aside':'yes', 'visible':'no', 'fields':{
 				'tags':{'label':'', 'hidelabel':'yes', 'active':'no', 'type':'tags', 'tags':[], 'hint':'Enter a new tag:'},
 				}},
 			'_excerpt':{'label':'Excerpt', 'fields':{
