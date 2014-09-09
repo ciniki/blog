@@ -213,7 +213,7 @@ function ciniki_blog_postedit() {
 						M.api.err(rsp);
 						return false;
 					} 
-					M.ciniki_blog_postfiles.edit.close();
+					M.ciniki_blog_post.post.close();
 				});
 		}
 	};
