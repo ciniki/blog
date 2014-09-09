@@ -145,7 +145,7 @@ function ciniki_blog_postedit() {
 				});
 		} else {
 			this.edit.post_id = 0;
-			this.edit.data = {'publish_date':M.dateFormat(new Date())};
+			this.edit.data['publish_date'] = M.dateFormat(new Date());
 			if( (M.curBusiness.modules['ciniki.blog'].flags&0x0666)>0 ) {
 				M.api.getJSONCb('ciniki.blog.postTags', {'business_id':M.curBusinessID}, function(rsp) {
 					if( rsp.stat != 'ok' ) {
