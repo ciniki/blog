@@ -43,7 +43,15 @@ function ciniki_blog_web_posts($ciniki, $settings, $business_id, $args, $blogtyp
 		. "'yes' AS is_details "
 		. "";
 
-	if( isset($args['category']) && $args['category'] != '' ) {
+	if( isset($args['latest']) && $args['latest'] == 'yes' ) {
+		$strsql .= ", 'unknown' AS tag_name "
+			. "FROM ciniki_blog_posts "
+			. "WHERE ciniki_blog_posts.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+			. "AND ciniki_blog_posts.status = 40 "
+			. "AND ciniki_blog_posts.publish_date < UTC_TIMESTAMP() "
+			. "";
+
+	} elseif( isset($args['category']) && $args['category'] != '' ) {
 		$strsql .= ", ciniki_blog_post_tags.tag_name "
 			. "FROM ciniki_blog_post_tags "
 			. "LEFT JOIN ciniki_blog_posts ON (ciniki_blog_post_tags.post_id = ciniki_blog_posts.id "
