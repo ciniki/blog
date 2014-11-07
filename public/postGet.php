@@ -24,6 +24,7 @@ function ciniki_blog_postGet($ciniki) {
 		'refs'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'References'),
 		'categories'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Categories'),
 		'tags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Tags'),
+		'webcollections'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Web Collections'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -260,6 +261,26 @@ function ciniki_blog_postGet($ciniki) {
 	}
 
 	//
+	// Get the list of web collections, and which ones this post is attached to
+	//
+	if( isset($args['webcollections']) && $args['webcollections'] == 'yes'
+		&& isset($ciniki['business']['modules']['ciniki.web']) 
+		&& ($ciniki['business']['modules']['ciniki.web']['flags']&0x08) == 0x08
+		) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'hooks', 'webCollectionList');
+		$rc = ciniki_web_hooks_webCollectionList($ciniki, $args['business_id'],
+			array('object'=>'ciniki.blog.post', 'object_id'=>$args['post_id']));
+		if( $rc['stat'] != 'ok' ) {	
+			return $rc;
+		}
+		if( isset($rc['collections']) ) {
+			$post['_webcollections'] = $rc['collections'];
+			$post['webcollections'] = $rc['selected'];
+			$post['webcollections_text'] = $rc['selected_text'];
+		}
+	}
+
+	//
 	// Check if all categories should be returned
 	//
 	$categories = array();
@@ -296,6 +317,7 @@ function ciniki_blog_postGet($ciniki) {
 			$tags = $rc['tags'];
 		}
 	}
+
 
 	return array('stat'=>'ok', 'post'=>$post, 'categories'=>$categories, 'tags'=>$tags);
 }

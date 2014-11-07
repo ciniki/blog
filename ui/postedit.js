@@ -39,6 +39,9 @@ function ciniki_blog_postedit() {
 				'status':{'label':'Status', 'type':'toggle', 'default':'10', 'toggles':this.statusOptions},
 				'publish_to':{'label':'Publish To', 'active':'no', 'type':'flags', 'none':'no', 'join':'yes', 'flags':this.publishtoFlags},
 				}},
+			'_webcollections':{'label':'Web Collections', 'aside':'yes', 'active':'no', 'fields':{
+				'webcollections':{'label':'', 'hidelabel':'yes', 'type':'collection'},
+				}},
 			'_categories':{'label':'Categories', 'aside':'yes', 'visible':'no', 'fields':{
 				'categories':{'label':'', 'hidelabel':'yes', 'active':'no', 'type':'tags', 'tags':[], 'hint':'Enter a new category:'},
 				}},
@@ -86,6 +89,17 @@ function ciniki_blog_postedit() {
 			return false;
 		}
 
+		//
+		// Check if web collections are enabled
+		//
+		if( M.curBusiness.modules['ciniki.web'] != null 
+			&& (M.curBusiness.modules['ciniki.web'].flags&0x08) ) {
+			this.edit.sections._webcollections.active = 'yes';
+		} else {
+			this.edit.sections._webcollections.active = 'no';
+		}
+
+
 		this.showEdit(cb, args.post_id, args.blogtype);
 	}
 
@@ -121,7 +135,8 @@ function ciniki_blog_postedit() {
 		}
 		if( this.edit.post_id > 0 ) {
 			M.api.getJSONCb('ciniki.blog.postGet', {'business_id':M.curBusinessID,
-				'post_id':this.edit.post_id, 'categories':'yes', 'tags':'yes'}, function(rsp) {
+				'post_id':this.edit.post_id, 'categories':'yes', 'tags':'yes', 
+				'webcollections':'yes'}, function(rsp) {
 					if( rsp.stat != 'ok' ) {
 						M.api.err(rsp);
 						return false;
@@ -164,6 +179,23 @@ function ciniki_blog_postedit() {
 						for(i in rsp.tags) {
 							p.sections._tags.fields.tags.tags.push(rsp.tags[i].tag.name);
 						}
+					}
+					if( rsp.webcollections != null ) {
+						p.data['_webcollections'] = rsp.webcollections;
+					}
+					p.refresh();
+					p.show(cb);
+				});
+			} else if( this.edit.sections._webcollections.active == 'yes' ) {
+				// Get the list of collections
+				M.api.getJSONCb('ciniki.web.collectionList', {'business_id':M.curBusinessID}, function(rsp) {
+					if( rsp.stat != 'ok' ) {
+						M.api.err(rsp);
+						return false;
+					}
+					var p = M.ciniki_blog_postedit.edit;
+					if( rsp.collections != null ) {
+						p.data['_webcollections'] = rsp.collections;
 					}
 					p.refresh();
 					p.show(cb);

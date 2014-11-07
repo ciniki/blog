@@ -25,6 +25,7 @@ function ciniki_blog_post() {
 				'publish_date':{'label':'Date'},
 				'status_text':{'label':'Status'},
 				'publish_to_text':{'label':'Publish To', 'visible':'no'},
+				'webcollections_text':{'label':'Web Collections'},
 				'categories':{'label':'Categories', 'visible':'no'},
 				'tags':{'label':'Tags', 'visible':'no'},
 				}},
@@ -151,6 +152,16 @@ function ciniki_blog_post() {
 			return false;
 		}
 
+		//
+		// Check if web collections are enabled
+		//
+		if( M.curBusiness.modules['ciniki.web'] != null 
+			&& (M.curBusiness.modules['ciniki.web'].flags&0x08) ) {
+			this.post.sections.info.list.webcollections_text.visible = 'yes';
+		} else {
+			this.post.sections.info.list.webcollections_text.visible = 'no';
+		}
+
 		if( args.post_id != null && args.post_id > 0 ) {
 			this.showPost(cb, args.post_id);
 		}
@@ -173,8 +184,8 @@ function ciniki_blog_post() {
 //		this.post.sections.recipes.visible=(M.curBusiness.modules['ciniki.recipes']!=null)?'yes':'no';
 		if( pid != null ) { this.post.post_id = pid; }
 		M.api.getJSONCb('ciniki.blog.postGet', {'business_id':M.curBusinessID,
-			'post_id':this.post.post_id, 
-			'files':'yes', 'images':'yes', 'links':'yes', 'refs':'yes'}, function(rsp) {
+			'post_id':this.post.post_id, 'files':'yes', 'images':'yes', 
+			'links':'yes', 'refs':'yes', 'webcollections':'yes'}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
 					M.api.err(rsp);
 					return false;

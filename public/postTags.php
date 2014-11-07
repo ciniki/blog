@@ -37,6 +37,9 @@ function ciniki_blog_postTags($ciniki) {
     }   
 	$modules = $rc['modules'];
 
+
+	$rsp = array('stat'=>'ok');
+
 	//
 	// Get the list of categories
 	//
@@ -46,9 +49,9 @@ function ciniki_blog_postTags($ciniki) {
 		return $rc;
 	}
 	if( isset($rc['tags']) ) {
-		$categories = $rc['tags'];
+		$rsp['categories'] = $rc['tags'];
 	} else {
-		$categories = array();
+		$rsp['categories'] = array();
 	}
 
 	//
@@ -60,11 +63,30 @@ function ciniki_blog_postTags($ciniki) {
 		return $rc;
 	}
 	if( isset($rc['tags']) ) {
-		$tags = $rc['tags'];
+		$rsp['tags'] = $rc['tags'];
 	} else {
-		$tags = array();
+		$rsp['tags'] = array();
 	}
 
-	return array('stat'=>'ok', 'categories'=>$categories, 'tags'=>$tags);
+	//
+	// Get the list of web collections, and which ones this post is attached to
+	//
+	if( isset($ciniki['business']['modules']['ciniki.web']) 
+		&& ($ciniki['business']['modules']['ciniki.web']['flags']&0x08) == 0x08
+		) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'hooks', 'webCollectionList');
+		$rc = ciniki_web_hooks_webCollectionList($ciniki, $args['business_id'],
+			array('object'=>'ciniki.blog.post', 'object_id'=>0));
+		if( $rc['stat'] != 'ok' ) {	
+			return $rc;
+		}
+		if( isset($rc['collections']) ) {
+			$rsp['webcollections'] = $rc['collections'];
+		} else {
+			$rsp['webcollections'] = array();
+		}
+	}
+
+	return $rsp;
 }
 ?>

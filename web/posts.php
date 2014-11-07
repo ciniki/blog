@@ -50,7 +50,18 @@ function ciniki_blog_web_posts($ciniki, $settings, $business_id, $args, $blogtyp
 			. "AND ciniki_blog_posts.status = 40 "
 			. "AND ciniki_blog_posts.publish_date < UTC_TIMESTAMP() "
 			. "";
-
+	} elseif( isset($args['collection_id']) && $args['collection_id'] > 0 ) {
+		$strsql .= ", 'unknown' AS tag_name "
+			. "FROM ciniki_web_collection_objrefs "
+			. "INNER JOIN ciniki_blog_posts ON ("
+				. "ciniki_blog_posts.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+				. "AND ciniki_blog_posts.status = 40 "
+				. "AND ciniki_blog_posts.publish_date < UTC_TIMESTAMP() "
+				. ") "
+			. "WHERE ciniki_web_collection_objrefs.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+			. "AND ciniki_web_collection_objrefs.collection_id = '" . ciniki_core_dbQuote($ciniki, $args['collection_id']) . "' "
+			. "AND ciniki_web_collection_objrefs.object = 'ciniki.blog.post' "
+			. "";
 	} elseif( isset($args['category']) && $args['category'] != '' ) {
 		$strsql .= ", ciniki_blog_post_tags.tag_name "
 			. "FROM ciniki_blog_post_tags "

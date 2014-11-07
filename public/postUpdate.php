@@ -30,6 +30,7 @@ function ciniki_blog_postUpdate(&$ciniki) {
         'publish_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'datetimetoutc', 'name'=>'Publish Date'),
 		'categories'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Categories'),
 		'tags'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Tags'),
+		'webcollections'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'idlist', 'name'=>'Web Collections'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -140,6 +141,24 @@ function ciniki_blog_postUpdate(&$ciniki) {
 			return $rc;
 		}
 	}
+
+	//
+	// If post was updated ok, Check if any web collections to add
+	//
+	if( isset($args['webcollections'])
+		&& isset($ciniki['business']['modules']['ciniki.web']) 
+		&& ($ciniki['business']['modules']['ciniki.web']['flags']&0x08) == 0x08
+		) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'hooks', 'webCollectionUpdate');
+		$rc = ciniki_web_hooks_webCollectionUpdate($ciniki, $args['business_id'],
+			array('object'=>'ciniki.blog.post', 'object_id'=>$args['post_id'], 
+				'collection_ids'=>$args['webcollections']));
+		if( $rc['stat'] != 'ok' ) {
+			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
+			return $rc;
+		}
+	}
+
 
 	//
 	// Commit the database changes
