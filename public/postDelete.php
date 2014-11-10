@@ -181,7 +181,7 @@ function ciniki_blog_postDelete(&$ciniki) {
 		&& ($ciniki['business']['modules']['ciniki.web']['flags']&0x08) == 0x08
 		) {
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'hooks', 'webCollectionDeleteObjRef');
-		$rc = ciniki_web_hooks_collectionDeleteObjRef($ciniki, $args['business_id'],
+		$rc = ciniki_web_hooks_webCollectionDeleteObjRef($ciniki, $args['business_id'],
 			array('object'=>'ciniki.blog.post', 'object_id'=>$args['post_id']));
 		if( $rc['stat'] != 'ok' ) {	
 			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
