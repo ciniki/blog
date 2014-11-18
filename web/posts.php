@@ -40,7 +40,7 @@ function ciniki_blog_web_posts($ciniki, $settings, $business_id, $args, $blogtyp
 		. "ciniki_blog_posts.permalink, "
 		. "ciniki_blog_posts.primary_image_id, "
 		. "ciniki_blog_posts.excerpt, "
-		. "'yes' AS is_details "
+		. "IF(ciniki_blog_posts.content<>'','yes','no') AS is_details "
 		. "";
 
 	if( isset($args['latest']) && $args['latest'] == 'yes' ) {

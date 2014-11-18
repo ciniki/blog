@@ -29,7 +29,7 @@ function ciniki_blog_post() {
 				'categories':{'label':'Categories', 'visible':'no'},
 				'tags':{'label':'Tags', 'visible':'no'},
 				}},
-			'excerpt':{'label':'Excerpt', 'type':'htmlcontent'},
+			'excerpt':{'label':'Synopsis', 'type':'htmlcontent'},
 			'content':{'label':'Post', 'type':'htmlcontent'},
 			'images':{'label':'Gallery', 'type':'simplethumbs'},
 			'_images':{'label':'', 'type':'simplegrid', 'num_cols':1,

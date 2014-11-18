@@ -48,7 +48,7 @@ function ciniki_blog_postedit() {
 			'_tags':{'label':'Tags', 'aside':'yes', 'visible':'no', 'fields':{
 				'tags':{'label':'', 'hidelabel':'yes', 'active':'no', 'type':'tags', 'tags':[], 'hint':'Enter a new tag:'},
 				}},
-			'_excerpt':{'label':'Excerpt', 'fields':{
+			'_excerpt':{'label':'Synopsis', 'fields':{
 				'excerpt':{'label':'', 'hidelabel':'yes', 'hint':'', 'type':'textarea', 'size':'small'},
 				}},
 			'_content':{'label':'Post', 'fields':{
