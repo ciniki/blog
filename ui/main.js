@@ -40,7 +40,7 @@ function ciniki_blog_main() {
 				'noData':'No posts',
 				'limit':5,
 				'moreTxt':'more',
-				'moreFn':'M.ciniki_blog_main.showPosts(\'M.ciniki_blog_main.showMenu();\',\'now\',M.ciniki_blog_main.menu.blogtype);',
+				'moreFn':'M.ciniki_blog_main.showPosts(\'M.ciniki_blog_main.showMenu();\',\'now\',0,M.ciniki_blog_main.menu.blogtype);',
 				},
 			};
 		this.menu.liveSearchCb = function(s, i, value) {
@@ -142,12 +142,6 @@ function ciniki_blog_main() {
 			return false;
 		} 
 
-//		if( (M.curBusiness.modules['ciniki.blog'].flags&0x0100) > 0 ) {
-//			this.menu.sections.blogtypes.visible = 'yes';
-//		} else {
-//			this.menu.sections.blogtypes.visible = 'yes';
-//		}
-
 		if( args.blogtype != null && args.blogtype != '' ) {
 			this.showMenu(cb, args.blogtype);
 		} else {
@@ -157,13 +151,10 @@ function ciniki_blog_main() {
 
 	this.showMenu = function(cb, blogtype) {
 		this.menu.data = {};
-		if( blogtype != null && blogtype != '' ) {
-			this.menu.blogtype = blogtype;
-//			this.menu.sections.blogtypes.selected = blogtype;
-		}
+		if( blogtype != null && blogtype != '' ) { this.menu.blogtype = blogtype; }
 		M.api.getJSONCb('ciniki.blog.postStats', 
-			{'business_id':M.curBusinessID, 
-			'drafts':'yes', 'upcoming':'yes', 'past':11, 'years':'yes', 'blogtype':this.menu.blogtype}, function(rsp) {
+			{'business_id':M.curBusinessID, 'drafts':'yes', 'upcoming':'yes', 'past':11, 
+				'years':'yes', 'blogtype':this.menu.blogtype}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
 					M.api.err(rsp);
 					return false;
@@ -194,6 +185,7 @@ function ciniki_blog_main() {
 	};
 
 	this.showPosts = function(cb, year, month, blogtype) {
+		console.log(blogtype);
 		if( year != null ) {
 			if( year == 'now' ) {
 				this.posts.year = new Date().getFullYear();
@@ -209,7 +201,6 @@ function ciniki_blog_main() {
 		}
 		if( blogtype != null ) {
 			this.posts.blogtype = blogtype;
-			this.posts.sections.blogtype.selected = blogtype;
 		}
 		this.posts.reset();
 		M.api.getJSONCb('ciniki.blog.postList', {'business_id':M.curBusinessID, 
