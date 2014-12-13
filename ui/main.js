@@ -185,7 +185,6 @@ function ciniki_blog_main() {
 	};
 
 	this.showPosts = function(cb, year, month, blogtype) {
-		console.log(blogtype);
 		if( year != null ) {
 			if( year == 'now' ) {
 				this.posts.year = new Date().getFullYear();
