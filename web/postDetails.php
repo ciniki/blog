@@ -115,6 +115,7 @@ function ciniki_blog_web_postDetails($ciniki, $settings, $business_id, $permalin
 		. "FROM ciniki_blog_post_images "
 		. "WHERE ciniki_blog_post_images.post_id = '" . ciniki_core_dbQuote($ciniki, $post['id']) . "' "
 		. "AND ciniki_blog_post_images.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+		. "AND ciniki_blog_post_images.image_id > 0 "	// Only get images that have a picture
 		. "ORDER BY ciniki_blog_post_images.sequence, ciniki_blog_post_images.date_added, "
 			. "ciniki_blog_post_images.name "
 		. "";
