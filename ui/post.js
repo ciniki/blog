@@ -56,6 +56,8 @@ function ciniki_blog_post() {
 //				},
 			'_buttons':{'label':'', 'buttons':{
 				'edit':{'label':'Edit', 'fn':'M.startApp(\'ciniki.blog.postedit\',null,\'M.ciniki_blog_post.showPost();\',\'mc\',{\'post_id\':M.ciniki_blog_post.post.post_id});'},
+				'email':{'label':'Email Subscribers', 'visible':'no', 'fn':'M.ciniki_blog_post.post.emailSubscribers();'},
+//				'email':{'label':'Email Subscribers', 'fn':'M.startApp(\'ciniki.mail.postedit\',null,\'M.ciniki_blog_post.showPost();\',\'mc\',{\'post_id\':M.ciniki_blog_post.post.post_id});'},
 				}},
 		};
 		this.post.addDropImage = function(iid) {
@@ -139,6 +141,9 @@ function ciniki_blog_post() {
 		this.post.thumbFn = function(s, i, d) {
 			return 'M.startApp(\'ciniki.blog.postimages\',null,\'M.ciniki_blog_post.showPost();\',\'mc\',{\'post_image_id\':\'' + d.image.id + '\'});';
 		};
+		this.post.emailSubscribers = function() {
+			M.startApp('ciniki.mail.mailings',null,'M.ciniki_blog_post.showPost();','mc',{'add':'yes', 'object':'ciniki.blog.post', 'object_id':this.post_id});
+		};
 		this.post.addButton('edit', 'Edit', 'M.startApp(\'ciniki.blog.postedit\',null,\'M.ciniki_blog_post.showPost();\',\'mc\',{\'post_id\':M.ciniki_blog_post.post.post_id});');
 		this.post.addClose('Back');
 	};
@@ -194,6 +199,17 @@ function ciniki_blog_post() {
 				p.data = rsp.post;
 				if( rsp.post.categories != null && rsp.post.categories != '' ) {
 					p.data.categories = rsp.post.categories.replace(/::/g, ', ');
+				}
+				//
+				// Check if mail and subscriptions are active
+				//
+				if( M.curBusiness.modules['ciniki.mail'] != null
+					&& M.curBusiness.modules['ciniki.subscriptions'] != null 
+					&& (rsp.post.publish_to&0x01) == 1	// Published to public blog
+					) {
+					p.sections._buttons.buttons.email.visible = 'yes';
+				} else {
+					p.sections._buttons.buttons.email.visible = 'no';
 				}
 				if( rsp.post.tags != null && rsp.post.tags != '' ) {
 					p.data.tags = rsp.post.tags.replace(/::/g, ', ');
