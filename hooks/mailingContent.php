@@ -60,7 +60,7 @@ function ciniki_blog_hooks_mailingContent($ciniki, $business_id, $args) {
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
 		$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.blog', array(
 			array('container'=>'posts', 'fname'=>'id',
-				'fields'=>array('id', 'subject'=>'title', 'permalink', 'format', 'excerpt', 'content', 
+				'fields'=>array('id', 'title', 'subject'=>'title', 'permalink', 'format', 'excerpt', 'content', 
 					'image_id'=>'primary_image_id', 'status', 'status_text', 
 					'publish_datetime', 'publish_date', 'publish_time'),
 				'utctotz'=>array(
@@ -77,6 +77,10 @@ function ciniki_blog_hooks_mailingContent($ciniki, $business_id, $args) {
 			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2139', 'msg'=>"I'm sorry, but we can't find the post you requested."));
 		}
 		$post = array_pop($rc['posts']);
+
+		if( isset($settings['mailing-subject-prepend']) && $settings['mailing-subject-prepend'] != '' ) {
+			$post['subject'] = $settings['mailing-subject-prepend'] . $post['subject'];
+		}
 
 		//
 		// Build the link back text/url
