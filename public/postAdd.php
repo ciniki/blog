@@ -93,6 +93,7 @@ function ciniki_blog_postAdd(&$ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionRollback');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionCommit');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
 	$rc = ciniki_core_dbTransactionStart($ciniki, 'ciniki.blog');
 	if( $rc['stat'] != 'ok' ) { 
 		return $rc;
@@ -135,6 +136,62 @@ function ciniki_blog_postAdd(&$ciniki) {
 			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
 			return $rc;
 		}
+	}
+
+	//
+	// If there are subscriptions, add them now
+	//
+	if( isset($ciniki['business']['modules']['ciniki.subscriptions'])
+		&& isset($ciniki['business']['modules']['ciniki.mail'])
+		&& ($ciniki['business']['modules']['ciniki.blog']['flags']&0x7000) > 0 	// Blog subscriptions enabled
+		) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'mail', 'hooks', 'objectUpdateSubscriptions');
+		$rc = ciniki_mail_hooks_objectUpdateSubscriptions($ciniki, $args['business_id'], array(
+			'object'=>'ciniki.blog.post', 'object_id'=>$post_id));
+		if( $rc['stat'] != 'ok' ) {
+			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
+			return $rc;
+		}
+/*		//
+		// Get the active list of subscriptions
+		//
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'subscriptions', 'hooks', 'subscriptionList');
+		$rc = ciniki_subscriptions_hooks_subscriptionList($ciniki, $args['business_id'], array());
+		if( $rc['stat'] != 'ok' ) {
+			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
+			return $rc;
+		}
+		
+		//
+		// Add the subscriptions
+		//
+		if( isset($rc['subscriptions']) ) {
+			$subscriptions = $rc['subscriptions'];
+			foreach($rc['subscriptions'] as $subscription_id => $subscription) {
+				if( isset($ciniki['request']['args']['subscription-' . $subscription_id]) 
+					&& $ciniki['request']['args']['subscription-' . $subscription_id] == 'yes' 
+					) {
+					$rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.blog.post_subscription', array(
+						'post_id'=>$post_id,
+						'subscription_id'=>$subscription_id,
+						'status'=>'10'), 0x04);
+					if( $rc['stat'] != 'ok' ) {
+						ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
+						return $rc;
+					}
+				}
+//				if( in_array($subscription_id, $args['subscriptions_ids']) ) {
+//					$rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.blog.post_subscription', array(
+//						'post_id'=>$post_id,
+//						'subscription_id'=>$subscription_id,
+//						'status'=>'10'), 0x04);
+//					if( $rc['stat'] != 'ok' ) {
+//						ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
+//						return $rc;
+//					}
+//				}
+			}
+		} */
 	}
 
 	//

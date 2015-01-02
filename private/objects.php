@@ -95,6 +95,23 @@ function ciniki_blog_objects($ciniki) {
 			),
 		'history_table'=>'ciniki_blog_history',
 		);
+	$objects['post_subscription'] = array(
+		'name'=>'Post Subscription',
+		'sync'=>'yes',
+		'table'=>'ciniki_blog_post_subscriptions',
+		'fields'=>array(
+			'post_id'=>array('ref'=>'ciniki.blog.post'),
+			'subscription_id'=>array('ref'=>'ciniki.subscriptions.subscription'),
+			'status'=>array(),
+			),
+		'history_table'=>'ciniki_blog_history',
+		);
+	$objects['setting'] = array(
+		'type'=>'settings',
+		'name'=>'Blog Settings',
+		'table'=>'ciniki_blog_settings',
+		'history_table'=>'ciniki_blog_history',
+		);
 	
 	return array('stat'=>'ok', 'objects'=>$objects);
 }

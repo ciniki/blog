@@ -18,7 +18,10 @@
 function ciniki_blog_hooks_emailGet($ciniki, $business_id, $args) {
 	
 	if( isset($args['object']) && $args['object'] != ''
-		&& isset($args['object_id']) && $args['object_id'] > 0 ) {
+		&& isset($args['object_id']) && $args['object_id'] > 0 
+		&& isset($ciniki['business']['modules']['ciniki.blog']['flags'])
+		&& ($ciniki['business']['modules']['ciniki.blog']['flags']&0x7000) > 0		// Blog subscriptions enabled
+		) {
 		$email = array('subject'=>'', 'text_content'=>'', 'html_content'=>'');
 	
 		//
