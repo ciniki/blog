@@ -79,6 +79,11 @@ function ciniki_blog_hooks_mailingContent($ciniki, $business_id, $args) {
 		$post = array_pop($rc['posts']);
 
 		//
+		// Build the link back text/url
+		//
+		$post['linkback'] = array('text'=>'View full article online', 'url'=>'/blog/' . $post['permalink']);
+
+		//
 		// Get the images for the post
 		//
 		$strsql = "SELECT ciniki_blog_post_images.id, "
