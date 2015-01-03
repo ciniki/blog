@@ -60,7 +60,7 @@ function ciniki_blog_hooks_mailingContent($ciniki, $business_id, $args) {
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
 		$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.blog', array(
 			array('container'=>'posts', 'fname'=>'id',
-				'fields'=>array('id', 'title', 'subject'=>'title', 'permalink', 'format', 'excerpt', 'content', 
+				'fields'=>array('id', 'title', 'subject'=>'title', 'permalink', 'format', 'synopsis'=>'excerpt', 'content', 
 					'image_id'=>'primary_image_id', 'status', 'status_text', 
 					'publish_datetime', 'publish_date', 'publish_time'),
 				'utctotz'=>array(
@@ -85,7 +85,9 @@ function ciniki_blog_hooks_mailingContent($ciniki, $business_id, $args) {
 		//
 		// Build the link back text/url
 		//
-		$post['linkback'] = array('text'=>'View full article online', 'url'=>'/blog/' . $post['permalink']);
+		if( $post['content'] != '' ) {
+			$post['linkback'] = array('text'=>'View full article online', 'url'=>'/blog/' . $post['permalink']);
+		}
 
 		//
 		// Get the images for the post
