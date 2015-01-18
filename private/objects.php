@@ -66,6 +66,7 @@ function ciniki_blog_objects($ciniki) {
 			'post_id'=>array('ref'=>'ciniki.blog.post'),
 			'name'=>array(),
 			'url'=>array(),
+			'description'=>array(),
 			),
 		'history_table'=>'ciniki_blog_history',
 		);

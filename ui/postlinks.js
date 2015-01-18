@@ -120,7 +120,7 @@ function ciniki_blog_postlinks() {
 	};
 
 	this.deleteLink = function() {
-		if( confirm("Are you sure you want to remove this recommended recipe?") ) {
+		if( confirm("Are you sure you want to remove this link?") ) {
 			var rsp = M.api.getJSONCb('ciniki.blog.postLinkDelete', 
 				{'business_id':M.curBusinessID, 'link_id':this.edit.link_id}, function(rsp) {
 					if( rsp.stat != 'ok' ) {
