@@ -186,12 +186,20 @@ function ciniki_blog_postedit() {
 							p.sections._tags.fields.tags.tags.push(rsp.tags[i].tag.name);
 						}
 					}
+					if( p.post_id == 0 ) {
+						p.data.publish_date = M.dateFormat(new Date());
+						p.data.status = 10;
+						if( p.blogtype == 'memberblog' ) {
+							p.data.publish_to = 4;
+						} else if( p.blogtype == 'blog' ) { 
+							p.data.publish_to = 1;
+						}
+					}
 					p.refresh();
 					p.show(cb);
 				});
 /*		} else {
 			this.edit.post_id = 0;
-			this.edit.data['publish_date'] = M.dateFormat(new Date());
 			if( (M.curBusiness.modules['ciniki.blog'].flags&0x0666)>0 ) {
 				M.api.getJSONCb('ciniki.blog.postTags', {'business_id':M.curBusinessID}, function(rsp) {
 					if( rsp.stat != 'ok' ) {
