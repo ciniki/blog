@@ -60,7 +60,7 @@ function ciniki_blog_postedit() {
 			'_content':{'label':'Post', 'fields':{
 				'content':{'label':'', 'hidelabel':'yes', 'hint':'', 'type':'textarea', 'size':'large'},
 				}},
-			'_save':{'label':'', 'buttons':{
+			'_buttons':{'label':'', 'buttons':{
 				'save':{'label':'Save', 'fn':'M.ciniki_blog_postedit.savePost();'},
 				'delete':{'label':'Delete', 'fn':'M.ciniki_blog_postedit.deletePost();'},
 				}},
@@ -194,6 +194,9 @@ function ciniki_blog_postedit() {
 						} else if( p.blogtype == 'blog' ) { 
 							p.data.publish_to = 1;
 						}
+						p.sections._buttons.buttons.delete.visible = 'no';
+					} else {
+						p.sections._buttons.buttons.delete.visible = 'yes';
 					}
 					p.refresh();
 					p.show(cb);
