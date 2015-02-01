@@ -164,6 +164,6 @@ function ciniki_blog_postfiles() {
 	};
 
 	this.downloadFile = function(fid) {
-		window.open(M.api.getUploadURL('ciniki.blog.postFileDownload', {'business_id':M.curBusinessID, 'file_id':fid}));
+		M.api.openFile('ciniki.blog.postFileDownload', {'business_id':M.curBusinessID, 'file_id':fid});
 	};
 }
