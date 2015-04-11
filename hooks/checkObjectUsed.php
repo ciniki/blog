@@ -23,7 +23,7 @@ function ciniki_blog_hooks_checkObjectUsed($ciniki, $business_id, $args) {
 		// Check the invoice customers
 		//
 		$strsql = "SELECT 'items', COUNT(*) "
-			. "FROM ciniki_post_subscriptions "
+			. "FROM ciniki_blog_post_subscriptions "
 			. "WHERE subscription_id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
 			. "AND business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 			. "";
