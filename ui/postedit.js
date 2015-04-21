@@ -174,8 +174,8 @@ function ciniki_blog_postedit() {
 									p.data['subscription-' + rsp.post.subscriptions[i].subscription.id] = rsp.post.subscriptions[i].subscription.status;
 								} else {
 									p.sections.subscriptions.fields['subscription-' + rsp.post.subscriptions[i].subscription.id] = {'label':rsp.post.subscriptions[i].subscription.name,
-										'type':'text', 'editable':'no'};
-									p.data['subscription-' + rsp.post.subscriptions[i].subscription.id] = rsp.post.subscriptions[i].subscription.status_text;
+										'type':'text', 'editable':'no', 'size':'small'};
+									p.data['subscription-' + rsp.post.subscriptions[i].subscription.id] = rsp.post.subscriptions[i].subscription.mailing_status_text;
 								}
 							}
 						}
