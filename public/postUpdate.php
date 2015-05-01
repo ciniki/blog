@@ -194,7 +194,6 @@ function ciniki_blog_postUpdate(&$ciniki) {
 				//
 				// The subscription is selected for the blog post, and the status is currently unattached
 				//
-				error_log(print_r($ciniki['request']['args'], true));
 //				if( in_array($subscription_id, $args['subscriptions_ids']) 
 				if( isset($ciniki['request']['args']['subscription-' . $subscription_id]) 
 					&& $ciniki['request']['args']['subscription-' . $subscription_id] == 'yes' 
