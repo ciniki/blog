@@ -51,7 +51,7 @@ function ciniki_blog_postedit() {
 			'_categories':{'label':'Categories', 'aside':'yes', 'visible':'no', 'fields':{
 				'categories':{'label':'', 'hidelabel':'yes', 'active':'no', 'type':'tags', 'tags':[], 'hint':'Enter a new category:'},
 				}},
-			'_tags':{'label':'Tags', 'aside':'yes', 'visible':'no', 'fields':{
+			'_tags':{'label':'Keywords', 'aside':'yes', 'visible':'no', 'fields':{
 				'tags':{'label':'', 'hidelabel':'yes', 'active':'no', 'type':'tags', 'tags':[], 'hint':'Enter a new tag:'},
 				}},
 			'_excerpt':{'label':'Synopsis', 'fields':{

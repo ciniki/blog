@@ -27,7 +27,7 @@ function ciniki_blog_post() {
 				'publish_to_text':{'label':'Publish To', 'visible':'no'},
 				'webcollections_text':{'label':'Web Collections'},
 				'categories':{'label':'Categories', 'visible':'no'},
-				'tags':{'label':'Tags', 'visible':'no'},
+				'tags':{'label':'Keywords', 'visible':'no'},
 				}},
 			'subscriptions':{'label':'Subscriptions', 'aside':'yes', 'visible':'no', 'list':{}},
 			'_subscription_buttons':{'label':'', 'aside':'yes', 'buttons':{
