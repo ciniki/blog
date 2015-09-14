@@ -39,7 +39,7 @@ function ciniki_blog_postedit() {
 				}},
 			'info':{'label':'', 'aside':'yes', 'fields':{
 				'title':{'label':'Title', 'hint':'', 'type':'text'},
-				'publish_date':{'label':'Date', 'type':'text', 'size':'medium'},
+				'publish_date':{'label':'Date', 'type':'date', 'size':'medium'},
 				'status':{'label':'Status', 'type':'toggle', 'default':'10', 'toggles':this.statusOptions},
 				'publish_to':{'label':'Publish To', 'active':'no', 'type':'flags', 'none':'no', 'join':'yes', 'flags':this.publishtoFlags},
 				}},
