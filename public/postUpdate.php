@@ -160,87 +160,8 @@ function ciniki_blog_postUpdate(&$ciniki) {
 			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
 			return $rc;
 		}
-/*		//
-		// Get the active list of subscriptions
-		//
-		$strsql = "SELECT ciniki_subscriptions.id, "
-			. "IFNULL(ciniki_blog_post_subscriptions.id, 0) AS blog_post_subscription_id, "
-			. "ciniki_subscriptions.name, "
-			. "IFNULL(ciniki_blog_post_subscriptions.status, 0) AS status "
-			. "FROM ciniki_subscriptions "
-			. "LEFT JOIN ciniki_blog_post_subscriptions ON ("
-				. "ciniki_subscriptions.id = ciniki_blog_post_subscriptions.subscription_id "
-				. "AND ciniki_blog_post_subscriptions.post_id = '" . ciniki_core_dbQuote($ciniki, $args['post_id']) . "' "
-				. "AND ciniki_blog_post_subscriptions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-			. ") "
-			. "WHERE ciniki_subscriptions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-			. "AND ciniki_subscriptions.status = 10 "
-			. "";
-		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
-		$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.blog', array(
-		array('container'=>'subscriptions', 'fname'=>'id', 
-			'fields'=>array('id', 'blog_post_subscription_id', 'name', 'status')),
-		));
-		if( $rc['stat'] != 'ok' ) {
-			return $rc;
-		}
-
-		//
-		// Update the subscriptions
-		//
-		if( isset($rc['subscriptions']) ) {
-			$subscriptions = $rc['subscriptions'];
-			foreach($rc['subscriptions'] as $subscription_id => $subscription) {
-				//
-				// The subscription is selected for the blog post, and the status is currently unattached
-				//
-//				if( in_array($subscription_id, $args['subscriptions_ids']) 
-				if( isset($ciniki['request']['args']['subscription-' . $subscription_id]) 
-					&& $ciniki['request']['args']['subscription-' . $subscription_id] == 'yes' 
-					&& $subscription['status'] == 0
-					&& $subscription['blog_post_subscription_id'] == 0
-					) {
-					$rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.blog.post_subscription', array(
-						'post_id'=>$args['post_id'],
-						'subscription_id'=>$subscription_id,
-						'status'=>'10'), 0x04);
-					if( $rc['stat'] != 'ok' ) {
-						ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
-						return $rc;
-					}
-				}
-				//
-				// Update an existing subscription record
-				//
-				elseif( isset($ciniki['request']['args']['subscription-' . $subscription_id]) 
-					&& $ciniki['request']['args']['subscription-' . $subscription_id] == 'yes' 
-					&& $subscription['status'] == 0
-					) {
-					$rc = ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.blog.post_subscription', 
-						$subscription['blog_post_subscription_id'], array('status'=>'10'), 0x04);
-					if( $rc['stat'] != 'ok' ) {
-						ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
-						return $rc;
-					}
-				}
-				//
-				// Subscription is to be removed, it must be unsent status, otherwise it can't be removed
-				//
-//				elseif( !in_array($subscription_id, $args['subscriptions_ids']) 
-				elseif( isset($ciniki['request']['args']['subscription-' . $subscription_id]) 
-					&& $ciniki['request']['args']['subscription-' . $subscription_id] == 'no' 
-					&& $subscription['status'] == 10 
-					) {
-					$rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.blog.post_subscription', 
-						$subscription['blog_post_subscription_id'], NULL, 0x04);
-					if( $rc['stat'] != 'ok' ) {
-						ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
-						return $rc;
-					}
-				}
-			}
-		}*/
 	}
+
 	//
 	// If post was updated ok, Check if any web collections to add
 	//
