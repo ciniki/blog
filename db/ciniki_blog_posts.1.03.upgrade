@@ -1,0 +1,5 @@
+#
+# Add the subtitle field
+#
+ALTER TABLE ciniki_blog_posts ADD COLUMN subtitle varchar(150) not null AFTER title;
+ALTER TABLE ciniki_blog_posts COMMENT='v1.03';

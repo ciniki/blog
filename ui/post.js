@@ -22,6 +22,7 @@ function ciniki_blog_post() {
 				}},
 			'info':{'label':'', 'aside':'yes', 'list':{
 				'title':{'label':'Title'},
+				'subtitle':{'label':'Subtitle', 'visible':'no'},
 				'publish_date':{'label':'Date'},
 				'status_text':{'label':'Status'},
 				'publish_to_text':{'label':'Publish To', 'visible':'no'},
@@ -160,6 +161,8 @@ function ciniki_blog_post() {
 			alert('App Error');
 			return false;
 		}
+
+		this.post.sections.info.list.subtitle.visible = (M.curBusiness.modules['ciniki.blog'] != null && (M.curBusiness.modules['ciniki.blog'].flags&0x010000))>0?'yes':'no';
 
 		//
 		// Check if web collections are enabled

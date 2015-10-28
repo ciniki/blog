@@ -18,6 +18,7 @@ function ciniki_blog_objects($ciniki) {
 		'table'=>'ciniki_blog_posts',
 		'fields'=>array(
 			'title'=>array(),
+			'subtitle'=>array('default'=>''),
 			'permalink'=>array(),
 			'format'=>array(),
 			'excerpt'=>array(),

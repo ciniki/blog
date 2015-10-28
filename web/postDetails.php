@@ -33,9 +33,11 @@ function ciniki_blog_web_postDetails($ciniki, $settings, $business_id, $args) {
 	//
 	$strsql = "SELECT ciniki_blog_posts.id, "
 		. "ciniki_blog_posts.title, "
+		. "ciniki_blog_posts.subtitle, "
 		. "permalink, "
 		. "format, "
-		. "excerpt, "
+//		. "excerpt, "
+		. "excerpt AS synopsis, "
 		. "content, "
 		. "primary_image_id, "
 		. "status, status AS status_text, "
@@ -58,7 +60,7 @@ function ciniki_blog_web_postDetails($ciniki, $settings, $business_id, $args) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.blog', array(
 		array('container'=>'posts', 'fname'=>'id',
-			'fields'=>array('id', 'title', 'permalink', 'format', 'excerpt', 'content', 
+			'fields'=>array('id', 'title', 'subtitle', 'permalink', 'format', 'synopsis', 'content', 
 				'image_id'=>'primary_image_id', 'status', 'status_text', 
 				'publish_datetime', 'publish_date', 'publish_time'),
 			'utctotz'=>array(

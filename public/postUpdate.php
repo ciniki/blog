@@ -20,6 +20,7 @@ function ciniki_blog_postUpdate(&$ciniki) {
         'post_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Post'), 
 		'format'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Format'),
 		'title'=>array('required'=>'no', 'trimblanks'=>'yes', 'blank'=>'no', 'name'=>'Title'),
+		'subtitle'=>array('required'=>'no', 'trimblanks'=>'yes', 'blank'=>'yes', 'name'=>'Subtitle'),
 		'permalink'=>array('required'=>'no', 'trimblanks'=>'yes', 'blank'=>'yes', 'name'=>'Permalink'),
         'status'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Status',
 			'validlist'=>array('10', '40', '60')), 

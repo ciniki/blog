@@ -76,6 +76,7 @@ function ciniki_blog_postGet($ciniki) {
 	if( $args['post_id'] > 0 ) {
 		$strsql = "SELECT ciniki_blog_posts.id, "
 			. "ciniki_blog_posts.title, "
+			. "ciniki_blog_posts.subtitle, "
 			. "permalink, "
 			. "format, "
 			. "excerpt, "
@@ -91,7 +92,7 @@ function ciniki_blog_postGet($ciniki) {
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.blog', array(
 			array('container'=>'posts', 'fname'=>'id', 'name'=>'post',
-				'fields'=>array('id', 'title', 'permalink', 'format', 'excerpt', 'content', 
+				'fields'=>array('id', 'title', 'subtitle', 'permalink', 'format', 'excerpt', 'content', 
 					'primary_image_id', 'status', 'status_text',
 					'publish_to', 'publish_to_text', 'publish_date'),
 				'utctotz'=>array('publish_date'=>array('timezone'=>$intl_timezone, 'format'=>$date_format)),
@@ -265,6 +266,7 @@ function ciniki_blog_postGet($ciniki) {
 		//
 		$post = array('id'=>'0',
 			'title'=>'',
+			'subtitle'=>'',
 			'permalink'=>'',
 			'format'=>'10',
 			'excerpt'=>'',

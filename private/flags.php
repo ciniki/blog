@@ -32,6 +32,12 @@ function ciniki_blog_flags($ciniki, $modules) {
 //		array('flag'=>array('bit'=>'14', 'name'=>'Customer Blog Subscriptions')),
 //		array('flag'=>array('bit'=>'15', 'name'=>'Member Blog Subscriptions')),
 //		array('flag'=>array('bit'=>'16', 'name'=>'')),
+		// 0x010000
+		array('flag'=>array('bit'=>'17', 'name'=>'Subtitles')),
+//		array('flag'=>array('bit'=>'18', 'name'=>'')),
+//		array('flag'=>array('bit'=>'19', 'name'=>'')),
+//		array('flag'=>array('bit'=>'20', 'name'=>'')),
+
 		);
 
 	return array('stat'=>'ok', 'flags'=>$flags);
