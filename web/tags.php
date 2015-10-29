@@ -34,7 +34,7 @@ function ciniki_blog_web_tags($ciniki, $settings, $business_id, $tag_type, $blog
 	} else {
 		$strsql .= "AND (ciniki_blog_posts.publish_to&0x01) = 0x01 ";
 	}
-	$strsql .= "GROUP BY ciniki_blog_post_tags.tag_name "
+	$strsql .= "GROUP BY ciniki_blog_post_tags.tag_type, ciniki_blog_post_tags.tag_name "
 		. "ORDER BY ciniki_blog_post_tags.tag_type, ciniki_blog_post_tags.tag_name, ciniki_blog_posts.primary_image_id ASC, ciniki_blog_posts.date_added DESC "
 		. "";
 
