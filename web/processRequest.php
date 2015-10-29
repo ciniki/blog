@@ -614,8 +614,8 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
 		if( $rc['stat'] != 'ok' ) {
 			return $rc;
 		}
-		if( isset($rc['tags']) ) {
-			$tags = $rc['tags'];
+		if( isset($rc['types'][$tag_type]['tags']) ) {
+			$tags = $rc['types'][$tag_type]['tags'];
 		} else {
 			$tags = array();
 		}
@@ -767,8 +767,49 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
 	// Setup the sidebar
 	//
 	if( isset($settings['page-blog-sidebar']) && $settings['page-blog-sidebar'] == 'yes' ) { 
-//		$page['sidebar'] = array();	
-//		$page['sidebar'][] = array('type'=>'content', 'title'=>'', 'content'=>'This is where sidebar will go');
+		$page['sidebar'] = array();	
+
+		//
+		// Get the latest posts
+		//
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'posts');
+		$rc = ciniki_blog_web_posts($ciniki, $settings, $business_id, array('latest'=>'yes', 'limit'=>3), $args['blogtype']);
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		$posts = $rc['posts'];
+		if( count($posts) > 0 ) {
+			//
+			// Setup meta data
+			//
+			foreach($posts as $pid => $post) {
+				$posts[$pid]['meta'] = array();
+				if( isset($post['publish_date']) && $post['publish_date'] != '' ) {
+					$posts[$pid]['meta']['date'] = $post['publish_date'];
+				}
+			}
+			$page['sidebar'][] = array('type'=>'imagelist', 'title'=>'Latest posts',
+				'image_version'=>((isset($settings['page-blog-list-image-version'])&&$settings['page-blog-list-image-version']=='original')?'original':'thumbnail'),
+				'image_width'=>'400',
+				'more_button_text'=>(isset($settings['page-blog-more-button-text'])?$settings['page-blog-more-button-text']:''),
+				'base_url'=>$base_url, 'noimage'=>'yes', 'list'=>$posts);
+		}
+
+		//
+		// Get the list of tags
+		//
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'tags');
+		$rc = ciniki_blog_web_tags($ciniki, $settings, $ciniki['request']['business_id'], 0, $args['blogtype']);
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( isset($rc['types'][10]['tags']) ) {
+			$page['sidebar'][] = array('type'=>'taglist', 'title'=>'Categories', 'tag_type'=>'categories', 'base_url'=>$args['base_url'] . '/category', 'tags'=>$rc['types'][10]['tags']);
+		}
+		if( isset($rc['types'][20]['tags']) ) {
+			$page['sidebar'][] = array('type'=>'taglist', 'title'=>'Keywords', 'tag_type'=>'tags', 'base_url'=>$args['base_url'] . '/tag', 'tags'=>$rc['types'][20]['tags']);
+		}
+
 	}
 
 	return array('stat'=>'ok', 'page'=>$page);
