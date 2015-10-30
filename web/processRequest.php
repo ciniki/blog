@@ -67,7 +67,7 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
 	}
 
 	if( !isset($args['post_limit']) || $args['post_limit'] == '' ) {
-		$page_post_limit = 1;
+		$page_post_limit = 10;
 	} else {
 		$page_post_limit = $args['post_limit'];
 	}
