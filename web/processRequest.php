@@ -36,12 +36,12 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
 	if( $args['blogtype'] == 'memberblog' ) {
 		$tag_types = array(
 			'category'=>array('name'=>'Categories', 'tag_type'=>'10', 'visible'=>($ciniki['business']['modules']['ciniki.blog']['flags']&0x0200)>0?'yes':'no'),
-			'tag'=>array('name'=>'Tags', 'tag_type'=>'20', 'visible'=>($ciniki['business']['modules']['ciniki.blog']['flags']&0x0400)>0?'yes':'no'),
+			'tag'=>array('name'=>'Keywords', 'tag_type'=>'20', 'visible'=>($ciniki['business']['modules']['ciniki.blog']['flags']&0x0400)>0?'yes':'no'),
 			);
 	} else {
 		$tag_types = array(
 			'category'=>array('name'=>'Categories', 'tag_type'=>'10', 'visible'=>($ciniki['business']['modules']['ciniki.blog']['flags']&0x02)>0?'yes':'no'),
-			'tag'=>array('name'=>'Tags', 'tag_type'=>'20', 'visible'=>($ciniki['business']['modules']['ciniki.blog']['flags']&0x04)>0?'yes':'no'),
+			'tag'=>array('name'=>'Keywords', 'tag_type'=>'20', 'visible'=>($ciniki['business']['modules']['ciniki.blog']['flags']&0x04)>0?'yes':'no'),
 			);
 	}
 
@@ -67,7 +67,7 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
 	}
 
 	if( !isset($args['post_limit']) || $args['post_limit'] == '' ) {
-		$page_post_limit = 10;
+		$page_post_limit = 1;
 	} else {
 		$page_post_limit = $args['post_limit'];
 	}
@@ -500,11 +500,13 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
 			// Get the items for the specified category
 			//
 			ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'posts');
-			$rc = ciniki_blog_web_posts($ciniki, $settings, $business_id, array('latest'=>'yes'), $args['blogtype']);
+			$rc = ciniki_blog_web_posts($ciniki, $settings, $business_id, array('latest'=>'yes',
+				'offset'=>(($page_post_cur-1)*$page_post_limit), 'limit'=>$page_post_limit+1), $args['blogtype']);
 			if( $rc['stat'] != 'ok' ) {
 				return $rc;
 			}
 			$posts = $rc['posts'];
+			$total_num_posts = $rc['total_num_posts'];
 		} elseif( $display == 'archive' ) {
 			$months = array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
 			$page['breadcrumbs'][] = array('name'=>'Archive', 'url'=>$args['base_url'] . '/archive');
@@ -521,13 +523,12 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
 			//
 			ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'posts');
 			$rc = ciniki_blog_web_posts($ciniki, $settings, $business_id, array('year'=>$year, 'month'=>$month, 
-					'offset'=>(($page_post_cur-1)*$page_post_limit), 'limit'=>$page_post_limit+1), $args['blogtype']);
+				'offset'=>(($page_post_cur-1)*$page_post_limit), 'limit'=>$page_post_limit+1), $args['blogtype']);
 			if( $rc['stat'] != 'ok' ) {
 				return $rc;
 			}
 			$posts = $rc['posts'];
-
-			
+			$total_num_posts = $rc['total_num_posts'];
 		} else {
 			//
 			// Get the tag name and permalink
@@ -547,11 +548,13 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
 			// Get the items for the specified category
 			//
 			ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'posts');
-			$rc = ciniki_blog_web_posts($ciniki, $settings, $business_id, array('tag_type'=>$tag_type, 'tag_permalink'=>$tag_permalink), $args['blogtype']);
+			$rc = ciniki_blog_web_posts($ciniki, $settings, $business_id, array('tag_type'=>$tag_type, 'tag_permalink'=>$tag_permalink,
+				'offset'=>(($page_post_cur-1)*$page_post_limit), 'limit'=>$page_post_limit+1), $args['blogtype']);
 			if( $rc['stat'] != 'ok' ) {
 				return $rc;
 			}
 			$posts = $rc['posts'];
+			$total_num_posts = $rc['total_num_posts'];
 
 //			$page['title'] .= ($page['title']!=''?' - ':'') . $tag_name;
 		}
@@ -580,7 +583,18 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
 				'image_version'=>((isset($settings['page-blog-list-image-version'])&&$settings['page-blog-list-image-version']=='original')?'original':'thumbnail'),
 				'image_width'=>'600',
 				'more_button_text'=>(isset($settings['page-blog-more-button-text'])?$settings['page-blog-more-button-text']:''),
-				'base_url'=>$base_url, 'noimage'=>'yes', 'list'=>$posts);
+				'base_url'=>$base_url, 'noimage'=>'yes', 'limit'=>$page_post_limit, 'list'=>$posts);
+			
+			//
+			// check if pagination is required
+			//
+			error_log($total_num_posts);
+			error_log($page_post_limit);
+			if( $total_num_posts > $page_post_limit ) {
+				error_log('testing');
+				$page['blocks'][] = array('type'=>'multipagenav', 'cur_page'=>$page_post_cur, 'total_pages'=>ceil($total_num_posts/$page_post_limit),
+					'base_url'=>$base_url);
+			}
 		} else {
 			$page['blocks'][] = array('type'=>'message', 'content'=>"I'm sorry, but there doesn't seem to be any posts available.");
 		}
@@ -627,7 +641,15 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
 		if( count($tags) > 25 || $tag_type == '20' ) {
 			$page['blocks'][] = array('type'=>'tagcloud', 'base_url'=>$base_url, 'tags'=>$tags);
 		} elseif( count($tags) > 0 ) {
-			$page['blocks'][] = array('type'=>'tagimages', 'base_url'=>$base_url, 'tags'=>$tags);
+			if( isset($settings['page-blog-categories-format']) && $settings['page-blog-categories-format'] == 'tagimagelist' ) {
+				$page['blocks'][] = array('type'=>'tagimagelist', 'base_url'=>$base_url, 'tags'=>$tags,
+					'image_version'=>((isset($settings['page-blog-list-image-version'])&&$settings['page-blog-list-image-version']=='original')?'original':'thumbnail'),
+					'image_width'=>'400',
+					'noimage'=>'yes',
+					);
+			} else {
+				$page['blocks'][] = array('type'=>'tagimages', 'base_url'=>$base_url, 'tags'=>$tags);
+			}
 		} else {
 			$page['blocks'][] = array('type'=>'message', 'content'=>"I'm sorry, but we don't have any posts for that category.");
 		}
@@ -672,13 +694,18 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
 		if( isset($post['subtitle']) ) {
 			$page['subtitle'] = $post['subtitle'];
 		}
+		if( isset($settings['page-blog-post-header-share-buttons']) ) {
+			$page['article_header_share_buttons'] = $settings['page-blog-post-header-share-buttons'];
+		}
 		$page['meta'] = array();
 		$page['meta']['date'] = $post['publish_date'];
-		$page['meta']['categories'] = $post['categories'];
-		$page['meta']['divider'] = (isset($settings['page-blog-meta-divider'])?$settings['page-blog-meta-divider']:' | ');
-		$page['meta']['category_base_url'] = $args['base_url'] . '/category';
-		$page['meta']['category_prefix'] = (isset($settings['page-blog-meta-category-prefix'])?$settings['page-blog-meta-category-prefix']:'');
-		$page['meta']['categories_prefix'] = (isset($settings['page-blog-meta-categories-prefix'])?$settings['page-blog-meta-categories-prefix']:'');
+		if( isset($post['categories']) ) {
+			$page['meta']['categories'] = $post['categories'];
+			$page['meta']['divider'] = (isset($settings['page-blog-meta-divider'])?$settings['page-blog-meta-divider']:' | ');
+			$page['meta']['category_base_url'] = $args['base_url'] . '/category';
+			$page['meta']['category_prefix'] = (isset($settings['page-blog-meta-category-prefix'])?$settings['page-blog-meta-category-prefix']:'');
+			$page['meta']['categories_prefix'] = (isset($settings['page-blog-meta-categories-prefix'])?$settings['page-blog-meta-categories-prefix']:'');
+		}
 
 		$page['breadcrumbs'][] = array('name'=>$post['title'], 'url'=>$base_url);
 
@@ -727,10 +754,27 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
 			if( isset($post['links']) && count($post['links']) > 0 ) {
 				$page['blocks'][] = array('type'=>'links', 'title'=>'', 'links'=>$post['links']);
 			}
-			// FIXME: Include meta information
+			if( isset($post['categories']) || isset($post['tags']) ) {
+				$meta_footer = array();
+				if( isset($post['categories']) ) {
+					$meta_footer['categories'] = $post['categories'];
+					$meta_footer['category_divider'] = (isset($settings['page-blog-meta-divider'])?$settings['page-blog-meta-divider']:' | ');
+					$meta_footer['category_base_url'] = $args['base_url'] . '/category';
+					$meta_footer['category_prefix'] = (isset($settings['page-blog-meta-category-prefix'])?$settings['page-blog-meta-category-prefix']:'');
+					$meta_footer['categories_prefix'] = (isset($settings['page-blog-meta-categories-prefix'])?$settings['page-blog-meta-categories-prefix']:'');
+				}
+				if( isset($post['tags']) ) {
+					$meta_footer['tags'] = $post['tags'];
+					$meta_footer['tag_divider'] = (isset($settings['page-blog-meta-divider'])?$settings['page-blog-meta-divider']:' | ');
+					$meta_footer['tag_base_url'] = $args['base_url'] . '/tag';
+					$meta_footer['tag_prefix'] = (isset($settings['page-blog-meta-tag-prefix'])?$settings['page-blog-meta-tag-prefix']:'');
+					$meta_footer['tags_prefix'] = (isset($settings['page-blog-meta-tags-prefix'])?$settings['page-blog-meta-tags-prefix']:'');
+				}
+				$page['blocks'][] = array('type'=>'meta', 'title'=>'', 'meta'=>$meta_footer);
+			}
 			if( $args['blogtype'] == 'blog' && (!isset($settings['page-blog-share-buttons']) || $settings['page-blog-share-buttons'] == 'yes') ) {
 				$tags = array();
-				$page['blocks'][] = array('type'=>'sharebuttons', 'title'=>$post['title'], 'tags'=>$tags);
+				$page['blocks'][] = array('type'=>'sharebuttons', 'pagetitle'=>$post['title'], 'tags'=>$tags);
 			}
 			if( isset($post['images']) && count($post['images']) > 0 ) {
 				$page['blocks'][] = array('type'=>'gallery', 'title'=>'Additional Images', 'base_url'=>$base_url . '/gallery', 'images'=>$post['images'])    ;
@@ -792,7 +836,7 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
 				'image_version'=>((isset($settings['page-blog-list-image-version'])&&$settings['page-blog-list-image-version']=='original')?'original':'thumbnail'),
 				'image_width'=>'400',
 				'more_button_text'=>(isset($settings['page-blog-more-button-text'])?$settings['page-blog-more-button-text']:''),
-				'base_url'=>$base_url, 'noimage'=>'yes', 'list'=>$posts);
+				'base_url'=>$args['base_url'], 'noimage'=>'yes', 'list'=>$posts);
 		}
 
 		//

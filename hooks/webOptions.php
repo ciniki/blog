@@ -63,6 +63,19 @@ function ciniki_blog_hooks_webOptions(&$ciniki, $business_id, $args) {
 			),
 		));
 
+	if( ($ciniki['business']['modules']['ciniki.blog']['flags']&0x02) > 0 ) {
+		$options[] = array('option'=>array(
+			'label'=>'Category List Format',
+			'setting'=>'page-blog-categories-format', 
+			'type'=>'toggle',
+			'value'=>(isset($settings['page-blog-categories-format'])?$settings['page-blog-categories-format']:'tagimages'),
+			'toggles'=>array(
+				array('toggle'=>array('value'=>'tagimages', 'label'=>'Grid')),
+				array('toggle'=>array('value'=>'tagimagelist', 'label'=>'List')),
+				),
+			));
+	}
+
 	$options[] = array('option'=>array(
 		'label'=>'Image Size',
 		'setting'=>'page-blog-list-image-version', 
@@ -71,6 +84,17 @@ function ciniki_blog_hooks_webOptions(&$ciniki, $business_id, $args) {
 		'toggles'=>array(
 			array('toggle'=>array('value'=>'thumbnail', 'label'=>'Square')),
 			array('toggle'=>array('value'=>'original', 'label'=>'Original')),
+			),
+		));
+
+	$options[] = array('option'=>array(
+		'label'=>'Title Share Buttons',
+		'setting'=>'page-blog-post-header-share-buttons', 
+		'type'=>'toggle',
+		'value'=>(isset($settings['page-blog-post-header-share-buttons'])?$settings['page-blog-post-header-share-buttons']:'no'),
+		'toggles'=>array(
+			array('toggle'=>array('value'=>'no', 'label'=>'No')),
+			array('toggle'=>array('value'=>'yes', 'label'=>'Yes')),
 			),
 		));
 
@@ -105,6 +129,23 @@ function ciniki_blog_hooks_webOptions(&$ciniki, $business_id, $args) {
 			'setting'=>'page-blog-meta-categories-prefix', 
 			'type'=>'text',
 			'value'=>(isset($settings['page-blog-meta-categories-prefix'])?$settings['page-blog-meta-categories-prefix']:''),
+			'hint'=>'',
+			));
+	}
+
+	if( ($ciniki['business']['modules']['ciniki.blog']['flags']&0x04) > 0 ) {
+		$options[] = array('option'=>array(
+			'label'=>'Meta Tag Prefix',
+			'setting'=>'page-blog-meta-tag-prefix', 
+			'type'=>'text',
+			'value'=>(isset($settings['page-blog-meta-tag-prefix'])?$settings['page-blog-meta-tag-prefix']:''),
+			'hint'=>'',
+			));
+		$options[] = array('option'=>array(
+			'label'=>'Meta Tags Prefix',
+			'setting'=>'page-blog-meta-tags-prefix', 
+			'type'=>'text',
+			'value'=>(isset($settings['page-blog-meta-tags-prefix'])?$settings['page-blog-meta-tags-prefix']:''),
 			'hint'=>'',
 			));
 	}
