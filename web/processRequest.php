@@ -54,8 +54,8 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
 		&& isset($args['uri_split'][2]) && $args['uri_split'][2] != '' 
 		&& preg_match("/^(.*)\.pdf$/", $args['uri_split'][2], $matches)
 		) {
-		ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'downloadPDF');
-		$rc = ciniki_blog_web_downloadPDF($ciniki, $settings, $business_id, $ciniki['request']['uri_split'][0], $args['uri_split'][2], $args['blogtype']);
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'fileDownload');
+		$rc = ciniki_blog_web_fileDownload($ciniki, $ciniki['request']['business_id'], $args['uri_split'][0], $args['uri_split'][2], $args['blogtype']);
 		if( $rc['stat'] == 'ok' ) {
 			return array('stat'=>'ok', 'download'=>$rc['file']);
 		}
