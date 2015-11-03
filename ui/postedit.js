@@ -33,7 +33,7 @@ function ciniki_blog_postedit() {
 //			}};
 		this.edit.forms = {};
 		this.edit.forms.generic = {
-			'_image':{'label':'', 'aside':'yes', 'fields':{
+			'_image':{'label':'', 'aside':'yes', 'type':'imageform', 'fields':{
 				'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 
 					'controls':'all', 'history':'no'},
 				}},
