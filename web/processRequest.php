@@ -461,19 +461,19 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
 			$page['container_class'] = 'ciniki-blog-post';
 			if( isset($post['image_id']) && $post['image_id'] > 0 ) {
 				if( isset($settings['page-blog-sidebar']) && $settings['page-blog-sidebar'] == 'yes' ) { 
-					$page['blocks'][] = array('type'=>'image', 'primary'=>'yes', 'image_id'=>$post['image_id'], 'title'=>'');
+					$page['blocks'][] = array('type'=>'image', 'section'=>'primaryimage', 'primary'=>'yes', 'image_id'=>$post['image_id'], 'title'=>'');
 				} else {
-					$page['blocks'][] = array('type'=>'asideimage', 'primary'=>'yes', 'image_id'=>$post['image_id'], 'title'=>$post['title'], 'caption'=>'');
+					$page['blocks'][] = array('type'=>'asideimage', 'section'=>'primaryimage', 'primary'=>'yes', 'image_id'=>$post['image_id'], 'title'=>$post['title'], 'caption'=>'');
 				}
 			}
 			if( isset($post['content']) && $post['content'] != '' ) {
-				$page['blocks'][] = array('type'=>'content', 'title'=>'', 'content'=>$post['content']);
+				$page['blocks'][] = array('type'=>'content', 'section'=>'content', 'title'=>'', 'content'=>$post['content']);
 			}
 			if( isset($post['files']) && count($post['files']) > 0 ) {
-				$page['blocks'][] = array('type'=>'files', 'title'=>'', 'base_url'=>$base_url . '/download/', 'files'=>$post['files']);
+				$page['blocks'][] = array('type'=>'files', 'title'=>'', 'section'=>'files', 'base_url'=>$base_url . '/download/', 'files'=>$post['files']);
 			}
 			if( isset($post['links']) && count($post['links']) > 0 ) {
-				$page['blocks'][] = array('type'=>'links', 'title'=>'', 'links'=>$post['links']);
+				$page['blocks'][] = array('type'=>'links', 'section'=>'links', 'title'=>'', 'links'=>$post['links']);
 			}
 			if( isset($post['categories']) || isset($post['tags']) ) {
 				$meta_footer = array();
@@ -491,11 +491,11 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
 					$meta_footer['tag_prefix'] = (isset($settings['page-blog-meta-tag-prefix'])?$settings['page-blog-meta-tag-prefix']:'');
 					$meta_footer['tags_prefix'] = (isset($settings['page-blog-meta-tags-prefix'])?$settings['page-blog-meta-tags-prefix']:'');
 				}
-				$page['blocks'][] = array('type'=>'meta', 'title'=>'', 'meta'=>$meta_footer);
+				$page['blocks'][] = array('type'=>'meta', 'section'=>'meta', 'title'=>'', 'meta'=>$meta_footer);
 			}
 			if( $args['blogtype'] == 'blog' && (!isset($settings['page-blog-share-buttons']) || $settings['page-blog-share-buttons'] == 'yes') ) {
 				$tags = array();
-				$page['blocks'][] = array('type'=>'sharebuttons', 'pagetitle'=>$post['title'], 'tags'=>$tags);
+				$page['blocks'][] = array('type'=>'sharebuttons', 'section'=>'share', 'pagetitle'=>$post['title'], 'tags'=>$tags);
 			}
 			if( isset($post['images']) && count($post['images']) > 0 ) {
 				$page['blocks'][] = array('type'=>'gallery', 'title'=>'Additional Images', 'base_url'=>$base_url . '/gallery', 'images'=>$post['images'])    ;

@@ -150,6 +150,8 @@ function ciniki_blog_hooks_webOptions(&$ciniki, $business_id, $args) {
 			));
 	}
 
-	return array('stat'=>'ok', 'options'=>$options);
+	$pages['ciniki.blog'] = array('name'=>'Public Blog', 'options'=>$options);
+
+	return array('stat'=>'ok', 'pages'=>$pages);
 }
 ?>
