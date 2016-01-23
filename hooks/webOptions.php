@@ -41,113 +41,113 @@ function ciniki_blog_hooks_webOptions(&$ciniki, $business_id, $args) {
 
 
 	$options = array();
-	$options[] = array('option'=>array(
+	$options[] = array(
 		'label'=>'Submenu',
 		'setting'=>'page-blog-submenu', 
 		'type'=>'toggle',
 		'value'=>(isset($settings['page-blog-submenu'])?$settings['page-blog-submenu']:'yes'),
 		'toggles'=>array(
-			array('toggle'=>array('value'=>'no', 'label'=>'No')),
-			array('toggle'=>array('value'=>'yes', 'label'=>'Yes')),
+			array('value'=>'no', 'label'=>'No'),
+			array('value'=>'yes', 'label'=>'Yes'),
 			),
-		));
+		);
 
-	$options[] = array('option'=>array(
+	$options[] = array(
 		'label'=>'Sidebar',
 		'setting'=>'page-blog-sidebar', 
 		'type'=>'toggle',
 		'value'=>(isset($settings['page-blog-sidebar'])?$settings['page-blog-sidebar']:'no'),
 		'toggles'=>array(
-			array('toggle'=>array('value'=>'no', 'label'=>'No')),
-			array('toggle'=>array('value'=>'yes', 'label'=>'Yes')),
+			array('value'=>'no', 'label'=>'No'),
+			array('value'=>'yes', 'label'=>'Yes'),
 			),
-		));
+		);
 
 	if( ($ciniki['business']['modules']['ciniki.blog']['flags']&0x02) > 0 ) {
-		$options[] = array('option'=>array(
+		$options[] = array(
 			'label'=>'Category List Format',
 			'setting'=>'page-blog-categories-format', 
 			'type'=>'toggle',
 			'value'=>(isset($settings['page-blog-categories-format'])?$settings['page-blog-categories-format']:'tagimages'),
 			'toggles'=>array(
-				array('toggle'=>array('value'=>'tagimages', 'label'=>'Grid')),
-				array('toggle'=>array('value'=>'tagimagelist', 'label'=>'List')),
+				array('value'=>'tagimages', 'label'=>'Grid'),
+				array('value'=>'tagimagelist', 'label'=>'List'),
 				),
-			));
+			);
 	}
 
-	$options[] = array('option'=>array(
+	$options[] = array(
 		'label'=>'Image Size',
 		'setting'=>'page-blog-list-image-version', 
 		'type'=>'toggle',
 		'value'=>(isset($settings['page-blog-list-image-version'])?$settings['page-blog-list-image-version']:'thumbnail'),
 		'toggles'=>array(
-			array('toggle'=>array('value'=>'thumbnail', 'label'=>'Square')),
-			array('toggle'=>array('value'=>'original', 'label'=>'Original')),
+			array('value'=>'thumbnail', 'label'=>'Square'),
+			array('value'=>'original', 'label'=>'Original'),
 			),
-		));
+		);
 
-	$options[] = array('option'=>array(
+	$options[] = array(
 		'label'=>'Title Share Buttons',
 		'setting'=>'page-blog-post-header-share-buttons', 
 		'type'=>'toggle',
 		'value'=>(isset($settings['page-blog-post-header-share-buttons'])?$settings['page-blog-post-header-share-buttons']:'no'),
 		'toggles'=>array(
-			array('toggle'=>array('value'=>'no', 'label'=>'No')),
-			array('toggle'=>array('value'=>'yes', 'label'=>'Yes')),
+			array('value'=>'no', 'label'=>'No'),
+			array('value'=>'yes', 'label'=>'Yes'),
 			),
-		));
+    );
 
-	$options[] = array('option'=>array(
+	$options[] = array(
 		'label'=>'More Button',
 		'setting'=>'page-blog-more-button-text', 
 		'type'=>'text',
 		'value'=>(isset($settings['page-blog-more-button-text'])?$settings['page-blog-more-button-text']:''),
 		'hint'=>'... more',
-		));
+    );
 
 	if( ($ciniki['business']['modules']['ciniki.blog']['flags']&0x06) > 0 ) {
-		$options[] = array('option'=>array(
+		$options[] = array(
 			'label'=>'Meta Divider',
 			'setting'=>'page-blog-meta-divider', 
 			'type'=>'text',
 			'value'=>(isset($settings['page-blog-meta-divider'])?$settings['page-blog-meta-divider']:''),
 			'hint'=>' | ',
-			));
+        );
 	}
 
 	if( ($ciniki['business']['modules']['ciniki.blog']['flags']&0x02) > 0 ) {
-		$options[] = array('option'=>array(
+		$options[] = array(
 			'label'=>'Meta Category Prefix',
 			'setting'=>'page-blog-meta-category-prefix', 
 			'type'=>'text',
 			'value'=>(isset($settings['page-blog-meta-category-prefix'])?$settings['page-blog-meta-category-prefix']:''),
 			'hint'=>'',
-			));
-		$options[] = array('option'=>array(
+			);
+		$options[] = array(
 			'label'=>'Meta Categories Prefix',
 			'setting'=>'page-blog-meta-categories-prefix', 
 			'type'=>'text',
 			'value'=>(isset($settings['page-blog-meta-categories-prefix'])?$settings['page-blog-meta-categories-prefix']:''),
 			'hint'=>'',
-			));
+			);
 	}
 
 	if( ($ciniki['business']['modules']['ciniki.blog']['flags']&0x04) > 0 ) {
-		$options[] = array('option'=>array(
+		$options[] = array(
 			'label'=>'Meta Tag Prefix',
 			'setting'=>'page-blog-meta-tag-prefix', 
 			'type'=>'text',
 			'value'=>(isset($settings['page-blog-meta-tag-prefix'])?$settings['page-blog-meta-tag-prefix']:''),
 			'hint'=>'',
-			));
-		$options[] = array('option'=>array(
+			);
+		$options[] = array(
 			'label'=>'Meta Tags Prefix',
 			'setting'=>'page-blog-meta-tags-prefix', 
 			'type'=>'text',
 			'value'=>(isset($settings['page-blog-meta-tags-prefix'])?$settings['page-blog-meta-tags-prefix']:''),
 			'hint'=>'',
-			));
+			);
 	}
 
 	$pages['ciniki.blog'] = array('name'=>'Public Blog', 'options'=>$options);
