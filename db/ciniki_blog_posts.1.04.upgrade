@@ -1,0 +1,5 @@
+#
+# Add the subtitle field
+#
+ALTER TABLE ciniki_blog_posts ADD COLUMN primary_image_caption varchar(250) not null AFTER primary_image_id;
+ALTER TABLE ciniki_blog_posts COMMENT='v1.04';
