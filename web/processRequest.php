@@ -461,9 +461,9 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
 			$page['container_class'] = 'ciniki-blog-post';
 			if( isset($post['image_id']) && $post['image_id'] > 0 ) {
 				if( isset($settings['page-blog-sidebar']) && $settings['page-blog-sidebar'] == 'yes' ) { 
-					$page['blocks'][] = array('type'=>'image', 'section'=>'primary-image', 'primary'=>'yes', 'image_id'=>$post['image_id'], 'title'=>'');
+					$page['blocks'][] = array('type'=>'image', 'section'=>'primary-image', 'primary'=>'yes', 'image_id'=>$post['image_id'], 'caption'=>$post['image_caption'], 'title'=>'');
 				} else {
-					$page['blocks'][] = array('type'=>'asideimage', 'section'=>'primary-image', 'primary'=>'yes', 'image_id'=>$post['image_id'], 'title'=>$post['title'], 'caption'=>'');
+					$page['blocks'][] = array('type'=>'asideimage', 'section'=>'primary-image', 'primary'=>'yes', 'image_id'=>$post['image_id'], 'caption'=>$post['image_caption'], 'title'=>$post['title']);
 				}
 			}
 			if( isset($post['content']) && $post['content'] != '' ) {

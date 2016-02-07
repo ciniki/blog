@@ -40,6 +40,7 @@ function ciniki_blog_web_postDetails($ciniki, $settings, $business_id, $args) {
 		. "excerpt AS synopsis, "
 		. "content, "
 		. "primary_image_id, "
+		. "primary_image_caption AS image_caption, "
 		. "status, status AS status_text, "
 		. "publish_date AS publish_datetime, "
 		. "publish_date, "
@@ -61,7 +62,7 @@ function ciniki_blog_web_postDetails($ciniki, $settings, $business_id, $args) {
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.blog', array(
 		array('container'=>'posts', 'fname'=>'id',
 			'fields'=>array('id', 'title', 'subtitle', 'permalink', 'format', 'synopsis', 'content', 
-				'image_id'=>'primary_image_id', 'status', 'status_text', 
+				'image_id'=>'primary_image_id', 'image_caption', 'status', 'status_text', 
 				'publish_datetime', 'publish_date', 'publish_time'),
 			'utctotz'=>array(
 				'publish_datetime'=>array('timezone'=>$intl_timezone, 'format'=>'Y-m-d'),

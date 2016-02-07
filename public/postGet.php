@@ -82,6 +82,7 @@ function ciniki_blog_postGet($ciniki) {
 			. "excerpt, "
 			. "content, "
 			. "primary_image_id, "
+			. "primary_image_caption, "
 			. "status, status AS status_text, "
 			. "publish_to, publish_to AS publish_to_text, "
 			. "publish_date "
@@ -93,7 +94,7 @@ function ciniki_blog_postGet($ciniki) {
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.blog', array(
 			array('container'=>'posts', 'fname'=>'id', 'name'=>'post',
 				'fields'=>array('id', 'title', 'subtitle', 'permalink', 'format', 'excerpt', 'content', 
-					'primary_image_id', 'status', 'status_text',
+					'primary_image_id', 'primary_image_caption', 'status', 'status_text',
 					'publish_to', 'publish_to_text', 'publish_date'),
 				'utctotz'=>array('publish_date'=>array('timezone'=>$intl_timezone, 'format'=>$date_format)),
 				'flags'=>array('publish_to_text'=>array(0x01=>'Public', 0x04=>'Members')),

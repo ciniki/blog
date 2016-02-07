@@ -26,6 +26,7 @@ function ciniki_blog_postUpdate(&$ciniki) {
 			'validlist'=>array('10', '40', '60')), 
         'publish_to'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Publish To'), 
         'primary_image_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Image'),
+        'primary_image_caption'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Caption'),
         'excerpt'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Excerpt'),
         'content'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Content'),
         'publish_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'datetimetoutc', 'name'=>'Publish Date'),

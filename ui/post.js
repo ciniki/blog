@@ -20,6 +20,9 @@ function ciniki_blog_post() {
 			'_image':{'label':'', 'aside':'yes', 'type':'imageform', 'fields':{
 				'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'history':'no'},
 				}},
+			'_image_caption':{'label':'', 'aside':'yes', 'visible':function() {return M.ciniki_blog_post.post.data.primary_image_caption!=''?'yes':'no';}, 'list':{
+				'primary_image_caption':{'label':'Caption', 'type':'text'},
+				}},
 			'info':{'label':'', 'aside':'yes', 'list':{
 				'title':{'label':'Title'},
 				'subtitle':{'label':'Subtitle', 'visible':'no'},
@@ -74,7 +77,7 @@ function ciniki_blog_post() {
 			return true;
 		};
 		this.post.sectionData = function(s) {
-			if( s == 'info' || s == 'subscriptions' ) { return this.sections[s].list; }
+			if( s == 'info' || s == 'subscriptions' || s == '_image_caption' ) { return this.sections[s].list; }
 			if( s == 'excerpt' || s == 'content' ) { return this.data[s].replace(/\n/g, '<br/>'); }
 			return this.data[s];
 		};

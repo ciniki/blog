@@ -37,6 +37,9 @@ function ciniki_blog_postedit() {
 				'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 
 					'controls':'all', 'history':'no'},
 				}},
+            '_image_caption':{'label':'', 'aside':'yes', 'fields':{
+                'primary_image_caption':{'label':'Caption', 'type':'text'},
+                }},
 			'info':{'label':'', 'aside':'yes', 'fields':{
 				'title':{'label':'Title', 'hint':'', 'type':'text'},
 				'subtitle':{'label':'Subtitle', 'hint':'', 'type':'text'},
