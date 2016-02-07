@@ -28,6 +28,7 @@ function ciniki_blog_web_tags($ciniki, $settings, $business_id, $tag_type, $blog
 	$strsql .= "AND ciniki_blog_post_tags.post_id = ciniki_blog_posts.id "
 		. "AND ciniki_blog_posts.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 		. "AND ciniki_blog_posts.status = 40 "
+		. "AND ciniki_blog_posts.publish_date < UTC_TIMESTAMP() "
 		. "";
 	if( $blogtype == 'memberblog' ) {
 		$strsql .= "AND (ciniki_blog_posts.publish_to&0x04) = 0x04 ";
