@@ -45,6 +45,18 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
 			);
 	}
 
+    //
+    // Check for image format
+    //
+    $thumbnail_format = 'square-cropped';
+    $thumbnail_padding_color = '#ffffff';
+    if( isset($settings['page-blog-thumbnail-format']) && $settings['page-blog-thumbnail-format'] == 'square-padded' ) {
+        $thumbnail_format = $settings['page-blog-thumbnail-format'];
+        if( isset($settings['page-blog-thumbnail-padding-color']) && $settings['page-blog-thumbnail-padding-color'] != '' ) {
+            $thumbnail_padding_color = $settings['page-blog-thumbnail-padding-color'];
+        } 
+    }
+
 	//
 	// Check if a file was specified to be downloaded
 	//
@@ -307,7 +319,8 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
 				'image_version'=>((isset($settings['page-blog-list-image-version'])&&$settings['page-blog-list-image-version']=='original')?'original':'thumbnail'),
 				'image_width'=>'600',
 				'more_button_text'=>(isset($settings['page-blog-more-button-text'])?$settings['page-blog-more-button-text']:''),
-				'base_url'=>$base_url, 'noimage'=>'yes', 'limit'=>$page_post_limit, 'list'=>$posts);
+				'base_url'=>$base_url, 'noimage'=>'yes', 'limit'=>$page_post_limit, 'list'=>$posts,
+                'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
 			
 			//
 			// check if pagination is required
@@ -367,9 +380,10 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
 					'image_version'=>((isset($settings['page-blog-list-image-version'])&&$settings['page-blog-list-image-version']=='original')?'original':'thumbnail'),
 					'image_width'=>'400',
 					'noimage'=>'yes',
-					);
+                    'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
 			} else {
-				$page['blocks'][] = array('type'=>'tagimages', 'base_url'=>$base_url, 'tags'=>$tags);
+				$page['blocks'][] = array('type'=>'tagimages', 'base_url'=>$base_url, 'tags'=>$tags,
+                    'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
 			}
 		} else {
 			$page['blocks'][] = array('type'=>'message', 'content'=>"I'm sorry, but we don't have any posts for that category.");
@@ -557,7 +571,8 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
 				'image_version'=>((isset($settings['page-blog-list-image-version'])&&$settings['page-blog-list-image-version']=='original')?'original':'thumbnail'),
 				'image_width'=>'400',
 				'more_button_text'=>(isset($settings['page-blog-more-button-text'])?$settings['page-blog-more-button-text']:''),
-				'base_url'=>$args['base_url'], 'noimage'=>'yes', 'list'=>$posts);
+				'base_url'=>$args['base_url'], 'noimage'=>'yes', 'list'=>$posts,
+                'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
 		}
 
 		//
