@@ -19,6 +19,7 @@ function ciniki_blog_postimages() {
 			}},
 			'info':{'label':'Information', 'type':'simpleform', 'fields':{
 				'name':{'label':'Title', 'type':'text'},
+				'sequence':{'label':'Order', 'type':'text', 'size':'small'},
 			}},
 			'_description':{'label':'Description', 'type':'simpleform', 'fields':{
 				'description':{'label':'', 'type':'textarea', 'size':'small', 'hidelabel':'yes'},

@@ -43,7 +43,7 @@ function ciniki_blog_postImageUpdate(&$ciniki) {
 	//
 	// Get the existing image details
 	//
-	$strsql = "SELECT post_id, uuid, image_id "
+	$strsql = "SELECT post_id, uuid, sequence, image_id "
 		. "FROM ciniki_blog_post_images "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['post_image_id']) . "' "
@@ -84,10 +84,55 @@ function ciniki_blog_postImageUpdate(&$ciniki) {
 	}
 
 	//
+	// Start transaction
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionStart');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionRollback');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionCommit');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbAddModuleHistory');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
+	$rc = ciniki_core_dbTransactionStart($ciniki, 'ciniki.blog');
+	if( $rc['stat'] != 'ok' ) { 
+		return $rc;
+	}   
+
+	//
 	// Update the post image in the database
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
-	return ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.blog.postimage', 
-		$args['post_image_id'], $args, 0x07);
+	$rc = ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.blog.postimage', $args['post_image_id'], $args, 0x04);
+    if( $rc['stat'] != 'ok' ) {
+		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
+		return $rc;
+    }
+
+    //
+    // Update the sequences
+    //
+    if( isset($args['sequence']) ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'sequencesUpdate');
+        $rc = ciniki_core_sequencesUpdate($ciniki, $args['business_id'], 'ciniki.blog.postimage', 'post_id', $item['post_id'], $args['sequence'], $item['sequence']);
+        if( $rc['stat'] != 'ok' ) {
+            ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
+            return $rc;
+        }
+    }
+
+	//
+	// Commit the transaction
+	//
+	$rc = ciniki_core_dbTransactionCommit($ciniki, 'ciniki.blog');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+
+	//
+	// Update the last_change date in the business modules
+	// Ignore the result, as we don't want to stop user updates if this fails.
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
+	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'blog');
+
+	return array('stat'=>'ok');
 }
 ?>
