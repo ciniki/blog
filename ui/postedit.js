@@ -186,7 +186,7 @@ function ciniki_blog_postedit() {
 						}
 					}
 					p.sections._tags.fields.tags.tags = [];
-					if( (M.curBusiness.modules['ciniki.blog'].flags&0x222)>0 && rsp.tags != null ) {
+					if( (M.curBusiness.modules['ciniki.blog'].flags&0x444)>0 && rsp.tags != null ) {
 						for(i in rsp.tags) {
 							p.sections._tags.fields.tags.tags.push(rsp.tags[i].tag.name);
 						}

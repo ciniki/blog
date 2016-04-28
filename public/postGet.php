@@ -112,7 +112,7 @@ function ciniki_blog_postGet($ciniki) {
 		//
 		// Get the categories and tags for the post
 		//
-		if( ($modules['ciniki.blog']['flags']&0x03) > 0 ) {
+		if( ($modules['ciniki.blog']['flags']&0x06) > 0 ) {
 			$strsql = "SELECT tag_type, tag_name AS lists "
 				. "FROM ciniki_blog_post_tags "
 				. "WHERE post_id = '" . ciniki_core_dbQuote($ciniki, $args['post_id']) . "' "
