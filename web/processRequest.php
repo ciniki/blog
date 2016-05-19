@@ -418,6 +418,16 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
 		}
 		$post = $rc['post'];
 
+        if( isset($post['image_id']) && $post['image_id'] > 0 ) {
+            // Check for the primary image in the post
+            ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'getScaledImageURL');
+            $rc = ciniki_web_getScaledImageURL($ciniki, $post['image_id'], 'original', '500', 0);
+            if( $rc['stat'] != 'ok' ) {
+                return $rc;
+            }
+            $ciniki['response']['head']['og']['image'] = $rc['domain_url'];
+        }
+
 		if( isset($post['synopsis']) && $post['synopsis'] != '' ) {
 			$ciniki['response']['head']['og']['description'] = strip_tags($post['synopsis']);
 		} elseif( isset($post['content']) && $post['content'] != '' ) {
