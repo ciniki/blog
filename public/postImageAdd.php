@@ -149,6 +149,6 @@ function ciniki_blog_postImageAdd(&$ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
 	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'blog');
 
-	return array('stat'=>'ok', 'id'=>$args['content_id']);
+	return array('stat'=>'ok', 'id'=>$image_id);
 }
 ?>
