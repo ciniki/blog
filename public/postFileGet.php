@@ -62,7 +62,7 @@ function ciniki_blog_postFileGet($ciniki) {
         return $rc;
     }
     if( !isset($rc['file']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1569', 'msg'=>'Unable to find file'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.18', 'msg'=>'Unable to find file'));
     }
     
     return array('stat'=>'ok', 'file'=>$rc['file']);

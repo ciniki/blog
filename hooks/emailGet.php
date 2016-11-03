@@ -45,7 +45,7 @@ function ciniki_blog_hooks_emailGet($ciniki, $business_id, $args) {
             return $rc;
         }
         if( !isset($rc['post']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2122', 'msg'=>'Unable to find blog post'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.1', 'msg'=>'Unable to find blog post'));
         }
         $post = $rc['post'];
 
@@ -71,6 +71,6 @@ function ciniki_blog_hooks_emailGet($ciniki, $business_id, $args) {
         return array('stat'=>'ok', 'email'=>$email);
     }
 
-    return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2123', 'msg'=>'Internal Error'));
+    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.2', 'msg'=>'Internal Error'));
 }
 ?>

@@ -62,7 +62,7 @@ function ciniki_blog_postLinkGet($ciniki) {
         return $rc;
     }
     if( !isset($rc['links']) ) {
-        return array('stat'=>'ok', 'err'=>array('pkg'=>'ciniki', 'code'=>'1578', 'msg'=>'Unable to find link'));
+        return array('stat'=>'ok', 'err'=>array('code'=>'ciniki.blog.33', 'msg'=>'Unable to find link'));
     }
     $link = $rc['links'][0]['link'];
     

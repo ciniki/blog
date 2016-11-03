@@ -64,7 +64,7 @@ function ciniki_blog_postImageGet($ciniki) {
         return $rc;
     }
     if( !isset($rc['images']) ) {
-        return array('stat'=>'ok', 'err'=>array('pkg'=>'ciniki', 'code'=>'1575', 'msg'=>'Unable to find image'));
+        return array('stat'=>'ok', 'err'=>array('code'=>'ciniki.blog.28', 'msg'=>'Unable to find image'));
     }
     $image = $rc['images'][0]['image'];
     

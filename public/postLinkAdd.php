@@ -51,7 +51,7 @@ function ciniki_blog_postLinkAdd(&$ciniki) {
         return $rc;
     }
     if( isset($rc['link']) || (isset($rc['rows']) && count($rc['rows']) > 0) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1561', 'msg'=>'You already have a post link with that url, please choose another'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.31', 'msg'=>'You already have a post link with that url, please choose another'));
     }
 
     //

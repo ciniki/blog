@@ -19,7 +19,7 @@
 function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args) {
 
     if( !isset($ciniki['business']['modules']['ciniki.blog']) ) {
-        return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'2604', 'msg'=>"I'm sorry, the page you requested does not exist."));
+        return array('stat'=>'404', 'err'=>array('code'=>'ciniki.blog.48', 'msg'=>"I'm sorry, the page you requested does not exist."));
     }
     $page = array(
         'title'=>$args['page_title'],
@@ -75,7 +75,7 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
         //
         // If there was an error locating the files, display generic error
         //
-        return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'2662', 'msg'=>'The file you requested does not exist.'));
+        return array('stat'=>'404', 'err'=>array('code'=>'ciniki.blog.49', 'msg'=>'The file you requested does not exist.'));
     }
 
     if( !isset($args['post_limit']) || $args['post_limit'] == '' ) {
@@ -532,7 +532,7 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
     // Return error if nothing found to display
     //
     else {
-        return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'2663', 'msg'=>"We're sorry, the page you requested."));
+        return array('stat'=>'404', 'err'=>array('code'=>'ciniki.blog.50', 'msg'=>"We're sorry, the page you requested."));
     }
 
     //

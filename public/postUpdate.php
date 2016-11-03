@@ -67,7 +67,7 @@ function ciniki_blog_postUpdate(&$ciniki) {
             return $rc;
         }
         if( isset($rc['post']) || (isset($rc['rows']) && count($rc['rows']) > 0) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1587', 'msg'=>'You already have a post with that title, you\'ll need to choose another.'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.45', 'msg'=>'You already have a post with that title, you\'ll need to choose another.'));
         }
     }
 

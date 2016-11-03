@@ -54,7 +54,7 @@ function ciniki_blog_postLinkUpdate(&$ciniki) {
             return $rc;
         }
         if( !isset($rc['link']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1598', 'msg'=>'The post link does not exist'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.34', 'msg'=>'The post link does not exist'));
         }
         $link = $rc['link'];
 
@@ -73,7 +73,7 @@ function ciniki_blog_postLinkUpdate(&$ciniki) {
             return $rc;
         }
         if( isset($rc['link']) || (isset($rc['rows']) && count($rc['rows']) > 0) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1599', 'msg'=>'You already have a post link with that url, please choose another'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.35', 'msg'=>'You already have a post link with that url, please choose another'));
         }
     }
 

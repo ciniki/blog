@@ -75,7 +75,7 @@ function ciniki_blog_web_postDetails($ciniki, $settings, $business_id, $args) {
         return $rc;
     }
     if( !isset($rc['posts']) || count($rc['posts']) < 1 ) {
-        return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'1597', 'msg'=>"I'm sorry, but we can't find the post you requested."));
+        return array('stat'=>'404', 'err'=>array('code'=>'ciniki.blog.47', 'msg'=>"I'm sorry, but we can't find the post you requested."));
     }
     $post = array_pop($rc['posts']);
 

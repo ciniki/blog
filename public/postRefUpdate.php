@@ -57,7 +57,7 @@ function ciniki_blog_postRefUpdate(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['ref']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1584', 'msg'=>'Unable to find existing blog post reference'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.42', 'msg'=>'Unable to find existing blog post reference'));
     }
     $ref = $rc['ref'];
 
@@ -65,7 +65,7 @@ function ciniki_blog_postRefUpdate(&$ciniki) {
     // Check for blank or undefined object_id
     //
     if( isset($args['object_id']) && ($args['object_id'] == '' || $args['object_id'] == '0') ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1585', 'msg'=>'Please specify a object reference.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.43', 'msg'=>'Please specify a object reference.'));
     }
 
     //
@@ -86,7 +86,7 @@ function ciniki_blog_postRefUpdate(&$ciniki) {
             return $rc;
         }
         if( isset($rc['rows']) && count($rc['rows']) > 0 ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1586', 'msg'=>'Reference already exists for this post'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.44', 'msg'=>'Reference already exists for this post'));
         }
     }
 

@@ -62,7 +62,7 @@ function ciniki_blog_postDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['post']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1591', 'msg'=>'Unable to find existing post'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.9', 'msg'=>'Unable to find existing post'));
     }
     $uuid = $rc['post']['uuid'];
 
@@ -197,7 +197,7 @@ function ciniki_blog_postDelete(&$ciniki) {
         $args['post_id'], $uuid, 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1592', 'msg'=>'Unable to delete post, internal error.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.10', 'msg'=>'Unable to delete post, internal error.'));
     }
 
     //

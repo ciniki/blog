@@ -57,7 +57,7 @@ function ciniki_blog_postFileUpdate(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['file']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1570', 'msg'=>'File does not exist.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.19', 'msg'=>'File does not exist.'));
     }
     $file = $rc['file'];
 
@@ -76,7 +76,7 @@ function ciniki_blog_postFileUpdate(&$ciniki) {
             return $rc;
         }
         if( $rc['num_rows'] > 0 ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1571', 'msg'=>'You already have a file with this name, please choose another name.'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.20', 'msg'=>'You already have a file with this name, please choose another name.'));
         }
     }
 

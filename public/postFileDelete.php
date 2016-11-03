@@ -48,7 +48,7 @@ function ciniki_blog_postFileDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['item']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1497', 'msg'=>'Post file does not exist'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.15', 'msg'=>'Post file does not exist'));
     }
     $item = $rc['item'];
 

@@ -74,7 +74,7 @@ function ciniki_blog_hooks_mailingContent($ciniki, $business_id, $args) {
             return $rc;
         }
         if( !isset($rc['posts']) || count($rc['posts']) < 1 ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2139', 'msg'=>"I'm sorry, but we can't find the post you requested."));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.3', 'msg'=>"I'm sorry, but we can't find the post you requested."));
         }
         $post = array_pop($rc['posts']);
 

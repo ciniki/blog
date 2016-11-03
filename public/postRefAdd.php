@@ -54,7 +54,7 @@ function ciniki_blog_postRefAdd(&$ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectCheckExists');
     $rc = ciniki_core_objectCheckExists($ciniki, $args['business_id'], $args['object'], $args['object_id']);
     if( $rc['stat'] == 'noexist' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1566', 'msg'=>'Object does not exist'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.36', 'msg'=>'Object does not exist'));
     }
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -75,7 +75,7 @@ function ciniki_blog_postRefAdd(&$ciniki) {
         return $rc;
     }
     if( isset($rc['rows']) && count($rc['rows']) > 0 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1593', 'msg'=>'Object is already attached to the blog post'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.37', 'msg'=>'Object is already attached to the blog post'));
     }
 
     //
