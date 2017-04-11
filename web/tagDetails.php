@@ -34,7 +34,11 @@ function ciniki_blog_web_tagDetails($ciniki, $settings, $business_id, $args, $bl
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
-        $rsp['tag'] = $rc['tag'];
+        if( isset($rc['tag']) ) {
+            $rsp['tag'] = $rc['tag'];
+        } else {
+            $rsp['tag'] = '';
+        }
     }
 
     return $rsp;
