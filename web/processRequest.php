@@ -400,10 +400,11 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }
-            $tag_name = $ciniki['request']['uri_split'][1];
-            $tag_name = $rc['tag']['tag_name'];
-            $page['breadcrumbs'][] = array('name'=>$tag_types[$type_permalink]['name'], 'url'=>$args['base_url'] . '/' . $type_permalink);
-            $page['breadcrumbs'][] = array('name'=>$tag_name, 'url'=>$args['base_url'] . '/' . $type_permalink . '/' . urlencode($rc['tag']['permalink']));
+            if( isset($rc['tag']['tag_name']) ) {
+                $tag_name = $rc['tag']['tag_name'];
+                $page['breadcrumbs'][] = array('name'=>$tag_types[$type_permalink]['name'], 'url'=>$args['base_url'] . '/' . $type_permalink);
+                $page['breadcrumbs'][] = array('name'=>$tag_name, 'url'=>$args['base_url'] . '/' . $type_permalink . '/' . urlencode($rc['tag']['permalink']));
+            }
         }
 
         //
