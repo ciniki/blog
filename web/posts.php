@@ -18,6 +18,8 @@
 //
 function ciniki_blog_web_posts($ciniki, $settings, $business_id, $args, $blogtype) {
 
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuoteIDs');
+
     //
     // Load the business settings
     //
@@ -40,19 +42,19 @@ function ciniki_blog_web_posts($ciniki, $settings, $business_id, $args, $blogtyp
         . "ciniki_blog_posts.permalink, "
         . "ciniki_blog_posts.primary_image_id AS image_id, "
         . "ciniki_blog_posts.excerpt AS synopsis, "
-        . "IF(ciniki_blog_posts.content<>'','yes','no') AS is_details, "
-        . "categories.id AS tag_id, "
-        . "categories.tag_name, "
-        . "categories.permalink AS tag_permalink "
+        . "IF(ciniki_blog_posts.content<>'','yes','no') AS is_details "
+//        . "categories.id AS tag_id, "
+//        . "categories.tag_name, "
+//        . "categories.permalink AS tag_permalink "
         . "";
 
     if( isset($args['latest']) && $args['latest'] == 'yes' ) {
         $strsql .= "FROM ciniki_blog_posts "
-            . "LEFT JOIN ciniki_blog_post_tags AS categories ON ("
-                . "ciniki_blog_posts.id = categories.post_id "
-                . "AND categories.tag_type = 10 "
-                . "AND categories.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-                . ") "
+//            . "LEFT JOIN ciniki_blog_post_tags AS categories ON ("
+//                . "ciniki_blog_posts.id = categories.post_id "
+//                . "AND categories.tag_type = 10 "
+//                . "AND categories.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+//                . ") "
             . "WHERE ciniki_blog_posts.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
             . "AND ciniki_blog_posts.status = 40 "
             . "AND ciniki_blog_posts.publish_date < UTC_TIMESTAMP() "
@@ -70,11 +72,11 @@ function ciniki_blog_web_posts($ciniki, $settings, $business_id, $args, $blogtyp
                 . "AND ciniki_blog_posts.status = 40 "
                 . "AND ciniki_blog_posts.publish_date < UTC_TIMESTAMP() "
                 . ") "
-            . "LEFT JOIN ciniki_blog_post_tags AS categories ON ("
-                . "ciniki_blog_posts.id = categories.post_id "
-                . "AND categories.tag_type = 10 "
-                . "AND categories.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-                . ") "
+//            . "LEFT JOIN ciniki_blog_post_tags AS categories ON ("
+//                . "ciniki_blog_posts.id = categories.post_id "
+//                . "AND categories.tag_type = 10 "
+//                . "AND categories.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+//                . ") "
             . "WHERE ciniki_web_collection_objrefs.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
             . "AND ciniki_web_collection_objrefs.collection_id = '" . ciniki_core_dbQuote($ciniki, $args['collection_id']) . "' "
             . "AND ciniki_web_collection_objrefs.object = 'ciniki.blog.post' "
@@ -97,11 +99,11 @@ function ciniki_blog_web_posts($ciniki, $settings, $business_id, $args, $blogtyp
                 . "AND ciniki_blog_posts.status = 40 "
                 . "AND ciniki_blog_posts.publish_date < UTC_TIMESTAMP() "
                 . ") "
-            . "LEFT JOIN ciniki_blog_post_tags AS categories ON ("
-                . "ciniki_blog_posts.id = categories.post_id "
-                . "AND categories.tag_type = 10 "
-                . "AND categories.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-                . ") "
+//            . "LEFT JOIN ciniki_blog_post_tags AS categories ON ("
+//                . "ciniki_blog_posts.id = categories.post_id "
+//                . "AND categories.tag_type = 10 "
+//                . "AND categories.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+//                . ") "
             . "WHERE ciniki_blog_post_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
             . "AND ciniki_blog_post_tags.tag_type = '" . ciniki_core_dbQuote($ciniki, $args['tag_type']) . "' "
             . "AND ciniki_blog_post_tags.permalink = '" . ciniki_core_dbQuote($ciniki, $args['tag_permalink']) . "' "
@@ -136,11 +138,11 @@ function ciniki_blog_web_posts($ciniki, $settings, $business_id, $args, $blogtyp
         $end_date->setTimezone(new DateTimeZone('UTC'));
 
         $strsql .= "FROM ciniki_blog_posts "
-            . "LEFT JOIN ciniki_blog_post_tags AS categories ON ("
-                . "ciniki_blog_posts.id = categories.post_id "
-                . "AND categories.tag_type = 10 "
-                . "AND categories.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-                . ") "
+//            . "LEFT JOIN ciniki_blog_post_tags AS categories ON ("
+//                . "ciniki_blog_posts.id = categories.post_id "
+//                . "AND categories.tag_type = 10 "
+//                . "AND categories.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+//                . ") "
             . "WHERE ciniki_blog_posts.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
             . "AND ciniki_blog_posts.status = 40 "
             . "AND ciniki_blog_posts.publish_date >= '" . $start_date->format('Y-m-d H:i:s') . "' "
@@ -157,11 +159,11 @@ function ciniki_blog_web_posts($ciniki, $settings, $business_id, $args, $blogtyp
             . "";
     } else {
         $strsql .= "FROM ciniki_blog_posts "
-            . "LEFT JOIN ciniki_blog_post_tags AS categories ON ("
-                . "ciniki_blog_posts.id = categories.post_id "
-                . "AND categories.tag_type = 10 "
-                . "AND categories.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-                . ") "
+//            . "LEFT JOIN ciniki_blog_post_tags AS categories ON ("
+//                . "ciniki_blog_posts.id = categories.post_id "
+//                . "AND categories.tag_type = 10 "
+//                . "AND categories.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+//                . ") "
             . "WHERE ciniki_blog_posts.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
             . "AND ciniki_blog_posts.status = 40 "
             . "AND ciniki_blog_posts.publish_date < UTC_TIMESTAMP() "
@@ -210,12 +212,11 @@ function ciniki_blog_web_posts($ciniki, $settings, $business_id, $args, $blogtyp
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.blog', array(
         array('container'=>'posts', 'fname'=>'id',
-            'fields'=>array('id', 'title', 'subtitle', 'permalink', 'image_id', 'synopsis', 'is_details',
-                'publish_date'),
+            'fields'=>array('id', 'title', 'subtitle', 'permalink', 'image_id', 'synopsis', 'is_details', 'publish_date'),
             'utctotz'=>array('publish_date'=>array('timezone'=>$intl_timezone, 'format'=>'M j, Y')),
             ),
-        array('container'=>'categories', 'fname'=>'tag_id', 
-            'fields'=>array('name'=>'tag_name', 'permalink'=>'tag_permalink')),
+//        array('container'=>'categories', 'fname'=>'tag_id', 
+//            'fields'=>array('name'=>'tag_name', 'permalink'=>'tag_permalink')),
         )); 
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -224,6 +225,35 @@ function ciniki_blog_web_posts($ciniki, $settings, $business_id, $args, $blogtyp
         $posts = $rc['posts'];
     } else {
         $posts = array();
+    }
+
+    //
+    // Get the categories for each post
+    //
+    $ids = array_keys($posts);
+    $strsql = "SELECT categories.post_id, "
+        . "categories.id, "
+        . "categories.tag_name, "
+        . "categories.permalink AS tag_permalink "
+        . "FROM ciniki_blog_post_tags AS categories "
+        . "WHERE post_id IN (" . ciniki_core_dbQuoteIDs($ciniki, $ids) . ") "
+        . "AND categories.tag_type = 10 "
+        . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "ORDER BY post_id "
+        . "";
+    $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.blog', array(
+        array('container'=>'posts', 'fname'=>'post_id', 'fields'=>array('id'=>'post_id')),
+        array('container'=>'categories', 'fname'=>'id', 'fields'=>array('name'=>'tag_name', 'permalink'=>'tag_permalink')),
+        )); 
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    if( isset($rc['posts']) ) {
+        foreach($rc['posts'] as $post) {
+            if( isset($posts[$post['id']]) ) {
+                $posts[$post['id']]['categories'] = $post['categories'];
+            }
+        }
     }
 
     return array('stat'=>'ok', 'posts'=>$posts, 'total_num_posts'=>$num_posts);
