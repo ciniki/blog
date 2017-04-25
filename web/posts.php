@@ -184,7 +184,11 @@ function ciniki_blog_web_posts($ciniki, $settings, $business_id, $args, $blogtyp
         $strsql_count .= "AND (ciniki_blog_posts.publish_to&0x01) > 0 ";
     }
 
-    $strsql .= "ORDER BY ciniki_blog_posts.publish_date DESC, ciniki_blog_posts.id ";
+    if( isset($args['year']) && $args['year'] != '' ) {
+        $strsql .= "ORDER BY ciniki_blog_posts.publish_date ASC, ciniki_blog_posts.id ";
+    } else {
+        $strsql .= "ORDER BY ciniki_blog_posts.publish_date DESC, ciniki_blog_posts.id ";
+    }
     if( isset($args['offset']) && $args['offset'] > 0 
         && isset($args['limit']) && $args['limit'] > 0 ) {
         $strsql .= "LIMIT " . $args['offset'] . ', ' . $args['limit'];
