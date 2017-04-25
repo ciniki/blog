@@ -259,14 +259,12 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
             //
             // Get the items for the specified category
             //
-            error_log('00000--' . $page_post_limit);
             ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'posts');
             $rc = ciniki_blog_web_posts($ciniki, $settings, $business_id, array('year'=>$year, 'month'=>$month, 
                 'offset'=>(($page_post_cur-1)*$page_post_limit), 'limit'=>$page_post_limit+1), $args['blogtype']);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }
-            error_log(count($rc['posts']));
             $posts = $rc['posts'];
             $total_num_posts = $rc['total_num_posts'];
         } else {
@@ -329,7 +327,6 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
             //
             // check if pagination is required
             //
-            error_log($page_post_limit);
             if( $total_num_posts > $page_post_limit ) {
                 $page['blocks'][] = array('type'=>'multipagenav', 'cur_page'=>$page_post_cur, 'total_pages'=>ceil($total_num_posts/$page_post_limit),
                     'base_url'=>$base_url);
