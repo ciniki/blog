@@ -235,27 +235,29 @@ function ciniki_blog_web_posts($ciniki, $settings, $business_id, $args, $blogtyp
     // Get the categories for each post
     //
     $ids = array_keys($posts);
-    $strsql = "SELECT categories.post_id, "
-        . "categories.id, "
-        . "categories.tag_name, "
-        . "categories.permalink AS tag_permalink "
-        . "FROM ciniki_blog_post_tags AS categories "
-        . "WHERE post_id IN (" . ciniki_core_dbQuoteIDs($ciniki, $ids) . ") "
-        . "AND categories.tag_type = 10 "
-        . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-        . "ORDER BY post_id "
-        . "";
-    $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.blog', array(
-        array('container'=>'posts', 'fname'=>'post_id', 'fields'=>array('id'=>'post_id')),
-        array('container'=>'categories', 'fname'=>'id', 'fields'=>array('name'=>'tag_name', 'permalink'=>'tag_permalink')),
-        )); 
-    if( $rc['stat'] != 'ok' ) {
-        return $rc;
-    }
-    if( isset($rc['posts']) ) {
-        foreach($rc['posts'] as $post) {
-            if( isset($posts[$post['id']]) ) {
-                $posts[$post['id']]['categories'] = $post['categories'];
+    if( count($ids) > 0 ) {
+        $strsql = "SELECT categories.post_id, "
+            . "categories.id, "
+            . "categories.tag_name, "
+            . "categories.permalink AS tag_permalink "
+            . "FROM ciniki_blog_post_tags AS categories "
+            . "WHERE post_id IN (" . ciniki_core_dbQuoteIDs($ciniki, $ids) . ") "
+            . "AND categories.tag_type = 10 "
+            . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "ORDER BY post_id "
+            . "";
+        $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.blog', array(
+            array('container'=>'posts', 'fname'=>'post_id', 'fields'=>array('id'=>'post_id')),
+            array('container'=>'categories', 'fname'=>'id', 'fields'=>array('name'=>'tag_name', 'permalink'=>'tag_permalink')),
+            )); 
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+        if( isset($rc['posts']) ) {
+            foreach($rc['posts'] as $post) {
+                if( isset($posts[$post['id']]) ) {
+                    $posts[$post['id']]['categories'] = $post['categories'];
+                }
             }
         }
     }
