@@ -321,7 +321,7 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
                 'image_version'=>((isset($settings['page-blog-list-image-version'])&&$settings['page-blog-list-image-version']=='original')?'original':'thumbnail'),
                 'image_width'=>'600',
                 'more_button_text'=>(isset($settings['page-blog-more-button-text'])?$settings['page-blog-more-button-text']:''),
-                'base_url'=>$base_url, 'noimage'=>'yes', 'limit'=>$page_post_limit, 'list'=>$posts,
+                'base_url'=>$args['base_url'], 'noimage'=>'yes', 'limit'=>$page_post_limit, 'list'=>$posts,
                 'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
             
             //
