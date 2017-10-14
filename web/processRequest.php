@@ -124,26 +124,36 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
     // Check if we are to display an image, from the gallery, or latest images
     //
     $display = '';
-    if( isset($args['uri_split'][0]) && $args['uri_split'][0] == 'archive' ) {
+    if( (isset($args['uri_split'][0]) && $args['uri_split'][0] == 'archive')
+        || $args['module_page'] == 'ciniki.blog.archive'
+        ) {
         $display = 'archive';
         $year = '';
+        $uri_offset = 0;
+        if( isset($args['uri_split'][0]) && $args['uri_split'][0] == 'archive' ) {
+            $uri_offset = 1;
+        }
+
         //
         // Show the archive for a specified year
         //
-        if( isset($ciniki['request']['uri_split'][1]) && $ciniki['request']['uri_split'][1] != '' 
-            && preg_match("/^[0-9][0-9][0-9][0-9]$/", $ciniki['request']['uri_split'][1])
-            ) {
-            ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'posts');
-            ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'processContent');
-            ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'getScaledImageURL');
+        if( isset($args['uri_split'][$uri_offset]) && $args['uri_split'][$uri_offset] != '' ) {
+            if( preg_match("/^[0-9][0-9][0-9][0-9]$/", $args['uri_split'][$uri_offset]) ) {
+                ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'posts');
+                ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'processContent');
+                ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'getScaledImageURL');
 
-            $year = $ciniki['request']['uri_split'][1];
-            if( isset($ciniki['request']['uri_split'][2]) && $ciniki['request']['uri_split'][2] != '' 
-                && preg_match("/^[0-9][0-9]$/", $ciniki['request']['uri_split'][2]) 
-                ) {
-                $month = $ciniki['request']['uri_split'][2];
+                $year = $args['uri_split'][$uri_offset];
+                if( isset($args['uri_split'][($uri_offset+1)]) && $args['uri_split'][($uri_offset+1)] != '' 
+                    && preg_match("/^[0-9][0-9]$/", $args['uri_split'][($uri_offset+1)]) 
+                    ) {
+                    $month = $args['uri_split'][($uri_offset+1)];
+                } else {
+                    $month = '';
+                }
             } else {
-                $month = '';
+                $display = 'post';
+                $post_permalink = $args['uri_split'][0];
             }
         } 
         
@@ -245,14 +255,19 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
             $total_num_posts = $rc['total_num_posts'];
         } elseif( $display == 'archive' ) {
             $months = array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
-            $page['breadcrumbs'][] = array('name'=>'Archive', 'url'=>$args['base_url'] . '/archive');
-            $page['breadcrumbs'][] = array('name'=>$year, 'url'=>$args['base_url'] . '/archive/'. $year);
-            if( $month != '' ) {
-                $base_url = $args['base_url'] . '/archive/' . $year . '/' . $month;
-                $page['title'] = $months[intval($month)-1] . ' ' . $year;
-                $page['breadcrumbs'][] = array('name'=>$months[intval($month)-1], 'url'=>$args['base_url'] . '/archive/'. $year . '/' . $month);
+            $base_url = $args['base_url'];
+            if( $args['module_page'] != 'ciniki.blog.archive' ) {
+                $page['breadcrumbs'][] = array('name'=>'Archive', 'url'=>$args['base_url'] . '/archive');
             } else {
-                $base_url = $args['base_url'] . '/archive/' . $year;
+                $base_url .= '/archive';
+            }
+            $page['breadcrumbs'][] = array('name'=>$year, 'url'=>$base_url . '/'. $year);
+            if( $month != '' ) {
+                $base_url = $args['base_url'] . '/' . $year . '/' . $month;
+                $page['title'] = $months[intval($month)-1] . ' ' . $year;
+                $page['breadcrumbs'][] = array('name'=>$months[intval($month)-1], 'url'=>$base_url . '/'. $year . '/' . $month);
+            } else {
+                $base_url = $base_url . '/' . $year;
                 $page['title'] = $year;
             }
 
@@ -346,12 +361,17 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
             return $rc;
         }
 
-        $page['title'] = 'Archive';
-        $page['breadcrumbs'][] = array('name'=>'Archive', 'url'=>$args['base_url'] . '/archive');
+        if( $args['module_page'] != 'ciniki.blog.archive' ) {
+            $page['breadcrumbs'][] = array('name'=>'Archive', 'url'=>$base_url);
+            $base_url = $args['base_url'] . '/archive';
+            $page['title'] = 'Archive';
+        } else {
+            $base_url = $args['base_url'];
+        }
 
         if( count($rc['archive']) > 0 ) {
             $page['blocks'][] = array('type'=>'archivelist', 
-                'base_url'=>$args['base_url'] . '/archive',
+                'base_url'=>$base_url,
                 'archive'=>$rc['archive']);
         } else {
             $page['blocks'][] = array('type'=>'message', 'content'=>"I'm sorry, but there doesn't seem to be any posts archived.");
