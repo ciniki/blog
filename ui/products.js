@@ -28,7 +28,7 @@ function ciniki_blog_postproducts() {
         this.edit.liveSearchCb = function(s, i, value) {
             if( i == 'object_id' ) {
                 var rsp = M.api.getJSONBgCb('ciniki.products.productSearch',
-                    {'business_id':M.curBusinessID, 'start_needle':value, 'limit':25},
+                    {'tnid':M.curTenantID, 'start_needle':value, 'limit':25},
                     function(rsp) {
                         M.ciniki_blog_postproducts.edit.liveSearchShow(s, i, M.gE(M.ciniki_blog_postproducts.edit.panelUID + '_' + i), rsp.products);
                     });
@@ -49,7 +49,7 @@ function ciniki_blog_postproducts() {
             this.removeLiveSearch(s, fid);
         };
         this.edit.fieldHistoryArgs = function(s, i) {
-            return {'method':'ciniki.blog.postRefHistory', 'args':{'business_id':M.curBusinessID, 
+            return {'method':'ciniki.blog.postRefHistory', 'args':{'tnid':M.curTenantID, 
                 'object_id':this.object_id, 'field':i}};
         };
         this.edit.addButton('save', 'Save', 'M.ciniki_blog_postproducts.saveRef();');
@@ -91,7 +91,7 @@ function ciniki_blog_postproducts() {
         if( this.edit.ref_id > 0 ) {
             this.edit.sections._buttons.buttons.delete.visible = 'yes';
             var rsp = M.api.getJSONCb('ciniki.blog.postRefGet', 
-                {'business_id':M.curBusinessID, 'ref_id':this.edit.ref_id}, function(rsp) {
+                {'tnid':M.curTenantID, 'ref_id':this.edit.ref_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
@@ -115,7 +115,7 @@ function ciniki_blog_postproducts() {
             var c = this.edit.serializeForm('no');
             if( c != '' ) {
                 M.api.postJSONCb('ciniki.blog.postRefUpdate', 
-                    {'business_id':M.curBusinessID, 'ref_id':this.edit.ref_id}, c, function(rsp) {
+                    {'tnid':M.curTenantID, 'ref_id':this.edit.ref_id}, c, function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
                             return false;
@@ -129,7 +129,7 @@ function ciniki_blog_postproducts() {
             var c = this.edit.serializeForm('yes');
             if( c != '' ) {
                 M.api.postJSONCb('ciniki.blog.postRefAdd', 
-                    {'business_id':M.curBusinessID, 'post_id':this.edit.post_id, 
+                    {'tnid':M.curTenantID, 'post_id':this.edit.post_id, 
                     'object':'ciniki.products.product'}, c, function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -146,7 +146,7 @@ function ciniki_blog_postproducts() {
     this.deleteRef = function() {
         if( confirm("Are you sure you want to remove this product?") ) {
             var rsp = M.api.getJSONCb('ciniki.blog.postRefDelete', 
-                {'business_id':M.curBusinessID, 'ref_id':this.edit.ref_id}, function(rsp) {
+                {'tnid':M.curTenantID, 'ref_id':this.edit.ref_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;

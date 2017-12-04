@@ -9,18 +9,18 @@
 // Returns
 // -------
 //
-function ciniki_blog_hooks_mailingContent($ciniki, $business_id, $args) {
+function ciniki_blog_hooks_mailingContent($ciniki, $tnid, $args) {
 
     if( isset($args['object']) && $args['object'] == 'ciniki.blog.post' 
         && isset($args['object_id']) && $args['object_id'] != '' 
-        && isset($ciniki['business']['modules']['ciniki.blog']['flags'])
-        && ($ciniki['business']['modules']['ciniki.blog']['flags']&0x7000) > 0      // Blog subscriptions enabled
+        && isset($ciniki['tenant']['modules']['ciniki.blog']['flags'])
+        && ($ciniki['tenant']['modules']['ciniki.blog']['flags']&0x7000) > 0      // Blog subscriptions enabled
         ) {
         //
         // Load INTL settings
         //
-        ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-        $rc = ciniki_businesses_intlSettings($ciniki, $business_id);
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+        $rc = ciniki_tenants_intlSettings($ciniki, $tnid);
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
@@ -32,7 +32,7 @@ function ciniki_blog_hooks_mailingContent($ciniki, $business_id, $args) {
         // Load the blog settings
         //
         ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'private', 'settings');
-        $rc = ciniki_blog_settings($ciniki, $business_id);
+        $rc = ciniki_blog_settings($ciniki, $tnid);
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
@@ -53,7 +53,7 @@ function ciniki_blog_hooks_mailingContent($ciniki, $business_id, $args) {
             . "publish_date, "
             . "publish_date AS publish_time "
             . "FROM ciniki_blog_posts "
-            . "WHERE ciniki_blog_posts.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE ciniki_blog_posts.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_blog_posts.id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
             . "AND (ciniki_blog_posts.publish_to&0x01) > 0 "
             . "";
@@ -101,7 +101,7 @@ function ciniki_blog_hooks_mailingContent($ciniki, $business_id, $args) {
             . "UNIX_TIMESTAMP(ciniki_blog_post_images.last_updated) AS last_updated "
             . "FROM ciniki_blog_post_images "
             . "WHERE ciniki_blog_post_images.post_id = '" . ciniki_core_dbQuote($ciniki, $post['id']) . "' "
-            . "AND ciniki_blog_post_images.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_blog_post_images.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_blog_post_images.image_id > 0 "   // Only get images that have a picture
             . "ORDER BY ciniki_blog_post_images.sequence, ciniki_blog_post_images.date_added, "
                 . "ciniki_blog_post_images.name "
@@ -125,7 +125,7 @@ function ciniki_blog_hooks_mailingContent($ciniki, $business_id, $args) {
         //
         $strsql = "SELECT id, name, extension, permalink, description, binary_content "
             . "FROM ciniki_blog_post_files "
-            . "WHERE ciniki_blog_post_files.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE ciniki_blog_post_files.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_blog_post_files.post_id = '" . ciniki_core_dbQuote($ciniki, $post['id']) . "' "
             . "";
         $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.blog', array(
@@ -144,7 +144,7 @@ function ciniki_blog_hooks_mailingContent($ciniki, $business_id, $args) {
         //
         $strsql = "SELECT id, name, url, description "
             . "FROM ciniki_blog_post_links "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_blog_post_links.post_id = '" . ciniki_core_dbQuote($ciniki, $post['id']) . "' "
             . "";
         $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.blog', array(

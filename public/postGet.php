@@ -16,7 +16,7 @@ function ciniki_blog_postGet($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'post_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Post'),
         'images'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Images'),
         'files'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Files'),
@@ -33,10 +33,10 @@ function ciniki_blog_postGet($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'private', 'checkAccess');
-    $rc = ciniki_blog_checkAccess($ciniki, $args['business_id'], 'ciniki.blog.postGet'); 
+    $rc = ciniki_blog_checkAccess($ciniki, $args['tnid'], 'ciniki.blog.postGet'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -45,8 +45,8 @@ function ciniki_blog_postGet($ciniki) {
     //
     // Load currency and timezone settings
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-    $rc = ciniki_businesses_intlSettings($ciniki, $args['business_id']);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $args['tnid']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -88,7 +88,7 @@ function ciniki_blog_postGet($ciniki) {
             . "publish_date "
             . "FROM ciniki_blog_posts "
             . "WHERE ciniki_blog_posts.id = '" . ciniki_core_dbQuote($ciniki, $args['post_id']) . "' "
-            . "AND ciniki_blog_posts.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND ciniki_blog_posts.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "";
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
         $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.blog', array(
@@ -116,7 +116,7 @@ function ciniki_blog_postGet($ciniki) {
             $strsql = "SELECT tag_type, tag_name AS lists "
                 . "FROM ciniki_blog_post_tags "
                 . "WHERE post_id = '" . ciniki_core_dbQuote($ciniki, $args['post_id']) . "' "
-                . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+                . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
                 . "ORDER BY tag_type, tag_name "
                 . "";
             $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.blog', array(
@@ -160,7 +160,7 @@ function ciniki_blog_postGet($ciniki) {
                 . "ciniki_blog_post_images.description "
                 . "FROM ciniki_blog_post_images "
                 . "WHERE ciniki_blog_post_images.post_id = '" . ciniki_core_dbQuote($ciniki, $args['post_id']) . "' "
-                . "AND ciniki_blog_post_images.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+                . "AND ciniki_blog_post_images.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
                 . "ORDER BY ciniki_blog_post_images.sequence, ciniki_blog_post_images.date_added, "
                     . "ciniki_blog_post_images.name "
                 . "";
@@ -175,7 +175,7 @@ function ciniki_blog_postGet($ciniki) {
                 $post['images'] = $rc['images'];
                 foreach($post['images'] as $img_id => $img) {
                     if( isset($img['image']['image_id']) && $img['image']['image_id'] > 0 ) {
-                        $rc = ciniki_images_loadCacheThumbnail($ciniki, $args['business_id'], $img['image']['image_id'], 75);
+                        $rc = ciniki_images_loadCacheThumbnail($ciniki, $args['tnid'], $img['image']['image_id'], 75);
                         if( $rc['stat'] != 'ok' ) {
                             return $rc;
                         }
@@ -193,7 +193,7 @@ function ciniki_blog_postGet($ciniki) {
         if( isset($args['files']) && $args['files'] == 'yes' ) {
             $strsql = "SELECT id, name, extension, permalink "
                 . "FROM ciniki_blog_post_files "
-                . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+                . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
                 . "AND ciniki_blog_post_files.post_id = '" . ciniki_core_dbQuote($ciniki, $args['post_id']) . "' "
                 . "";
             $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.blog', array(
@@ -216,7 +216,7 @@ function ciniki_blog_postGet($ciniki) {
         if( isset($args['files']) && $args['files'] == 'yes' ) {
             $strsql = "SELECT id, name, url, description "
                 . "FROM ciniki_blog_post_links "
-                . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+                . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
                 . "AND ciniki_blog_post_links.post_id = '" . ciniki_core_dbQuote($ciniki, $args['post_id']) . "' "
                 . "";
             $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.blog', array(
@@ -244,11 +244,11 @@ function ciniki_blog_postGet($ciniki) {
                 . "ciniki_recipes.name "
                 . "FROM ciniki_blog_post_refs "
                 . "LEFT JOIN ciniki_recipes ON (ciniki_blog_post_refs.object_id = ciniki_recipes.id "
-                    . "AND ciniki_recipes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+                    . "AND ciniki_recipes.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
                     . ") "
                 . "WHERE ciniki_blog_post_refs.post_id = '" . ciniki_core_dbQuote($ciniki, $args['post_id']) . "' "
                 . "AND ciniki_blog_post_refs.object = 'ciniki.recipes.recipe' "
-                . "AND ciniki_blog_post_refs.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+                . "AND ciniki_blog_post_refs.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
                 . ""; 
             $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.blog', array(
                 array('container'=>'recipes', 'fname'=>'id', 'name'=>'recipe',
@@ -287,7 +287,7 @@ function ciniki_blog_postGet($ciniki) {
         && ($modules['ciniki.blog']['flags']&0x7000) > 0    // Blog subscriptions enabled
         ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'mail', 'hooks', 'objectSubscriptions');
-        $rc = ciniki_mail_hooks_objectSubscriptions($ciniki, $args['business_id'], 
+        $rc = ciniki_mail_hooks_objectSubscriptions($ciniki, $args['tnid'], 
             array('object'=>'ciniki.blog.post', 'object_id'=>$args['post_id']));
 /*      $strsql = "SELECT ciniki_subscriptions.id, "
             . "ciniki_subscriptions.name, "
@@ -297,9 +297,9 @@ function ciniki_blog_postGet($ciniki) {
             . "LEFT JOIN ciniki_blog_post_subscriptions ON ("
                 . "ciniki_subscriptions.id = ciniki_blog_post_subscriptions.subscription_id "
                 . "AND ciniki_blog_post_subscriptions.post_id = '" . ciniki_core_dbQuote($ciniki, $args['post_id']) . "' "
-                . "AND ciniki_blog_post_subscriptions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+                . "AND ciniki_blog_post_subscriptions.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
                 . ") "
-            . "WHERE ciniki_subscriptions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE ciniki_subscriptions.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND ciniki_subscriptions.status = 10 "
             . "";
         $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.blog', array(
@@ -323,11 +323,11 @@ function ciniki_blog_postGet($ciniki) {
     // Get the list of web collections, and which ones this post is attached to
     //
     if( isset($args['webcollections']) && $args['webcollections'] == 'yes'
-        && isset($ciniki['business']['modules']['ciniki.web']) 
-        && ($ciniki['business']['modules']['ciniki.web']['flags']&0x08) == 0x08
+        && isset($ciniki['tenant']['modules']['ciniki.web']) 
+        && ($ciniki['tenant']['modules']['ciniki.web']['flags']&0x08) == 0x08
         ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'hooks', 'webCollectionList');
-        $rc = ciniki_web_hooks_webCollectionList($ciniki, $args['business_id'],
+        $rc = ciniki_web_hooks_webCollectionList($ciniki, $args['tnid'],
             array('object'=>'ciniki.blog.post', 'object_id'=>$args['post_id']));
         if( $rc['stat'] != 'ok' ) { 
             return $rc;
@@ -348,7 +348,7 @@ function ciniki_blog_postGet($ciniki) {
         // Get the available tags
         //
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsList');
-        $rc = ciniki_core_tagsList($ciniki, 'ciniki.blog', $args['business_id'], 
+        $rc = ciniki_core_tagsList($ciniki, 'ciniki.blog', $args['tnid'], 
             'ciniki_blog_post_tags', 10);
         if( $rc['stat'] != 'ok' ) {
             return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.22', 'msg'=>'Unable to get list of categories', 'err'=>$rc['err']));
@@ -367,7 +367,7 @@ function ciniki_blog_postGet($ciniki) {
         // Get the available tags
         //
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsList');
-        $rc = ciniki_core_tagsList($ciniki, 'ciniki.blog', $args['business_id'], 
+        $rc = ciniki_core_tagsList($ciniki, 'ciniki.blog', $args['tnid'], 
             'ciniki_blog_post_tags', 20);
         if( $rc['stat'] != 'ok' ) {
             return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.23', 'msg'=>'Unable to get list of tags', 'err'=>$rc['err']));

@@ -1,13 +1,13 @@
 #
 # Description
 # -----------
-# This table stores the blog entries for a business.
+# This table stores the blog entries for a tenant.
 #
 # Fields
 # ------
 # id:               The ID assigned to the event.
 # uuid:             The Universal Unique ID.
-# business_id:      The business the blog entry is attached to.
+# tnid:             The tenant the blog entry is attached to.
 #
 # title:            The title for the blog entry.
 # subtitle:         The subtitle for the blog entry.
@@ -50,8 +50,8 @@
 # publish_date:     The UTC date and time the blog post is to be published.  The post will not
 #                   show up on the website until this date passes.
 #
-# publish_year:     The year the post was published in the local business timezone.
-# publish_month:    The month the post was published in the local business timezone.
+# publish_year:     The year the post was published in the local tenant timezone.
+# publish_month:    The month the post was published in the local tenant timezone.
 #
 # user_id:          The ID of the user who published the post.
 #
@@ -61,7 +61,7 @@
 create table ciniki_blog_posts (
     id bigint not null auto_increment,
     uuid char(36) not null,
-    business_id int not null,
+    tnid int not null,
     title varchar(150) not null,
     subtitle varchar(150) not null,
     permalink varchar(150) not null,
@@ -79,7 +79,7 @@ create table ciniki_blog_posts (
     date_added datetime not null,
     last_updated datetime not null,
     primary key (id),
-    index (business_id, title, publish_to, publish_date),
+    index (tnid, title, publish_to, publish_date),
     index (permalink),
-    index sync (business_id, uuid, last_updated)
+    index sync (tnid, uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.04';

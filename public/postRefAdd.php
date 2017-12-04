@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business the blog post belongs to.
+// tnid:         The ID of the tenant the blog post belongs to.
 // post_id:             The ID of the post to add the reference to.
 // object:              The object of the reference.
 // object_id:           The ID of the object reference.
@@ -23,7 +23,7 @@ function ciniki_blog_postRefAdd(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'post_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Post'), 
         'object'=>array('required'=>'yes', 'blank'=>'no', 
             'validlist'=>array(
@@ -40,10 +40,10 @@ function ciniki_blog_postRefAdd(&$ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'private', 'checkAccess');
-    $rc = ciniki_blog_checkAccess($ciniki, $args['business_id'], 'ciniki.blog.postRefAdd'); 
+    $rc = ciniki_blog_checkAccess($ciniki, $args['tnid'], 'ciniki.blog.postRefAdd'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -52,7 +52,7 @@ function ciniki_blog_postRefAdd(&$ciniki) {
     // Check the referenced object exists
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectCheckExists');
-    $rc = ciniki_core_objectCheckExists($ciniki, $args['business_id'], $args['object'], $args['object_id']);
+    $rc = ciniki_core_objectCheckExists($ciniki, $args['tnid'], $args['object'], $args['object_id']);
     if( $rc['stat'] == 'noexist' ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.36', 'msg'=>'Object does not exist'));
     }
@@ -65,7 +65,7 @@ function ciniki_blog_postRefAdd(&$ciniki) {
     //
     $strsql = "SELECT id "
         . "FROM ciniki_blog_post_refs "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND post_id = '" . ciniki_core_dbQuote($ciniki, $args['post_id']) . "' "
         . "AND object = '" . ciniki_core_dbQuote($ciniki, $args['object']) . "' "
         . "AND object_id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
@@ -82,6 +82,6 @@ function ciniki_blog_postRefAdd(&$ciniki) {
     // Add the relationship
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-    return ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.blog.postref', $args, 0x07);
+    return ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.blog.postref', $args, 0x07);
 }
 ?>

@@ -27,7 +27,7 @@ function ciniki_blog_postlinks() {
             };
         this.edit.fieldValue = function(s, i, d) { return this.data[i]; }
         this.edit.fieldHistoryArgs = function(s, i) {
-            return {'method':'ciniki.blog.postLinkHistory', 'args':{'business_id':M.curBusinessID, 
+            return {'method':'ciniki.blog.postLinkHistory', 'args':{'tnid':M.curTenantID, 
                 'link_id':this.link_id, 'field':i}};
         };
         this.edit.addButton('save', 'Save', 'M.ciniki_blog_postlinks.saveLink();');
@@ -67,7 +67,7 @@ function ciniki_blog_postlinks() {
         if( this.edit.link_id > 0 ) {
             this.edit.sections._buttons.buttons.delete.visible = 'yes';
             var rsp = M.api.getJSONCb('ciniki.blog.postLinkGet', 
-                {'business_id':M.curBusinessID, 'link_id':this.edit.link_id}, function(rsp) {
+                {'tnid':M.curTenantID, 'link_id':this.edit.link_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
@@ -91,7 +91,7 @@ function ciniki_blog_postlinks() {
             var c = this.edit.serializeForm('no');
             if( c != '' ) {
                 M.api.postJSONCb('ciniki.blog.postLinkUpdate', 
-                    {'business_id':M.curBusinessID, 'link_id':this.edit.link_id}, c, function(rsp) {
+                    {'tnid':M.curTenantID, 'link_id':this.edit.link_id}, c, function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
                             return false;
@@ -105,7 +105,7 @@ function ciniki_blog_postlinks() {
             var c = this.edit.serializeForm('yes');
             if( c != '' ) {
                 M.api.postJSONCb('ciniki.blog.postLinkAdd', 
-                    {'business_id':M.curBusinessID, 'post_id':this.edit.post_id, 
+                    {'tnid':M.curTenantID, 'post_id':this.edit.post_id, 
                     'object':'ciniki.recipes.recipe'}, c, function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -122,7 +122,7 @@ function ciniki_blog_postlinks() {
     this.deleteLink = function() {
         if( confirm("Are you sure you want to remove this link?") ) {
             var rsp = M.api.getJSONCb('ciniki.blog.postLinkDelete', 
-                {'business_id':M.curBusinessID, 'link_id':this.edit.link_id}, function(rsp) {
+                {'tnid':M.curTenantID, 'link_id':this.edit.link_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;

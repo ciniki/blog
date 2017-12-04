@@ -8,7 +8,7 @@
 # ------
 # id:               The ID of the file.
 # uuid:             The Universal Unique ID for the file.
-# business_id:      The business the file is for.
+# tnid:             The tenant the file is for.
 #
 # post_id:          The ID of the blog post the file is attached to
 #
@@ -30,7 +30,7 @@
 create table ciniki_blog_post_files (
     id int not null auto_increment,
     uuid char(36) not null,
-    business_id int not null,
+    tnid int not null,
     post_id int not null,
     extension varchar(10) not null,
     name varchar(200) not null,
@@ -41,7 +41,7 @@ create table ciniki_blog_post_files (
     date_added datetime not null,
     last_updated datetime not null,
     primary key (id),
-    unique index (business_id, post_id, permalink), 
+    unique index (tnid, post_id, permalink), 
     index (name),
-    index sync (business_id, uuid, last_updated)
+    index sync (tnid, uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.01';

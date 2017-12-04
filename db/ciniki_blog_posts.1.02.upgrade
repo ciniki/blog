@@ -1,8 +1,8 @@
 #
-# This file will upgrade the database table businesses to version 1.02.
+# This file will upgrade the database table tenants to version 1.02.
 #
 ALTER TABLE ciniki_blog_posts ADD COLUMN publish_to tinyint unsigned not null AFTER status;
 UPDATE ciniki_blog_posts SET publish_to = 1;
-DROP INDEX business_id ON ciniki_blog_posts;
-CREATE INDEX business_id ON ciniki_blog_posts (business_id, title, publish_to, publish_date);
+DROP INDEX tnid ON ciniki_blog_posts;
+CREATE INDEX tnid ON ciniki_blog_posts (tnid, title, publish_to, publish_date);
 ALTER TABLE ciniki_blog_posts COMMENT='v1.02';

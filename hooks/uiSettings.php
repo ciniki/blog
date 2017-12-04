@@ -7,12 +7,12 @@
 // Arguments
 // ---------
 // ciniki:
-// business_id:     The ID of the business to get events for.
+// tnid:     The ID of the tenant to get events for.
 //
 // Returns
 // -------
 //
-function ciniki_blog_hooks_uiSettings($ciniki, $business_id, $args) {
+function ciniki_blog_hooks_uiSettings($ciniki, $tnid, $args) {
 
     //
     // Setup the default response
@@ -54,7 +54,7 @@ function ciniki_blog_hooks_uiSettings($ciniki, $business_id, $args) {
         $rsp['menu_items'][] = $menu_item;
     } 
 
-    if( isset($ciniki['business']['modules']['ciniki.blog']) && isset($ciniki['business']['modules']['ciniki.mail']) 
+    if( isset($ciniki['tenant']['modules']['ciniki.blog']) && isset($ciniki['tenant']['modules']['ciniki.mail']) 
         && (isset($args['permissions']['owners'])
             || isset($args['permissions']['resellers'])
             || ($ciniki['session']['user']['perms']&0x01) == 0x01

@@ -2,7 +2,7 @@
 //
 // Description
 // -----------
-// This method removes a blog post from the business.
+// This method removes a blog post from the tenant.
 //
 // Returns
 // -------
@@ -13,7 +13,7 @@ function ciniki_blog_postDelete(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'post_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Post'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
@@ -23,19 +23,19 @@ function ciniki_blog_postDelete(&$ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'private', 'checkAccess');
-    $rc = ciniki_blog_checkAccess($ciniki, $args['business_id'], 'ciniki.blog.postDelete'); 
+    $rc = ciniki_blog_checkAccess($ciniki, $args['tnid'], 'ciniki.blog.postDelete'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
 
     //
-    // get the active modules for the business
+    // get the active modules for the tenant
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'getActiveModules');
-    $rc = ciniki_businesses_getActiveModules($ciniki, $args['business_id']); 
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'getActiveModules');
+    $rc = ciniki_tenants_getActiveModules($ciniki, $args['tnid']); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }
@@ -54,7 +54,7 @@ function ciniki_blog_postDelete(&$ciniki) {
     //
     $strsql = "SELECT uuid "
         . "FROM ciniki_blog_posts "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['post_id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.blog', 'post');
@@ -80,7 +80,7 @@ function ciniki_blog_postDelete(&$ciniki) {
     $strsql = "SELECT id, uuid "
         . "FROM ciniki_blog_post_refs "
         . "WHERE post_id = '" . ciniki_core_dbQuote($ciniki, $args['post_id']) . "' "
-        . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.blog', 'ref');
     if( $rc['stat'] != 'ok' ) {
@@ -90,7 +90,7 @@ function ciniki_blog_postDelete(&$ciniki) {
     if( isset($rc['rows']) ) {
         $refs = $rc['rows'];
         foreach($refs as $ref) {
-            $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.blog.postref',
+            $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.blog.postref',
                 $ref['id'], $ref['uuid'], 0x04);
             if( $rc['stat'] != 'ok' ) {
                 ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
@@ -105,7 +105,7 @@ function ciniki_blog_postDelete(&$ciniki) {
     $strsql = "SELECT id, uuid "
         . "FROM ciniki_blog_post_links "
         . "WHERE post_id = '" . ciniki_core_dbQuote($ciniki, $args['post_id']) . "' "
-        . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.blog', 'link');
     if( $rc['stat'] != 'ok' ) {
@@ -115,7 +115,7 @@ function ciniki_blog_postDelete(&$ciniki) {
     if( isset($rc['rows']) ) {
         $links = $rc['rows'];
         foreach($links as $link) {
-            $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.blog.postlink',
+            $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.blog.postlink',
                 $link['id'], $link['uuid'], 0x04);
             if( $rc['stat'] != 'ok' ) {
                 ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
@@ -130,7 +130,7 @@ function ciniki_blog_postDelete(&$ciniki) {
     $strsql = "SELECT id, uuid "
         . "FROM ciniki_blog_post_images "
         . "WHERE post_id = '" . ciniki_core_dbQuote($ciniki, $args['post_id']) . "' "
-        . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.blog', 'image');
     if( $rc['stat'] != 'ok' ) {
@@ -140,7 +140,7 @@ function ciniki_blog_postDelete(&$ciniki) {
     if( isset($rc['rows']) ) {
         $images = $rc['rows'];
         foreach($images as $image) {
-            $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.blog.postimage',
+            $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.blog.postimage',
                 $image['id'], $image['uuid'], 0x04);
             if( $rc['stat'] != 'ok' ) {
                 ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
@@ -155,7 +155,7 @@ function ciniki_blog_postDelete(&$ciniki) {
     $strsql = "SELECT id, uuid "
         . "FROM ciniki_blog_post_files "
         . "WHERE post_id = '" . ciniki_core_dbQuote($ciniki, $args['post_id']) . "' "
-        . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.blog', 'file');
     if( $rc['stat'] != 'ok' ) {
@@ -165,7 +165,7 @@ function ciniki_blog_postDelete(&$ciniki) {
     if( isset($rc['rows']) ) {
         $files = $rc['rows'];
         foreach($files as $file) {
-            $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.blog.postfile',
+            $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.blog.postfile',
                 $file['id'], $file['uuid'], 0x04);
             if( $rc['stat'] != 'ok' ) {
                 ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
@@ -177,11 +177,11 @@ function ciniki_blog_postDelete(&$ciniki) {
     //
     // Remove the event from any web collections
     //
-    if( isset($ciniki['business']['modules']['ciniki.web']) 
-        && ($ciniki['business']['modules']['ciniki.web']['flags']&0x08) == 0x08
+    if( isset($ciniki['tenant']['modules']['ciniki.web']) 
+        && ($ciniki['tenant']['modules']['ciniki.web']['flags']&0x08) == 0x08
         ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'hooks', 'webCollectionDeleteObjRef');
-        $rc = ciniki_web_hooks_webCollectionDeleteObjRef($ciniki, $args['business_id'],
+        $rc = ciniki_web_hooks_webCollectionDeleteObjRef($ciniki, $args['tnid'],
             array('object'=>'ciniki.blog.post', 'object_id'=>$args['post_id']));
         if( $rc['stat'] != 'ok' ) { 
             ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
@@ -193,7 +193,7 @@ function ciniki_blog_postDelete(&$ciniki) {
     //
     // Delete the post
     //
-    $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.blog.post',
+    $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.blog.post',
         $args['post_id'], $uuid, 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
@@ -209,11 +209,11 @@ function ciniki_blog_postDelete(&$ciniki) {
     }
 
     //
-    // Update the last_change date in the business modules
+    // Update the last_change date in the tenant modules
     // Ignore the result, as we don't want to stop user updates if this fails.
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-    ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'blog');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'updateModuleChangeDate');
+    ciniki_tenants_updateModuleChangeDate($ciniki, $args['tnid'], 'ciniki', 'blog');
 
     $ciniki['syncqueue'][] = array('push'=>'ciniki.blog.post', 
         'args'=>array('delete_uuid'=>$uuid, 'delete_id'=>$args['post_id']));

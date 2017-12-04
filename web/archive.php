@@ -8,18 +8,18 @@
 // ---------
 // ciniki:
 // settings:        The web settings structure.
-// business_id:     The ID of the business to get events for.
+// tnid:     The ID of the tenant to get events for.
 //
 // Returns
 // -------
 //
-function ciniki_blog_web_archive($ciniki, $settings, $business_id, $blogtype) {
+function ciniki_blog_web_archive($ciniki, $settings, $tnid, $blogtype) {
 
     //
-    // Load the business settings
+    // Load the tenant settings
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-    $rc = ciniki_businesses_intlSettings($ciniki, $business_id);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $tnid);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -35,7 +35,7 @@ function ciniki_blog_web_archive($ciniki, $settings, $business_id, $blogtype) {
         . "ciniki_blog_posts.publish_month, "
         . "COUNT(ciniki_blog_posts.id) AS num_posts "
         . "FROM ciniki_blog_posts "
-        . "WHERE ciniki_blog_posts.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_blog_posts.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_blog_posts.status = 40 "
         . "AND ciniki_blog_posts.publish_date < UTC_TIMESTAMP() "
         . "";

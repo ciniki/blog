@@ -9,18 +9,18 @@
 // Returns
 // -------
 //
-function ciniki_blog_web_postDetails($ciniki, $settings, $business_id, $args) {
+function ciniki_blog_web_postDetails($ciniki, $settings, $tnid, $args) {
 
     $modules = array();
-    if( isset($ciniki['business']['modules']) ) {
-        $modules = $ciniki['business']['modules'];
+    if( isset($ciniki['tenant']['modules']) ) {
+        $modules = $ciniki['tenant']['modules'];
     }
 
     //
     // Load INTL settings
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-    $rc = ciniki_businesses_intlSettings($ciniki, $business_id);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $tnid);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -46,7 +46,7 @@ function ciniki_blog_web_postDetails($ciniki, $settings, $business_id, $args) {
         . "publish_date, "
         . "publish_date AS publish_time "
         . "FROM ciniki_blog_posts "
-        . "WHERE ciniki_blog_posts.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_blog_posts.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "";
     if( isset($args['id']) ) {
         $strsql .= "AND ciniki_blog_posts.id = '" . ciniki_core_dbQuote($ciniki, $args['id']) . "' ";
@@ -86,7 +86,7 @@ function ciniki_blog_web_postDetails($ciniki, $settings, $business_id, $args) {
         $strsql = "SELECT id, tag_type, tag_name, permalink "
             . "FROM ciniki_blog_post_tags "
             . "WHERE post_id = '" . ciniki_core_dbQuote($ciniki, $post['id']) . "' "
-            . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "ORDER BY tag_type, tag_name "
             . "";
         $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.blog', array(
@@ -121,7 +121,7 @@ function ciniki_blog_web_postDetails($ciniki, $settings, $business_id, $args) {
         . "UNIX_TIMESTAMP(ciniki_blog_post_images.last_updated) AS last_updated "
         . "FROM ciniki_blog_post_images "
         . "WHERE ciniki_blog_post_images.post_id = '" . ciniki_core_dbQuote($ciniki, $post['id']) . "' "
-        . "AND ciniki_blog_post_images.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "AND ciniki_blog_post_images.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_blog_post_images.image_id > 0 "   // Only get images that have a picture
         . "ORDER BY ciniki_blog_post_images.sequence, ciniki_blog_post_images.date_added, "
             . "ciniki_blog_post_images.name "
@@ -145,7 +145,7 @@ function ciniki_blog_web_postDetails($ciniki, $settings, $business_id, $args) {
     //
     $strsql = "SELECT id, name, extension, permalink, description "
         . "FROM ciniki_blog_post_files "
-        . "WHERE ciniki_blog_post_files.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_blog_post_files.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_blog_post_files.post_id = '" . ciniki_core_dbQuote($ciniki, $post['id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.blog', array(
@@ -164,7 +164,7 @@ function ciniki_blog_web_postDetails($ciniki, $settings, $business_id, $args) {
     //
     $strsql = "SELECT id, name, url, description "
         . "FROM ciniki_blog_post_links "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_blog_post_links.post_id = '" . ciniki_core_dbQuote($ciniki, $post['id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.blog', array(

@@ -69,7 +69,7 @@ function ciniki_blog_post() {
         };
         this.post.addDropImage = function(iid) {
             var rsp = M.api.getJSON('ciniki.blog.postImageAdd',
-                {'business_id':M.curBusinessID, 'image_id':iid, 'post_id':M.ciniki_blog_post.post.post_id});
+                {'tnid':M.curTenantID, 'image_id':iid, 'post_id':M.ciniki_blog_post.post.post_id});
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -83,7 +83,7 @@ function ciniki_blog_post() {
         };
         this.post.addDropImageRefresh = function() {
             if( M.ciniki_blog_post.post.post_id > 0 ) {
-                var rsp = M.api.getJSONCb('ciniki.blog.postGet', {'business_id':M.curBusinessID, 
+                var rsp = M.api.getJSONCb('ciniki.blog.postGet', {'tnid':M.curTenantID, 
                     'post_id':M.ciniki_blog_post.post.post_id, 'images':'yes'}, function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -137,7 +137,7 @@ function ciniki_blog_post() {
         this.post.emailSubscribers = function(test) {
             if( this.data.mailing_id != null && this.data.mailing_id > 0 ) {
                 if( confirm('Are you sure the article is correct and ready to send?') ) {
-                    M.api.getJSONCb('ciniki.mail.mailingSend', {'business_id':M.curBusinessID,
+                    M.api.getJSONCb('ciniki.mail.mailingSend', {'tnid':M.curTenantID,
                         'mailing_id':this.data.mailing_id, 'test':test}, function(rsp) {
                             if( rsp.stat != 'ok' ) {
                                 M.api.err(rsp);
@@ -165,13 +165,13 @@ function ciniki_blog_post() {
             return false;
         }
 
-        this.post.sections.info.list.subtitle.visible = (M.curBusiness.modules['ciniki.blog'] != null && (M.curBusiness.modules['ciniki.blog'].flags&0x010000))>0?'yes':'no';
+        this.post.sections.info.list.subtitle.visible = (M.curTenant.modules['ciniki.blog'] != null && (M.curTenant.modules['ciniki.blog'].flags&0x010000))>0?'yes':'no';
 
         //
         // Check if web collections are enabled
         //
-        if( M.curBusiness.modules['ciniki.web'] != null 
-            && (M.curBusiness.modules['ciniki.web'].flags&0x08) ) {
+        if( M.curTenant.modules['ciniki.web'] != null 
+            && (M.curTenant.modules['ciniki.web'].flags&0x08) ) {
             this.post.sections.info.list.webcollections_text.visible = 'yes';
         } else {
             this.post.sections.info.list.webcollections_text.visible = 'no';
@@ -185,10 +185,10 @@ function ciniki_blog_post() {
     this.showPost = function(cb, pid) {
         this.post.reset();
         var numBlogs = 0;
-        if( (M.curBusiness.modules['ciniki.blog'].flags&0x0001) > 0 ) {
+        if( (M.curTenant.modules['ciniki.blog'].flags&0x0001) > 0 ) {
             numBlogs++; 
         }
-        if( (M.curBusiness.modules['ciniki.blog'].flags&0x0100) > 0 ) {
+        if( (M.curTenant.modules['ciniki.blog'].flags&0x0100) > 0 ) {
             numBlogs++; 
         }
         if( numBlogs > 1 ) {
@@ -196,9 +196,9 @@ function ciniki_blog_post() {
         } else {
             this.post.sections.info.list.publish_to_text.visible = 'no';
         }
-//      this.post.sections.recipes.visible=(M.curBusiness.modules['ciniki.recipes']!=null)?'yes':'no';
+//      this.post.sections.recipes.visible=(M.curTenant.modules['ciniki.recipes']!=null)?'yes':'no';
         if( pid != null ) { this.post.post_id = pid; }
-        M.api.getJSONCb('ciniki.blog.postGet', {'business_id':M.curBusinessID,
+        M.api.getJSONCb('ciniki.blog.postGet', {'tnid':M.curTenantID,
             'post_id':this.post.post_id, 'files':'yes', 'images':'yes', 
             'links':'yes', 'refs':'yes', 'webcollections':'yes'}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
@@ -214,9 +214,9 @@ function ciniki_blog_post() {
                 // Check if mail and subscriptions are active
                 //
                 p.sections.subscriptions.visible = 'no';
-                if( M.curBusiness.modules['ciniki.mail'] != null
-                    && M.curBusiness.modules['ciniki.subscriptions'] != null 
-                    && (M.curBusiness.modules['ciniki.blog'].flags&0x7000) > 0  // Blog subscriptions active
+                if( M.curTenant.modules['ciniki.mail'] != null
+                    && M.curTenant.modules['ciniki.subscriptions'] != null 
+                    && (M.curTenant.modules['ciniki.blog'].flags&0x7000) > 0  // Blog subscriptions active
                     && p.data.subscriptions != null && p.data.subscriptions.length > 0  // There are subscriptions
                     && (rsp.post.publish_to&0x01) == 1  // Published to public blog
                     ) {
@@ -250,8 +250,8 @@ function ciniki_blog_post() {
                 if( rsp.post.tags != null && rsp.post.tags != '' ) {
                     p.data.tags = rsp.post.tags.replace(/::/g, ', ');
                 }
-                p.sections.info.list.categories.visible=(M.curBusiness.modules['ciniki.blog'].flags&0x222)>0?'yes':'no';
-                p.sections.info.list.tags.visible=(M.curBusiness.modules['ciniki.blog'].flags&0x444)>0?'yes':'no';
+                p.sections.info.list.categories.visible=(M.curTenant.modules['ciniki.blog'].flags&0x222)>0?'yes':'no';
+                p.sections.info.list.tags.visible=(M.curTenant.modules['ciniki.blog'].flags&0x444)>0?'yes':'no';
                 p.refresh();
                 p.show(cb);
             });

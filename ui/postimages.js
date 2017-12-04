@@ -36,7 +36,7 @@ function ciniki_blog_postimages() {
             return ''; 
         };
         this.edit.fieldHistoryArgs = function(s, i) {
-            return {'method':'ciniki.blog.postImageHistory', 'args':{'business_id':M.curBusinessID, 
+            return {'method':'ciniki.blog.postImageHistory', 'args':{'tnid':M.curTenantID, 
                 'post_image_id':this.post_image_id, 'field':i}};
         };
         this.edit.addDropImage = function(iid) {
@@ -73,7 +73,7 @@ function ciniki_blog_postimages() {
         if( pid != null ) { this.edit.post_id = pid; }
         if( this.edit.post_image_id > 0 ) {
             M.api.getJSONCb('ciniki.blog.postImageGet', 
-                {'business_id':M.curBusinessID, 'post_image_id':this.edit.post_image_id}, function(rsp) {
+                {'tnid':M.curTenantID, 'post_image_id':this.edit.post_image_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
@@ -96,7 +96,7 @@ function ciniki_blog_postimages() {
             var c = this.edit.serializeFormData('no');
             if( c != '' ) {
                 M.api.postJSONFormData('ciniki.blog.postImageUpdate', 
-                    {'business_id':M.curBusinessID, 
+                    {'tnid':M.curTenantID, 
                     'post_image_id':this.edit.post_image_id}, c,
                         function(rsp) {
                             if( rsp.stat != 'ok' ) {
@@ -112,7 +112,7 @@ function ciniki_blog_postimages() {
         } else {
             var c = this.edit.serializeFormData('yes');
             M.api.postJSONFormData('ciniki.blog.postImageAdd', 
-                {'business_id':M.curBusinessID, 'post_id':this.edit.post_id}, c,
+                {'tnid':M.curTenantID, 'post_id':this.edit.post_id}, c,
                     function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -126,7 +126,7 @@ function ciniki_blog_postimages() {
 
     this.deleteImage = function() {
         if( confirm('Are you sure you want to delete this image?') ) {
-            var rsp = M.api.getJSONCb('ciniki.blog.postImageDelete', {'business_id':M.curBusinessID, 
+            var rsp = M.api.getJSONCb('ciniki.blog.postImageDelete', {'tnid':M.curTenantID, 
                 'post_image_id':this.edit.post_image_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);

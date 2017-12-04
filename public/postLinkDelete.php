@@ -17,7 +17,7 @@ function ciniki_blog_postLinkDelete(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'link_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Link'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
@@ -27,10 +27,10 @@ function ciniki_blog_postLinkDelete(&$ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'private', 'checkAccess');
-    $rc = ciniki_blog_checkAccess($ciniki, $args['business_id'], 'ciniki.blog.postLinkDelete'); 
+    $rc = ciniki_blog_checkAccess($ciniki, $args['tnid'], 'ciniki.blog.postLinkDelete'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -40,7 +40,7 @@ function ciniki_blog_postLinkDelete(&$ciniki) {
     //
     $strsql = "SELECT id, uuid "
         . "FROM ciniki_blog_post_links "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['link_id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.blog', 'item');
@@ -56,7 +56,7 @@ function ciniki_blog_postLinkDelete(&$ciniki) {
     // Delete the object
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectDelete');
-    return ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.blog.postlink', 
+    return ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.blog.postlink', 
         $args['link_id'], $item['uuid'], 0x07);
 }
 ?>

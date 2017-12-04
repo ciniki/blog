@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business to get the reference from.
+// tnid:         The ID of the tenant to get the reference from.
 // ref_id:              The ID of the refernece to get.
 // 
 // Returns
@@ -20,7 +20,7 @@ function ciniki_blog_postRefGet($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'ref_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Object Reference'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
@@ -30,10 +30,10 @@ function ciniki_blog_postRefGet($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'private', 'checkAccess');
-    $rc = ciniki_blog_checkAccess($ciniki, $args['business_id'], 'ciniki.blog.postRefGet'); 
+    $rc = ciniki_blog_checkAccess($ciniki, $args['tnid'], 'ciniki.blog.postRefGet'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -47,7 +47,7 @@ function ciniki_blog_postRefGet($ciniki) {
         . "ciniki_blog_post_refs.object_id "
         . "FROM ciniki_blog_post_refs "
         . "WHERE ciniki_blog_post_refs.id = '" . ciniki_core_dbQuote($ciniki, $args['ref_id']) . "' "
-        . "AND ciniki_blog_post_refs.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND ciniki_blog_post_refs.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
@@ -68,7 +68,7 @@ function ciniki_blog_postRefGet($ciniki) {
         $strsql = "SELECT name "
             . "FROM ciniki_recipes "
             . "WHERE id = '" . ciniki_core_dbQuote($ciniki, $ref['object_id']) . "' "
-            . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.recipes', 'item');
         if( $rc['stat'] != 'ok' ) {
@@ -81,7 +81,7 @@ function ciniki_blog_postRefGet($ciniki) {
         $strsql = "SELECT name "
             . "FROM ciniki_products "
             . "WHERE id = '" . ciniki_core_dbQuote($ciniki, $ref['object_id']) . "' "
-            . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'item');
         if( $rc['stat'] != 'ok' ) {

@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business the image is attached to.
+// tnid:         The ID of the tenant the image is attached to.
 // post_image_id:       The ID of the post image to get.
 //
 // Returns
@@ -20,7 +20,7 @@ function ciniki_blog_postImageGet($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'post_image_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Post Image'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
@@ -30,10 +30,10 @@ function ciniki_blog_postImageGet($ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'private', 'checkAccess');
-    $rc = ciniki_blog_checkAccess($ciniki, $args['business_id'], 'ciniki.blog.postImageGet'); 
+    $rc = ciniki_blog_checkAccess($ciniki, $args['tnid'], 'ciniki.blog.postImageGet'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -52,7 +52,7 @@ function ciniki_blog_postImageGet($ciniki) {
         . "ciniki_blog_post_images.sequence, "
         . "ciniki_blog_post_images.description "
         . "FROM ciniki_blog_post_images "
-        . "WHERE ciniki_blog_post_images.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE ciniki_blog_post_images.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND ciniki_blog_post_images.id = '" . ciniki_core_dbQuote($ciniki, $args['post_image_id']) . "' "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');

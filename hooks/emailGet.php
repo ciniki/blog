@@ -8,19 +8,19 @@
 // Arguments
 // ---------
 // ciniki:
-// business_id:         The business ID to check the session user against.
+// tnid:         The tenant ID to check the session user against.
 // method:              The requested method.
 //
 // Returns
 // -------
 // <rsp stat='ok' />
 //
-function ciniki_blog_hooks_emailGet($ciniki, $business_id, $args) {
+function ciniki_blog_hooks_emailGet($ciniki, $tnid, $args) {
     
     if( isset($args['object']) && $args['object'] != ''
         && isset($args['object_id']) && $args['object_id'] > 0 
-        && isset($ciniki['business']['modules']['ciniki.blog']['flags'])
-        && ($ciniki['business']['modules']['ciniki.blog']['flags']&0x7000) > 0      // Blog subscriptions enabled
+        && isset($ciniki['tenant']['modules']['ciniki.blog']['flags'])
+        && ($ciniki['tenant']['modules']['ciniki.blog']['flags']&0x7000) > 0      // Blog subscriptions enabled
         ) {
         $email = array('subject'=>'', 'text_content'=>'', 'html_content'=>'');
     
@@ -28,7 +28,7 @@ function ciniki_blog_hooks_emailGet($ciniki, $business_id, $args) {
         // Setup fake web request
         //
         ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'createFakeRequest');
-        $rc = ciniki_web_createFakeRequest($ciniki, $business_id);
+        $rc = ciniki_web_createFakeRequest($ciniki, $tnid);
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
@@ -39,7 +39,7 @@ function ciniki_blog_hooks_emailGet($ciniki, $business_id, $args) {
         // Get the blog post from the database
         //
         ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'postDetails');
-        $rc = ciniki_blog_web_postDetails($web_ciniki, $settings, $business_id, 
+        $rc = ciniki_blog_web_postDetails($web_ciniki, $settings, $tnid, 
             array('id'=>$args['object_id'], 'blogtype'=>'blog'));
         if( $rc['stat'] != 'ok' ) {
             return $rc;

@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business to add the file to.
+// tnid:         The ID of the tenant to add the file to.
 // post_id:             The ID of the blog post the file is attached to.
 // name:                The name of the file.
 // description:         (optional) The extended description of the file, can be much longer than the name.
@@ -22,7 +22,7 @@ function ciniki_blog_postFileAdd(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'post_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Post'),
         'name'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Name'), 
         'description'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Description'), 
@@ -38,10 +38,10 @@ function ciniki_blog_postFileAdd(&$ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'private', 'checkAccess');
-    $rc = ciniki_blog_checkAccess($ciniki, $args['business_id'], 'ciniki.blog.postFileAdd'); 
+    $rc = ciniki_blog_checkAccess($ciniki, $args['tnid'], 'ciniki.blog.postFileAdd'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -51,7 +51,7 @@ function ciniki_blog_postFileAdd(&$ciniki) {
     //
     $strsql = "SELECT id, name, permalink "
         . "FROM ciniki_blog_post_files "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND post_id = '" . ciniki_core_dbQuote($ciniki, $args['post_id']) . "' "
         . "AND permalink = '" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "' "
         . "";
@@ -93,6 +93,6 @@ function ciniki_blog_postFileAdd(&$ciniki) {
     // Add the file to the database
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-    return ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.blog.postfile', $args, 0x07);
+    return ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.blog.postfile', $args, 0x07);
 }
 ?>

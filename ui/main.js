@@ -1,5 +1,5 @@
 //
-// This app will handle the listing, additions and deletions of blog.  These are associated business.
+// This app will handle the listing, additions and deletions of blog.  These are associated tenant.
 //
 function ciniki_blog_main() {
     //
@@ -45,7 +45,7 @@ function ciniki_blog_main() {
             };
         this.menu.liveSearchCb = function(s, i, value) {
             if( s == 'search' && value != '' ) {
-                M.api.getJSONBgCb('ciniki.blog.postSearch', {'business_id':M.curBusinessID, 
+                M.api.getJSONBgCb('ciniki.blog.postSearch', {'tnid':M.curTenantID, 
                     'start_needle':value, 'limit':'10', 'blogtype':M.ciniki_blog_main.menu.blogtype}, function(rsp) { 
                         M.ciniki_blog_main.menu.liveSearchShow('search', null, M.gE(M.ciniki_blog_main.menu.panelUID + '_' + s), rsp.posts); 
                     });
@@ -153,7 +153,7 @@ function ciniki_blog_main() {
         this.menu.data = {};
         if( blogtype != null && blogtype != '' ) { this.menu.blogtype = blogtype; }
         M.api.getJSONCb('ciniki.blog.postStats', 
-            {'business_id':M.curBusinessID, 'drafts':'yes', 'upcoming':'yes', 'past':11, 
+            {'tnid':M.curTenantID, 'drafts':'yes', 'upcoming':'yes', 'past':11, 
                 'years':'yes', 'blogtype':this.menu.blogtype}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
@@ -202,7 +202,7 @@ function ciniki_blog_main() {
             this.posts.blogtype = blogtype;
         }
         this.posts.reset();
-        M.api.getJSONCb('ciniki.blog.postList', {'business_id':M.curBusinessID, 
+        M.api.getJSONCb('ciniki.blog.postList', {'tnid':M.curTenantID, 
             'year':this.posts.year, 'month':this.posts.month, 'status':'40','blogtype':this.posts.blogtype}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);

@@ -19,11 +19,11 @@ function ciniki_blog_settings() {
     // Callback for the field history
     //  
     this.main.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.blog.settingsHistory', 'args':{'business_id':M.curBusinessID, 'field':i}};
+        return {'method':'ciniki.blog.settingsHistory', 'args':{'tnid':M.curTenantID, 'field':i}};
     };
     this.main.open = function(cb) {
         var rsp = M.api.getJSONCb('ciniki.blog.settingsGet', 
-            {'business_id':M.curBusinessID}, function(rsp) {
+            {'tnid':M.curTenantID}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -38,7 +38,7 @@ function ciniki_blog_settings() {
         var c = this.main.serializeForm('no');
         if( c != '' ) {
             var rsp = M.api.postJSONCb('ciniki.blog.settingsUpdate', 
-                {'business_id':M.curBusinessID}, c, function(rsp) {
+                {'tnid':M.curTenantID}, c, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;

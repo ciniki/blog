@@ -8,12 +8,12 @@
 // ---------
 // ciniki:
 // settings:        The web settings structure.
-// business_id:     The ID of the business to get events for.
+// tnid:     The ID of the tenant to get events for.
 //
 // Returns
 // -------
 //
-function ciniki_blog_web_tags($ciniki, $settings, $business_id, $tag_type, $blogtype) {
+function ciniki_blog_web_tags($ciniki, $settings, $tnid, $tag_type, $blogtype) {
 
     $strsql = "SELECT ciniki_blog_post_tags.tag_type, "
         . "ciniki_blog_post_tags.tag_name, "
@@ -21,12 +21,12 @@ function ciniki_blog_web_tags($ciniki, $settings, $business_id, $tag_type, $blog
         . "COUNT(ciniki_blog_post_tags.post_id) AS num_tags, "
         . "MAX(ciniki_blog_posts.primary_image_id) AS image_id "
         . "FROM ciniki_blog_post_tags, ciniki_blog_posts "
-        . "WHERE ciniki_blog_post_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' ";
+        . "WHERE ciniki_blog_post_tags.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' ";
     if( $tag_type > 0 ) {
         $strsql .= "AND ciniki_blog_post_tags.tag_type = '" . ciniki_core_dbQuote($ciniki, $tag_type) . "' ";
     }
     $strsql .= "AND ciniki_blog_post_tags.post_id = ciniki_blog_posts.id "
-        . "AND ciniki_blog_posts.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "AND ciniki_blog_posts.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_blog_posts.status = 40 "
         . "AND ciniki_blog_posts.publish_date < UTC_TIMESTAMP() "
         . "";

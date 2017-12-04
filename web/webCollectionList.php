@@ -8,7 +8,7 @@
 // ---------
 // ciniki:
 // settings:        The web settings structure.
-// business_id:     The ID of the business to get events for.
+// tnid:     The ID of the tenant to get events for.
 //
 // args:            The possible arguments for posts
 //
@@ -16,13 +16,13 @@
 // Returns
 // -------
 //
-function ciniki_blog_web_webCollectionList($ciniki, $settings, $business_id, $args, $blogtype) {
+function ciniki_blog_web_webCollectionList($ciniki, $settings, $tnid, $args, $blogtype) {
 
     //
-    // Load the business settings
+    // Load the tenant settings
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-    $rc = ciniki_businesses_intlSettings($ciniki, $business_id);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $tnid);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -45,7 +45,7 @@ function ciniki_blog_web_webCollectionList($ciniki, $settings, $business_id, $ar
         . "FROM ciniki_web_collection_objrefs "
         . "INNER JOIN ciniki_blog_posts ON ("
             . "ciniki_web_collection_objrefs.object_id = ciniki_blog_posts.id "
-            . "AND ciniki_blog_posts.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_blog_posts.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_blog_posts.status = 40 "
             . "AND ciniki_blog_posts.publish_date < UTC_TIMESTAMP() "
             . "";
@@ -55,7 +55,7 @@ function ciniki_blog_web_webCollectionList($ciniki, $settings, $business_id, $ar
         $strsql .= "AND (ciniki_blog_posts.publish_to&0x01) > 0 ";
     }
     $strsql .= ") "
-        . "WHERE ciniki_web_collection_objrefs.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_web_collection_objrefs.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_web_collection_objrefs.collection_id = '" . ciniki_core_dbQuote($ciniki, $args['collection_id']) . "' "
         . "AND ciniki_web_collection_objrefs.object = 'ciniki.blog.post' "
         . "";

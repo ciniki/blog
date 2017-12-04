@@ -16,7 +16,7 @@ function ciniki_blog_postImageAdd(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'post_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Post'), 
         'name'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Title'), 
         'permalink'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Permalink'), 
@@ -31,10 +31,10 @@ function ciniki_blog_postImageAdd(&$ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'private', 'checkAccess');
-    $rc = ciniki_blog_checkAccess($ciniki, $args['business_id'], 'ciniki.blog.postImageAdd'); 
+    $rc = ciniki_blog_checkAccess($ciniki, $args['tnid'], 'ciniki.blog.postImageAdd'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     } 
@@ -66,7 +66,7 @@ function ciniki_blog_postImageAdd(&$ciniki) {
     //
     $strsql = "SELECT id, name, permalink "
         . "FROM ciniki_blog_post_images "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND post_id = '" . ciniki_core_dbQuote($ciniki, $args['post_id']) . "' "
         . "AND permalink = '" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "' "
         . "";
@@ -85,7 +85,7 @@ function ciniki_blog_postImageAdd(&$ciniki) {
         $strsql = "SELECT MAX(sequence) AS seq "
             . "FROM ciniki_blog_post_images "
             . "WHERE post_id = '" . ciniki_core_dbQuote($ciniki, $args['post_id']) . "' "
-            . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.blog', 'max');
         if( $rc['stat'] != 'ok' ) {
@@ -117,7 +117,7 @@ function ciniki_blog_postImageAdd(&$ciniki) {
     // Add the post image to the database
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-    $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.blog.postimage', $args, 0x04);
+    $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.blog.postimage', $args, 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
         return $rc;
@@ -128,7 +128,7 @@ function ciniki_blog_postImageAdd(&$ciniki) {
     // Update the sequences
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'sequencesUpdate');
-    $rc = ciniki_core_sequencesUpdate($ciniki, $args['business_id'], 'ciniki.blog.postimage', 'post_id', $args['post_id'], $args['sequence'], -1);
+    $rc = ciniki_core_sequencesUpdate($ciniki, $args['tnid'], 'ciniki.blog.postimage', 'post_id', $args['post_id'], $args['sequence'], -1);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
         return $rc;
@@ -143,11 +143,11 @@ function ciniki_blog_postImageAdd(&$ciniki) {
     }
 
     //
-    // Update the last_change date in the business modules
+    // Update the last_change date in the tenant modules
     // Ignore the result, as we don't want to stop user updates if this fails.
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-    ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'blog');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'updateModuleChangeDate');
+    ciniki_tenants_updateModuleChangeDate($ciniki, $args['tnid'], 'ciniki', 'blog');
 
     return array('stat'=>'ok', 'id'=>$image_id);
 }

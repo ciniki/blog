@@ -8,7 +8,7 @@
 // ---------
 // ciniki:
 // settings:        The web settings structure.
-// business_id:     The ID of the business to get post for.
+// tnid:     The ID of the tenant to get post for.
 //
 // args:            The possible arguments for posts
 //
@@ -16,9 +16,9 @@
 // Returns
 // -------
 //
-function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args) {
+function ciniki_blog_web_processRequest(&$ciniki, $settings, $tnid, $args) {
 
-    if( !isset($ciniki['business']['modules']['ciniki.blog']) ) {
+    if( !isset($ciniki['tenant']['modules']['ciniki.blog']) ) {
         return array('stat'=>'404', 'err'=>array('code'=>'ciniki.blog.48', 'msg'=>"I'm sorry, the page you requested does not exist."));
     }
     $page = array(
@@ -35,13 +35,13 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
     //
     if( $args['blogtype'] == 'memberblog' ) {
         $tag_types = array(
-            'category'=>array('name'=>'Categories', 'tag_type'=>'10', 'visible'=>($ciniki['business']['modules']['ciniki.blog']['flags']&0x0200)>0?'yes':'no'),
-            'tag'=>array('name'=>'Keywords', 'tag_type'=>'20', 'visible'=>($ciniki['business']['modules']['ciniki.blog']['flags']&0x0400)>0?'yes':'no'),
+            'category'=>array('name'=>'Categories', 'tag_type'=>'10', 'visible'=>($ciniki['tenant']['modules']['ciniki.blog']['flags']&0x0200)>0?'yes':'no'),
+            'tag'=>array('name'=>'Keywords', 'tag_type'=>'20', 'visible'=>($ciniki['tenant']['modules']['ciniki.blog']['flags']&0x0400)>0?'yes':'no'),
             );
     } else {
         $tag_types = array(
-            'category'=>array('name'=>'Categories', 'tag_type'=>'10', 'visible'=>($ciniki['business']['modules']['ciniki.blog']['flags']&0x02)>0?'yes':'no'),
-            'tag'=>array('name'=>'Keywords', 'tag_type'=>'20', 'visible'=>($ciniki['business']['modules']['ciniki.blog']['flags']&0x04)>0?'yes':'no'),
+            'category'=>array('name'=>'Categories', 'tag_type'=>'10', 'visible'=>($ciniki['tenant']['modules']['ciniki.blog']['flags']&0x02)>0?'yes':'no'),
+            'tag'=>array('name'=>'Keywords', 'tag_type'=>'20', 'visible'=>($ciniki['tenant']['modules']['ciniki.blog']['flags']&0x04)>0?'yes':'no'),
             );
     }
 
@@ -67,7 +67,7 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
         && preg_match("/^(.*)\.pdf$/", $args['uri_split'][2], $matches)
         ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'fileDownload');
-        $rc = ciniki_blog_web_fileDownload($ciniki, $ciniki['request']['business_id'], $args['uri_split'][0], $args['uri_split'][2], $args['blogtype']);
+        $rc = ciniki_blog_web_fileDownload($ciniki, $ciniki['request']['tnid'], $args['uri_split'][0], $args['uri_split'][2], $args['blogtype']);
         if( $rc['stat'] == 'ok' ) {
             return array('stat'=>'ok', 'download'=>$rc['file']);
         }
@@ -246,7 +246,7 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
             // Get the items for the specified category
             //
             ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'posts');
-            $rc = ciniki_blog_web_posts($ciniki, $settings, $business_id, array('latest'=>'yes',
+            $rc = ciniki_blog_web_posts($ciniki, $settings, $tnid, array('latest'=>'yes',
                 'offset'=>(($page_post_cur-1)*$page_post_limit), 'limit'=>$page_post_limit+1), $args['blogtype']);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
@@ -275,7 +275,7 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
             // Get the items for the specified category
             //
             ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'posts');
-            $rc = ciniki_blog_web_posts($ciniki, $settings, $business_id, array('year'=>$year, 'month'=>$month, 
+            $rc = ciniki_blog_web_posts($ciniki, $settings, $tnid, array('year'=>$year, 'month'=>$month, 
                 'offset'=>(($page_post_cur-1)*$page_post_limit), 'limit'=>$page_post_limit+1), $args['blogtype']);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
@@ -287,7 +287,7 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
             // Get the tag name and permalink
             //
             ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'tagDetails');
-            $rc = ciniki_blog_web_tagDetails($ciniki, $settings, $business_id, array('tag_type'=>$tag_type, 'tag_permalink'=>$tag_permalink), $args['blogtype']);
+            $rc = ciniki_blog_web_tagDetails($ciniki, $settings, $tnid, array('tag_type'=>$tag_type, 'tag_permalink'=>$tag_permalink), $args['blogtype']);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }
@@ -301,7 +301,7 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
             // Get the items for the specified category
             //
             ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'posts');
-            $rc = ciniki_blog_web_posts($ciniki, $settings, $business_id, array('tag_type'=>$tag_type, 'tag_permalink'=>$tag_permalink,
+            $rc = ciniki_blog_web_posts($ciniki, $settings, $tnid, array('tag_type'=>$tag_type, 'tag_permalink'=>$tag_permalink,
                 'offset'=>(($page_post_cur-1)*$page_post_limit), 'limit'=>$page_post_limit+1), $args['blogtype']);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
@@ -356,7 +356,7 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
         ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'processContent');
         ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'getScaledImageURL');
 
-        $rc = ciniki_blog_web_archive($ciniki, $settings, $ciniki['request']['business_id'], $args['blogtype']);
+        $rc = ciniki_blog_web_archive($ciniki, $settings, $ciniki['request']['tnid'], $args['blogtype']);
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
@@ -380,7 +380,7 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
 
     elseif( $display == 'type' ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'tags');
-        $rc = ciniki_blog_web_tags($ciniki, $settings, $ciniki['request']['business_id'], $tag_type, $args['blogtype']);
+        $rc = ciniki_blog_web_tags($ciniki, $settings, $ciniki['request']['tnid'], $tag_type, $args['blogtype']);
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
@@ -418,7 +418,7 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
             // Get the tag name and permalink
             //
             ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'tagDetails');
-            $rc = ciniki_blog_web_tagDetails($ciniki, $settings, $business_id, array('tag_type'=>$tag_type, 'tag_permalink'=>$tag_permalink), $args['blogtype']);
+            $rc = ciniki_blog_web_tagDetails($ciniki, $settings, $tnid, array('tag_type'=>$tag_type, 'tag_permalink'=>$tag_permalink), $args['blogtype']);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }
@@ -435,7 +435,7 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
         // and prev from the list of images returned
         //
         ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'postDetails');
-        $rc = ciniki_blog_web_postDetails($ciniki, $settings, $ciniki['request']['business_id'], array('permalink'=>$post_permalink, 'blogtype'=>$args['blogtype']));
+        $rc = ciniki_blog_web_postDetails($ciniki, $settings, $ciniki['request']['tnid'], array('permalink'=>$post_permalink, 'blogtype'=>$args['blogtype']));
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
@@ -585,7 +585,7 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
         // Get the latest posts
         //
         ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'posts');
-        $rc = ciniki_blog_web_posts($ciniki, $settings, $business_id, array('latest'=>'yes', 'limit'=>3), $args['blogtype']);
+        $rc = ciniki_blog_web_posts($ciniki, $settings, $tnid, array('latest'=>'yes', 'limit'=>3), $args['blogtype']);
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
@@ -612,7 +612,7 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $business_id, $args
         // Get the list of tags
         //
         ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'tags');
-        $rc = ciniki_blog_web_tags($ciniki, $settings, $ciniki['request']['business_id'], 0, $args['blogtype']);
+        $rc = ciniki_blog_web_tags($ciniki, $settings, $ciniki['request']['tnid'], 0, $args['blogtype']);
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }

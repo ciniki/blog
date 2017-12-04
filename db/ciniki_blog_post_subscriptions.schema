@@ -13,7 +13,7 @@
 #
 # uuid:                 The Universal Unique ID for each post relationship.
 #
-# business_id:          The business the blog post is attached to.
+# tnid:                 The tenant the blog post is attached to.
 #
 # post_id:              The ID of the post to attached the subscription to.
 #
@@ -32,13 +32,13 @@
 create table ciniki_blog_post_subscriptions (
     id int not null auto_increment,
     uuid char(36) not null,
-    business_id int not null,
+    tnid int not null,
     post_id int not null,
     subscription_id int not null,
     status tinyint unsigned not null,
     date_added datetime not null,
     last_updated datetime not null,
     primary key (id),
-    unique index (business_id, post_id, subscription_id),
-    index sync (business_id, uuid, last_updated)
+    unique index (tnid, post_id, subscription_id),
+    index sync (tnid, uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.01';

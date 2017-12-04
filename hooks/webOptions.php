@@ -8,7 +8,7 @@
 // ---------
 // ciniki:
 // settings:        The web settings structure.
-// business_id:     The ID of the business to get events for.
+// tnid:     The ID of the tenant to get events for.
 //
 // args:            The possible arguments for posts
 //
@@ -16,12 +16,12 @@
 // Returns
 // -------
 //
-function ciniki_blog_hooks_webOptions(&$ciniki, $business_id, $args) {
+function ciniki_blog_hooks_webOptions(&$ciniki, $tnid, $args) {
 
     //
     // Check to make sure the module is enabled
     //
-    if( !isset($ciniki['business']['modules']['ciniki.blog']) ) {
+    if( !isset($ciniki['tenant']['modules']['ciniki.blog']) ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.4', 'msg'=>"I'm sorry, the page you requested does not exist."));
     }
 
@@ -29,7 +29,7 @@ function ciniki_blog_hooks_webOptions(&$ciniki, $business_id, $args) {
     // Get the settings from the database
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash');
-    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_web_settings', 'business_id', $business_id, 'ciniki.web', 'settings', 'page-blog');
+    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_web_settings', 'tnid', $tnid, 'ciniki.web', 'settings', 'page-blog');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -63,7 +63,7 @@ function ciniki_blog_hooks_webOptions(&$ciniki, $business_id, $args) {
             ),
         );
 
-    if( ($ciniki['business']['modules']['ciniki.blog']['flags']&0x02) > 0 ) {
+    if( ($ciniki['tenant']['modules']['ciniki.blog']['flags']&0x02) > 0 ) {
         $options[] = array(
             'label'=>'Category List Format',
             'setting'=>'page-blog-categories-format', 
@@ -106,7 +106,7 @@ function ciniki_blog_hooks_webOptions(&$ciniki, $business_id, $args) {
         'hint'=>'... more',
     );
 
-    if( ($ciniki['business']['modules']['ciniki.blog']['flags']&0x06) > 0 ) {
+    if( ($ciniki['tenant']['modules']['ciniki.blog']['flags']&0x06) > 0 ) {
         $options[] = array(
             'label'=>'Meta Divider',
             'setting'=>'page-blog-meta-divider', 
@@ -116,7 +116,7 @@ function ciniki_blog_hooks_webOptions(&$ciniki, $business_id, $args) {
         );
     }
 
-    if( ($ciniki['business']['modules']['ciniki.blog']['flags']&0x02) > 0 ) {
+    if( ($ciniki['tenant']['modules']['ciniki.blog']['flags']&0x02) > 0 ) {
         $options[] = array(
             'label'=>'Meta Category Prefix',
             'setting'=>'page-blog-meta-category-prefix', 
@@ -133,7 +133,7 @@ function ciniki_blog_hooks_webOptions(&$ciniki, $business_id, $args) {
             );
     }
 
-    if( ($ciniki['business']['modules']['ciniki.blog']['flags']&0x04) > 0 ) {
+    if( ($ciniki['tenant']['modules']['ciniki.blog']['flags']&0x04) > 0 ) {
         $options[] = array(
             'label'=>'Meta Tag Prefix',
             'setting'=>'page-blog-meta-tag-prefix', 

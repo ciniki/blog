@@ -75,7 +75,7 @@ function ciniki_blog_postedit() {
             return '';
         };
         this.edit.fieldHistoryArgs = function(s, i) {
-            return {'method':'ciniki.blog.postHistory', 'args':{'business_id':M.curBusinessID,
+            return {'method':'ciniki.blog.postHistory', 'args':{'tnid':M.curTenantID,
                 'post_id':this.post_id, 'field':i}};
         }
         this.edit.addDropImage = function(iid) {
@@ -99,12 +99,12 @@ function ciniki_blog_postedit() {
             return false;
         }
 
-        this.edit.forms.generic.info.fields.subtitle.visible = (M.curBusiness.modules['ciniki.blog'] != null && (M.curBusiness.modules['ciniki.blog'].flags&0x010000))>0?'yes':'no';
+        this.edit.forms.generic.info.fields.subtitle.visible = (M.curTenant.modules['ciniki.blog'] != null && (M.curTenant.modules['ciniki.blog'].flags&0x010000))>0?'yes':'no';
         //
         // Check if web collections are enabled
         //
-        if( M.curBusiness.modules['ciniki.web'] != null 
-            && (M.curBusiness.modules['ciniki.web'].flags&0x08) ) {
+        if( M.curTenant.modules['ciniki.web'] != null 
+            && (M.curTenant.modules['ciniki.web'].flags&0x08) ) {
             this.edit.sections._webcollections.active = 'yes';
         } else {
             this.edit.sections._webcollections.active = 'no';
@@ -118,22 +118,22 @@ function ciniki_blog_postedit() {
         this.edit.reset();
         if( pid != null ) { this.edit.post_id = pid; }
         if( blogtype != null ) { this.edit.blogtype = blogtype; }
-        this.edit.sections._categories.visible=((M.curBusiness.modules['ciniki.blog'].flags&0x222)>0)?'yes':'no';
-        this.edit.sections._categories.fields.categories.active=((M.curBusiness.modules['ciniki.blog'].flags&0x222)>0)?'yes':'no';
-        this.edit.sections._tags.visible=((M.curBusiness.modules['ciniki.blog'].flags&0x444)>0)?'yes':'no';
-        this.edit.sections._tags.fields.tags.active=((M.curBusiness.modules['ciniki.blog'].flags&0x444)>0)?'yes':'no';
+        this.edit.sections._categories.visible=((M.curTenant.modules['ciniki.blog'].flags&0x222)>0)?'yes':'no';
+        this.edit.sections._categories.fields.categories.active=((M.curTenant.modules['ciniki.blog'].flags&0x222)>0)?'yes':'no';
+        this.edit.sections._tags.visible=((M.curTenant.modules['ciniki.blog'].flags&0x444)>0)?'yes':'no';
+        this.edit.sections._tags.fields.tags.active=((M.curTenant.modules['ciniki.blog'].flags&0x444)>0)?'yes':'no';
         this.publishToFlags = {};
         var numBlogs = 0;
-        if( (M.curBusiness.modules['ciniki.blog'].flags&0x0001) > 0 ) {
+        if( (M.curTenant.modules['ciniki.blog'].flags&0x0001) > 0 ) {
             this.publishToFlags['1'] = {'name':'Public'}; 
             numBlogs++; 
         }
-        if( (M.curBusiness.modules['ciniki.blog'].flags&0x0100) > 0 ) {
+        if( (M.curTenant.modules['ciniki.blog'].flags&0x0100) > 0 ) {
             this.publishToFlags['3'] = {'name':'Members'}; 
             numBlogs++; 
         }
-        if( numBlogs > 1 && M.curBusiness.modules['ciniki.blog'].flags&0x111 > 0 ) {
-            this.edit.sections.info.fields.publish_to.active = ((M.curBusiness.modules['ciniki.blog'].flags&0x111)>0)?'yes':'no';
+        if( numBlogs > 1 && M.curTenant.modules['ciniki.blog'].flags&0x111 > 0 ) {
+            this.edit.sections.info.fields.publish_to.active = ((M.curTenant.modules['ciniki.blog'].flags&0x111)>0)?'yes':'no';
             this.edit.sections.info.fields.publish_to.flags = this.publishToFlags;
         } else {
             this.edit.sections.info.fields.publish_to.active = 'no';
@@ -149,7 +149,7 @@ function ciniki_blog_postedit() {
         // Always request the post, if a new post, the tags, subscriptions and collections will be returned along
         // with defaults for the blog
         //
-            M.api.getJSONCb('ciniki.blog.postGet', {'business_id':M.curBusinessID,
+            M.api.getJSONCb('ciniki.blog.postGet', {'tnid':M.curTenantID,
                 'post_id':this.edit.post_id, 'categories':'yes', 'tags':'yes', 
                 'webcollections':'yes'}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
@@ -159,16 +159,16 @@ function ciniki_blog_postedit() {
                     var p = M.ciniki_blog_postedit.edit;
                     p.data = rsp.post;
                     p.sections._categories.fields.categories.tags = [];
-                    if( (M.curBusiness.modules['ciniki.blog'].flags&0x222)>0 && rsp.categories != null ) {
+                    if( (M.curTenant.modules['ciniki.blog'].flags&0x222)>0 && rsp.categories != null ) {
                         for(i in rsp.categories) {
                             p.sections._categories.fields.categories.tags.push(rsp.categories[i].tag.name);
                         }
                     }
                     p.sections.subscriptions.active = 'no';
                     p.sections.subscriptions.fields = {};
-                    if( M.curBusiness.modules['ciniki.subscriptions'] != null 
-                        && M.curBusiness.modules['ciniki.mail'] != null 
-                        && (M.curBusiness.modules['ciniki.blog'].flags&0x7000) > 0  // Blog subscriptions active
+                    if( M.curTenant.modules['ciniki.subscriptions'] != null 
+                        && M.curTenant.modules['ciniki.mail'] != null 
+                        && (M.curTenant.modules['ciniki.blog'].flags&0x7000) > 0  // Blog subscriptions active
                         ) {
                         if( rsp.post.subscriptions != null && rsp.post.subscriptions.length > 0 ) {
                             p.sections.subscriptions.active = 'yes';
@@ -186,7 +186,7 @@ function ciniki_blog_postedit() {
                         }
                     }
                     p.sections._tags.fields.tags.tags = [];
-                    if( (M.curBusiness.modules['ciniki.blog'].flags&0x444)>0 && rsp.tags != null ) {
+                    if( (M.curTenant.modules['ciniki.blog'].flags&0x444)>0 && rsp.tags != null ) {
                         for(i in rsp.tags) {
                             p.sections._tags.fields.tags.tags.push(rsp.tags[i].tag.name);
                         }
@@ -208,8 +208,8 @@ function ciniki_blog_postedit() {
                 });
 /*      } else {
             this.edit.post_id = 0;
-            if( (M.curBusiness.modules['ciniki.blog'].flags&0x0666)>0 ) {
-                M.api.getJSONCb('ciniki.blog.postTags', {'business_id':M.curBusinessID}, function(rsp) {
+            if( (M.curTenant.modules['ciniki.blog'].flags&0x0666)>0 ) {
+                M.api.getJSONCb('ciniki.blog.postTags', {'tnid':M.curTenantID}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
@@ -235,7 +235,7 @@ function ciniki_blog_postedit() {
                 });
             } else if( this.edit.sections._webcollections.active == 'yes' ) {
                 // Get the list of collections
-                M.api.getJSONCb('ciniki.web.collectionList', {'business_id':M.curBusinessID}, function(rsp) {
+                M.api.getJSONCb('ciniki.web.collectionList', {'tnid':M.curTenantID}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
@@ -259,7 +259,7 @@ function ciniki_blog_postedit() {
             var c = this.edit.serializeForm('no');
             if( c != '' ) {
                 M.api.postJSONCb('ciniki.blog.postUpdate',
-                    {'business_id':M.curBusinessID, 'post_id':this.edit.post_id}, c, function(rsp) {
+                    {'tnid':M.curTenantID, 'post_id':this.edit.post_id}, c, function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
                             return false;
@@ -275,7 +275,7 @@ function ciniki_blog_postedit() {
                 c += '&publish_to=' + this.edit.data.publish_to;
             }
             M.api.postJSONCb('ciniki.blog.postAdd',
-                {'business_id':M.curBusinessID}, c, function(rsp) {
+                {'tnid':M.curTenantID}, c, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
@@ -287,7 +287,7 @@ function ciniki_blog_postedit() {
 
     this.deletePost = function() {
         if( confirm('Are you sure you want to delete this post? All information about it will be removed and unrecoverable.') ) {
-            M.api.getJSONCb('ciniki.blog.postDelete', {'business_id':M.curBusinessID, 
+            M.api.getJSONCb('ciniki.blog.postDelete', {'tnid':M.curTenantID, 
                 'post_id':M.ciniki_blog_postedit.edit.post_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);

@@ -2,7 +2,7 @@
 //
 // Description
 // -----------
-// This method will add a new post to a business blog.
+// This method will add a new post to a tenant blog.
 //
 // Arguments
 // ---------
@@ -16,7 +16,7 @@ function ciniki_blog_postAdd(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'format'=>array('required'=>'no', 'default'=>'10', 'blank'=>'no', 'name'=>'Format'),
         'title'=>array('required'=>'yes', 'trimblanks'=>'yes', 'blank'=>'no', 'name'=>'Title'),
         'subtitle'=>array('required'=>'no', 'trimblanks'=>'yes', 'blank'=>'yes', 'name'=>'Subtitle'),
@@ -40,10 +40,10 @@ function ciniki_blog_postAdd(&$ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'private', 'checkAccess');
-    $rc = ciniki_blog_checkAccess($ciniki, $args['business_id'], 'ciniki.blog.postAdd'); 
+    $rc = ciniki_blog_checkAccess($ciniki, $args['tnid'], 'ciniki.blog.postAdd'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }
@@ -61,7 +61,7 @@ function ciniki_blog_postAdd(&$ciniki) {
     $strsql = "SELECT id "
         . "FROM ciniki_blog_posts "
         . "WHERE permalink = '" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "' "
-        . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.blog', 'post');
     if( $rc['stat'] != 'ok' ) {
@@ -74,8 +74,8 @@ function ciniki_blog_postAdd(&$ciniki) {
     //
     // Check if publish_date was specified, and convert to local time and get year and month
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-    $rc = ciniki_businesses_intlSettings($ciniki, $args['business_id']);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $args['tnid']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -105,7 +105,7 @@ function ciniki_blog_postAdd(&$ciniki) {
     // Add the post
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-    $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.blog.post', $args, 0x04);
+    $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.blog.post', $args, 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
         return $rc;
@@ -117,7 +117,7 @@ function ciniki_blog_postAdd(&$ciniki) {
     //
     if( isset($args['categories']) ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsUpdate');
-        $rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.blog', 'tag', $args['business_id'],
+        $rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.blog', 'tag', $args['tnid'],
             'ciniki_blog_post_tags', 'ciniki_blog_history',
             'post_id', $post_id, 10, $args['categories']);
         if( $rc['stat'] != 'ok' ) {
@@ -131,7 +131,7 @@ function ciniki_blog_postAdd(&$ciniki) {
     //
     if( isset($args['tags']) ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsUpdate');
-        $rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.blog', 'tag', $args['business_id'],
+        $rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.blog', 'tag', $args['tnid'],
             'ciniki_blog_post_tags', 'ciniki_blog_history',
             'post_id', $post_id, 20, $args['tags']);
         if( $rc['stat'] != 'ok' ) {
@@ -143,12 +143,12 @@ function ciniki_blog_postAdd(&$ciniki) {
     //
     // If there are subscriptions, add them now
     //
-    if( isset($ciniki['business']['modules']['ciniki.subscriptions'])
-        && isset($ciniki['business']['modules']['ciniki.mail'])
-        && ($ciniki['business']['modules']['ciniki.blog']['flags']&0x7000) > 0  // Blog subscriptions enabled
+    if( isset($ciniki['tenant']['modules']['ciniki.subscriptions'])
+        && isset($ciniki['tenant']['modules']['ciniki.mail'])
+        && ($ciniki['tenant']['modules']['ciniki.blog']['flags']&0x7000) > 0  // Blog subscriptions enabled
         ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'mail', 'hooks', 'objectUpdateSubscriptions');
-        $rc = ciniki_mail_hooks_objectUpdateSubscriptions($ciniki, $args['business_id'], array(
+        $rc = ciniki_mail_hooks_objectUpdateSubscriptions($ciniki, $args['tnid'], array(
             'object'=>'ciniki.blog.post', 'object_id'=>$post_id));
         if( $rc['stat'] != 'ok' ) {
             ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
@@ -158,7 +158,7 @@ function ciniki_blog_postAdd(&$ciniki) {
         // Get the active list of subscriptions
         //
         ciniki_core_loadMethod($ciniki, 'ciniki', 'subscriptions', 'hooks', 'subscriptionList');
-        $rc = ciniki_subscriptions_hooks_subscriptionList($ciniki, $args['business_id'], array());
+        $rc = ciniki_subscriptions_hooks_subscriptionList($ciniki, $args['tnid'], array());
         if( $rc['stat'] != 'ok' ) {
             ciniki_core_dbTransactionRollback($ciniki, 'ciniki.blog');
             return $rc;
@@ -173,7 +173,7 @@ function ciniki_blog_postAdd(&$ciniki) {
                 if( isset($ciniki['request']['args']['subscription-' . $subscription_id]) 
                     && $ciniki['request']['args']['subscription-' . $subscription_id] == 'yes' 
                     ) {
-                    $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.blog.post_subscription', array(
+                    $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.blog.post_subscription', array(
                         'post_id'=>$post_id,
                         'subscription_id'=>$subscription_id,
                         'status'=>'10'), 0x04);
@@ -183,7 +183,7 @@ function ciniki_blog_postAdd(&$ciniki) {
                     }
                 }
 //              if( in_array($subscription_id, $args['subscriptions_ids']) ) {
-//                  $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.blog.post_subscription', array(
+//                  $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.blog.post_subscription', array(
 //                      'post_id'=>$post_id,
 //                      'subscription_id'=>$subscription_id,
 //                      'status'=>'10'), 0x04);
@@ -200,11 +200,11 @@ function ciniki_blog_postAdd(&$ciniki) {
     // If post was added ok, Check if any web collections to add
     //
     if( isset($args['webcollections'])
-        && isset($ciniki['business']['modules']['ciniki.web']) 
-        && ($ciniki['business']['modules']['ciniki.web']['flags']&0x08) == 0x08
+        && isset($ciniki['tenant']['modules']['ciniki.web']) 
+        && ($ciniki['tenant']['modules']['ciniki.web']['flags']&0x08) == 0x08
         ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'hooks', 'webCollectionUpdate');
-        $rc = ciniki_web_hooks_webCollectionUpdate($ciniki, $args['business_id'],
+        $rc = ciniki_web_hooks_webCollectionUpdate($ciniki, $args['tnid'],
             array('object'=>'ciniki.blog.post', 'object_id'=>$post_id, 
                 'collection_ids'=>$args['webcollections']));
         if( $rc['stat'] != 'ok' ) {
@@ -222,11 +222,11 @@ function ciniki_blog_postAdd(&$ciniki) {
     }
 
     //
-    // Update the last_change date in the business modules
+    // Update the last_change date in the tenant modules
     // Ignore the result, as we don't want to stop user updates if this fails.
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-    ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'blog');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'updateModuleChangeDate');
+    ciniki_tenants_updateModuleChangeDate($ciniki, $args['tnid'], 'ciniki', 'blog');
 
     return array('stat'=>'ok', 'id'=>$post_id);
 }

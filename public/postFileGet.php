@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business to file belongs to.
+// tnid:         The ID of the tenant to file belongs to.
 // file_id:             The ID of the file to get.
 //
 // Returns
@@ -20,7 +20,7 @@ function ciniki_blog_postFileGet($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'file_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'File'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
@@ -30,10 +30,10 @@ function ciniki_blog_postFileGet($ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'private', 'checkAccess');
-    $rc = ciniki_blog_checkAccess($ciniki, $args['business_id'], 'ciniki.blog.postFileGet'); 
+    $rc = ciniki_blog_checkAccess($ciniki, $args['tnid'], 'ciniki.blog.postFileGet'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -50,7 +50,7 @@ function ciniki_blog_postFileGet($ciniki) {
         . "ciniki_blog_post_files.permalink, "
         . "ciniki_blog_post_files.description "
         . "FROM ciniki_blog_post_files "
-        . "WHERE ciniki_blog_post_files.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE ciniki_blog_post_files.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND ciniki_blog_post_files.id = '" . ciniki_core_dbQuote($ciniki, $args['file_id']) . "' "
         . "";
 

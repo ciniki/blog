@@ -7,7 +7,7 @@
 // Returns
 // -------
 //
-function ciniki_blog_web_fileDownload($ciniki, $business_id, $post_permalink, $file_permalink, $blogtype) {
+function ciniki_blog_web_fileDownload($ciniki, $tnid, $post_permalink, $file_permalink, $blogtype) {
 
     //
     // Get the file details
@@ -18,10 +18,10 @@ function ciniki_blog_web_fileDownload($ciniki, $business_id, $post_permalink, $f
         . "ciniki_blog_post_files.extension, "
         . "ciniki_blog_post_files.binary_content "
         . "FROM ciniki_blog_posts, ciniki_blog_post_files "
-        . "WHERE ciniki_blog_posts.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_blog_posts.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_blog_posts.permalink = '" . ciniki_core_dbQuote($ciniki, $post_permalink) . "' "
         . "AND ciniki_blog_posts.id = ciniki_blog_post_files.post_id "
-        . "AND ciniki_blog_post_files.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "AND ciniki_blog_post_files.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND CONCAT_WS('.', ciniki_blog_post_files.permalink, ciniki_blog_post_files.extension) = '" . ciniki_core_dbQuote($ciniki, $file_permalink) . "' "
         . "";
     if( $blogtype == 'memberblog' ) {
