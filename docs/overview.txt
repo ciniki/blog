@@ -1,1 +1,1 @@
-This module stores the blog posts for each business.
+This module stores the blog posts for each tenant.
