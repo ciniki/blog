@@ -218,6 +218,12 @@ function ciniki_blog_postDelete(&$ciniki) {
     $ciniki['syncqueue'][] = array('push'=>'ciniki.blog.post', 
         'args'=>array('delete_uuid'=>$uuid, 'delete_id'=>$args['post_id']));
 
+    //
+    // Update the web index if enabled
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'hookExec');
+    ciniki_core_hookExec($ciniki, $args['tnid'], 'ciniki', 'web', 'indexObject', array('object'=>'ciniki.blog.post', 'object_id'=>$args['post_id']));
+
     return array('stat'=>'ok');
 }
 ?>
