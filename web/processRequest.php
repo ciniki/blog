@@ -104,7 +104,11 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $tnid, $args) {
         }
     }
     if( count($page['breadcrumbs']) == 0 ) {
-        $page['breadcrumbs'][] = array('name'=>'Blog', 'url'=>$args['base_url']);
+        if( isset($settings['page-blog-name']) && $settings['page-blog-name'] != '' ) {
+            $page['breadcrumbs'][] = array('name'=>$settings['page-blog-name'], 'url'=>$args['base_url']);
+        } else {
+            $page['breadcrumbs'][] = array('name'=>'Blog', 'url'=>$args['base_url']);
+        }
     }
 
     $display = '';
