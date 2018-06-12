@@ -179,7 +179,9 @@ function ciniki_blog_web_posts($ciniki, $settings, $tnid, $args, $blogtype) {
     if( $blogtype == 'memberblog' ) {
         $strsql .= "AND (ciniki_blog_posts.publish_to&0x04) > 0 ";
         $strsql_count .= "AND (ciniki_blog_posts.publish_to&0x04) > 0 ";
-        if( isset($settings['page-memberblog-num-past-months']) && $settings['page-memberblog-num-past-months'] > 0 ) {
+        if( isset($settings['page-memberblog-num-past-months']) && $settings['page-memberblog-num-past-months'] > 0 
+            && (!isset($args['year']) && !isset($args['month'])) 
+            ) {
             $dt = new DateTime('now', new DateTimezone('UTC'));
             $dt->sub(new DateInterval('P' . preg_replace('/[^0-9]/', '', $settings['page-memberblog-num-past-months']) . 'M'));
             $strsql .= "AND ciniki_blog_posts.publish_date > '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "' ";
@@ -188,7 +190,9 @@ function ciniki_blog_web_posts($ciniki, $settings, $tnid, $args, $blogtype) {
     } else {
         $strsql .= "AND (ciniki_blog_posts.publish_to&0x01) > 0 ";
         $strsql_count .= "AND (ciniki_blog_posts.publish_to&0x01) > 0 ";
-        if( isset($settings['page-blog-num-past-months']) && $settings['page-blog-num-past-months'] > 0 ) {
+        if( isset($settings['page-blog-num-past-months']) && $settings['page-blog-num-past-months'] > 0 
+            && (!isset($args['year']) && !isset($args['month'])) 
+            ) {
             $dt = new DateTime('now', new DateTimezone('UTC'));
             $dt->sub(new DateInterval('P' . preg_replace('/[^0-9]/', '', $settings['page-blog-num-past-months']) . 'M'));
             $strsql .= "AND ciniki_blog_posts.publish_date > '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "' ";

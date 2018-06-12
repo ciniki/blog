@@ -279,8 +279,9 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $tnid, $args) {
             // Get the items for the specified category
             //
             ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'posts');
-            $rc = ciniki_blog_web_posts($ciniki, $settings, $tnid, array('year'=>$year, 'month'=>$month, 
-                'offset'=>(($page_post_cur-1)*$page_post_limit), 'limit'=>$page_post_limit+1), $args['blogtype']);
+            //$rc = ciniki_blog_web_posts($ciniki, $settings, $tnid, array('year'=>$year, 'month'=>$month, 
+            //    'offset'=>(($page_post_cur-1)*$page_post_limit), 'limit'=>$page_post_limit+1), $args['blogtype']);
+            $rc = ciniki_blog_web_posts($ciniki, $settings, $tnid, array('year'=>$year, 'month'=>$month), $args['blogtype']);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }
@@ -340,13 +341,15 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $tnid, $args) {
                 'image_version'=>((isset($settings['page-blog-list-image-version'])&&$settings['page-blog-list-image-version']=='original')?'original':'thumbnail'),
                 'image_width'=>'600',
                 'more_button_text'=>(isset($settings['page-blog-more-button-text'])?$settings['page-blog-more-button-text']:''),
-                'base_url'=>$args['base_url'], 'noimage'=>'yes', 'limit'=>$page_post_limit, 'list'=>$posts,
+                'base_url'=>$args['base_url'], 'noimage'=>'yes', 
+                'limit'=>($display != 'archive' ? $page_post_limit : 0), 
+                'list'=>$posts,
                 'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
             
             //
             // check if pagination is required
             //
-            if( $total_num_posts > $page_post_limit ) {
+            if( $display != 'archive' && $total_num_posts > $page_post_limit ) {
                 $page['blocks'][] = array('type'=>'multipagenav', 'cur_page'=>$page_post_cur, 'total_pages'=>ceil($total_num_posts/$page_post_limit),
                     'base_url'=>$base_url);
             }
