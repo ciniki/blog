@@ -587,7 +587,6 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $tnid, $args) {
         if( $rc['stat'] != 'ok' ) {
             return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.56', 'msg'=>'Unable to get list of categories', 'err'=>$rc['err']));
         }
-        $page['blocks'][] = array('type'=>'content', 'html'=>"<pre>" . print_r($rc, true) . "</pre>");
         if( isset($rc['types'][10]['tags']) ) {
             $page['submenu'] = array();
             foreach($rc['types'][10]['tags'] as $tag) {
