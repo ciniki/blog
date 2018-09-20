@@ -581,6 +581,20 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $tnid, $args) {
             }
         }
     }
+    elseif( isset($settings['page-blog-submenu']) && $settings['page-blog-submenu'] == 'categories' ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'tags');
+        $rc = ciniki_blog_web_tags($ciniki, $settings, $tnid, 10, $args['blogtype']);
+        if( $rc['stat'] != 'ok' ) {
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.56', 'msg'=>'Unable to get list of categories', 'err'=>$rc['err']));
+        }
+        $page['blocks'][] = array('type'=>'content', 'html'=>"<pre>" . print_r($rc, true) . "</pre>");
+        if( isset($rc['types'][10]['tags']) ) {
+            $page['submenu'] = array();
+            foreach($rc['types'][10]['tags'] as $tag) {
+                $page['submenu'][] = array('name'=>$tag['name'], 'url'=>$args['base_url'] . '/category/' . $tag['permalink']);
+            }
+        }
+    }
 
     //
     // Setup the sidebar
