@@ -83,7 +83,7 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $tnid, $args) {
     } else {
         $page_post_limit = $args['post_limit'];
     }
-    if( isset($ciniki['request']['args']['page']) && $ciniki['request']['args']['page'] != '' ) {
+    if( isset($ciniki['request']['args']['page']) && $ciniki['request']['args']['page'] != '' && is_numeric($ciniki['request']['args']['page']) ) {
         $page_post_cur = $ciniki['request']['args']['page'];
     } else {
         $page_post_cur = 1;
