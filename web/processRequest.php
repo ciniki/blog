@@ -296,7 +296,10 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $tnid, $args) {
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }
-            $tag_name = $ciniki['request']['uri_split'][1];
+            if( !isset($rc['tag']['tag_name']) ) {
+                return array('stat'=>'404', 'err'=>array('code'=>'ciniki.blog.57', 'msg'=>"We're sorry, the page you requested does not exist."));
+            }
+            //$tag_name = $ciniki['request']['uri_split'][1];
             $tag_name = $rc['tag']['tag_name'];
             $page['title'] = $tag_name;
             $page['breadcrumbs'][] = array('name'=>$tag_types[$type_permalink]['name'], 'url'=>$args['base_url'] . '/' . $type_permalink);
@@ -562,7 +565,7 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $tnid, $args) {
     // Return error if nothing found to display
     //
     else {
-        return array('stat'=>'404', 'err'=>array('code'=>'ciniki.blog.50', 'msg'=>"We're sorry, the page you requested."));
+        return array('stat'=>'404', 'err'=>array('code'=>'ciniki.blog.50', 'msg'=>"We're sorry, the page you requested does not exist."));
     }
 
     //

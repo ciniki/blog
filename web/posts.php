@@ -205,10 +205,10 @@ function ciniki_blog_web_posts($ciniki, $settings, $tnid, $args, $blogtype) {
     } else {
         $strsql .= "ORDER BY ciniki_blog_posts.publish_date DESC, ciniki_blog_posts.id ";
     }
-    if( isset($args['offset']) && $args['offset'] > 0 
+    if( isset($args['offset']) && $args['offset'] > 0 && $args['offset'] < 1000000000
         && isset($args['limit']) && $args['limit'] > 0 ) {
         $strsql .= "LIMIT " . $args['offset'] . ', ' . $args['limit'];
-    } elseif( isset($args['limit']) && $args['limit'] > 0 ) {
+    } elseif( isset($args['limit']) && $args['limit'] > 0 && $args['limit'] < 1000000000 ) {
         $strsql .= "LIMIT " . $args['limit'];
     }
     
