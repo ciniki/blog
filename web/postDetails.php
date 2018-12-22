@@ -180,6 +180,51 @@ function ciniki_blog_web_postDetails($ciniki, $settings, $tnid, $args) {
         $post['links'] = array();
     }
 
+    //
+    // Check for any audio files
+    //
+    $strsql = "SELECT ciniki_blog_post_audio.id, "
+        . "ciniki_blog_post_audio.name, "
+        . "ciniki_blog_post_audio.sequence, "
+        . "ciniki_blog_post_audio.flags, "
+        . "ciniki_blog_post_audio.mp3_audio_id, "
+        . "ciniki_blog_post_audio.wav_audio_id, "
+        . "ciniki_blog_post_audio.ogg_audio_id, "
+        . "ciniki_audio.id AS audio_id, "
+        . "ciniki_audio.original_filename, "
+        . "ciniki_audio.type AS audio_type, "
+        . "ciniki_audio.type AS extension, "
+        . "ciniki_audio.uuid AS audio_uuid, "
+        . "ciniki_blog_post_audio.description "
+        . "FROM ciniki_blog_post_audio "
+        . "LEFT JOIN ciniki_audio ON ("
+            . "(ciniki_blog_post_audio.mp3_audio_id = ciniki_audio.id "
+                . "OR ciniki_blog_post_audio.wav_audio_id = ciniki_audio.id "
+                . "OR ciniki_blog_post_audio.ogg_audio_id = ciniki_audio.id "
+                . ") "
+            . "AND ciniki_audio.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+            . ") "
+        . "WHERE ciniki_blog_post_audio.post_id = '" . ciniki_core_dbQuote($ciniki, $post['id']) . "' "
+        . "AND ciniki_blog_post_audio.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+        . "AND (ciniki_blog_post_audio.flags&0x03) = 0x01 "     // Visible and processed
+        . "ORDER BY ciniki_blog_post_audio.sequence, ciniki_blog_post_audio.name, "
+            . "ciniki_blog_post_audio.date_added, ciniki_audio.type DESC "
+        . "";
+    $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.blog', array(
+        array('container'=>'audio', 'fname'=>'id',
+            'fields'=>array('id', 'name', 'sequence', 'flags', 
+                'mp3_audio_id', 'wav_audio_id', 'ogg_audio_id', 'description')),
+        array('container'=>'formats', 'fname'=>'audio_id',
+            'fields'=>array('id'=>'audio_id', 'uuid'=>'audio_uuid', 'type'=>'audio_type', 
+                'original_filename', 'extension'),
+            'maps'=>array('extension'=>array('20'=>'ogg', '30'=>'wav', '40'=>'mp3')),
+            ),
+        ));
+    if( $rc['stat'] != 'ok' ) { 
+        return $rc;
+    }
+    $post['audio'] = isset($rc['audio']) ? $rc['audio'] : array();
+
     return array('stat'=>'ok', 'post'=>$post);
 }
 ?>

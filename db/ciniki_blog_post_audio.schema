@@ -1,0 +1,59 @@
+#
+# Description
+# -----------
+# This table stores the audio samples for a blog posts.  
+#
+# Three audio file versions can be references, each are supported by different browsers.
+#
+# Fields
+# ------
+# id:               The ID of the blog post audio.
+# uuid:             The Universal Unique ID.
+# tnid:             The ID of the tenant the artistprofile is attached to.
+#
+# post_id:          The ID of the blog post the audio is attached to.
+# 
+# name:             The name for the audio file.
+# permalink:        The permalink for the file, to be used in the url.  This is based
+#                   on the name or the uuid if name is blank.
+#
+# sequence:         The order the audio file should appear in the list for the blog.
+#
+# flags:            The flags for audio.  
+#
+#                       0x01 - Visible (Sample is available on website)
+#                       0x02 - Audio requires processing (Flag will be removed when done)
+#                       0x04 - 
+#                       0x08 - 
+#
+# org_filename:     The original name of the uploaded file.
+#
+# mp3_audio_id:     The ID of the MP3 audio file in ciniki_audio.
+# wav_audio_id:     The ID of the WAV audio file in ciniki_audio.
+# ogg_audio_id:     The ID of the OGG audio file in ciniki_audio.
+#
+# description:      The description for the audio.
+#
+# date_added:       The UTC date and time the audio was added to the artist profile.
+# last_updated:     The UTC date and time the audio was last updated.
+#
+create table ciniki_blog_post_audio (
+    id int not null auto_increment,
+    uuid char(36) not null,
+    tnid int not null,
+    post_id int not null,
+    name varchar(200) not null,
+    permalink varchar(200) not null,
+    sequence tinyint unsigned not null,
+    flags tinyint unsigned not null,
+    org_filename varchar(250) not null,
+    mp3_audio_id int not null,
+    wav_audio_id int not null,
+    ogg_audio_id int not null,
+    description varchar(6000) not null,
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (id),
+    index (post_id, name),
+    index sync (tnid, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.01';

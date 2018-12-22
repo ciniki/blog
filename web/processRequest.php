@@ -529,6 +529,9 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $tnid, $args) {
             if( isset($post['files']) && count($post['files']) > 0 ) {
                 $page['blocks'][] = array('type'=>'files', 'title'=>'', 'section'=>'files', 'base_url'=>$base_url . '/download', 'files'=>$post['files']);
             }
+            if( isset($post['audio']) && count($post['audio']) > 0 ) {
+                $page['blocks'][] = array('type'=>'audiolist', 'section'=>'audio', 'audio'=>$post['audio'], 'titles'=>'yes');
+            }
             if( isset($post['links']) && count($post['links']) > 0 ) {
                 $page['blocks'][] = array('type'=>'links', 'section'=>'links', 'title'=>'', 'links'=>$post['links']);
             }

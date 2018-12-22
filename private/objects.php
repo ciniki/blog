@@ -87,6 +87,26 @@ function ciniki_blog_objects($ciniki) {
             ),
         'history_table'=>'ciniki_blog_history',
         );
+    $objects['postaudio'] = array(
+        'name' => 'Post Audio',
+        'sync' => 'yes',
+        'o_name' => 'audio',
+        'o_container' => 'audio',
+        'table' => 'ciniki_blog_post_audio',
+        'fields' => array(
+            'post_id' => array('name'=>'Post', 'ref'=>'ciniki.blog.post'),
+            'name' => array('name'=>'Name'),
+            'permalink' => array('name'=>'Permalink', 'default'=>''),
+            'sequence' => array('name'=>'Order', 'default'=>'1'),
+            'flags' => array('name'=>'Options', 'default'=>'0'),
+            'org_filename'=>array('name'=>'Original Filename', 'default'=>''),
+            'mp3_audio_id' => array('name'=>'MP3 Audio', 'ref'=>'ciniki.audio.file', 'default'=>'0',),
+            'wav_audio_id' => array('name'=>'WAV Audio', 'ref'=>'ciniki.audio.file', 'default'=>'0',),
+            'ogg_audio_id' => array('name'=>'OGG Audio', 'ref'=>'ciniki.audio.file', 'default'=>'0',),
+            'description' => array('name'=>'Description', 'default'=>''),
+            ),
+        'history_table' => 'ciniki_blog_history',
+        );
     $objects['postref'] = array(
         'name'=>'Post Reference',
         'sync'=>'yes',

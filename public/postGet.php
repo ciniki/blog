@@ -21,6 +21,7 @@ function ciniki_blog_postGet($ciniki) {
         'images'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Images'),
         'files'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Files'),
         'links'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Links'),
+        'audio'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Audio'),
         'refs'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'References'),
         'categories'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Categories'),
         'tags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Tags'),
@@ -260,6 +261,26 @@ function ciniki_blog_postGet($ciniki) {
             if( isset($rc['recipes']) ) {
                 $post['recipes'] = $rc['recipes'];
             }
+        }
+
+        //
+        // Get any audio files for the post
+        //
+        if( isset($args['audio']) && $args['audio'] == 'yes' ) {
+            $strsql = "SELECT id, name, flags, description "
+                . "FROM ciniki_blog_post_audio "
+                . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+                . "AND ciniki_blog_post_audio.post_id = '" . ciniki_core_dbQuote($ciniki, $args['post_id']) . "' "
+                . "";
+            ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+            $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.blog', array(
+                array('container'=>'audio', 'fname'=>'id', 
+                    'fields'=>array('id', 'name', 'flags', 'description')),
+            ));
+            if( $rc['stat'] != 'ok' ) {
+                return $rc;
+            }
+            $post['audio'] = isset($rc['audio']) ? $rc['audio'] : array();
         }
     } else {
         //
