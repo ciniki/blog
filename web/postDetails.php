@@ -183,7 +183,7 @@ function ciniki_blog_web_postDetails($ciniki, $settings, $tnid, $args) {
     //
     // Check for any audio files
     //
-    if( isset($ciniki['tenant']['modules'][$module]) ) {
+    if( isset($ciniki['tenant']['modules']['ciniki.blog']) ) {
         $strsql = "SELECT ciniki_blog_post_audio.id, "
             . "ciniki_blog_post_audio.name, "
             . "ciniki_blog_post_audio.sequence, "
