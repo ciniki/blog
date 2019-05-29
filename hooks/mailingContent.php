@@ -86,7 +86,16 @@ function ciniki_blog_hooks_mailingContent($ciniki, $tnid, $args) {
         // Build the link back text/url
         //
         if( $post['content'] != '' ) {
-            $post['linkback'] = array('text'=>'View full article online', 'url'=>'/blog/' . $post['permalink']);
+            ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'indexModuleBaseURL');
+            $rc = ciniki_web_indexModuleBaseURL($ciniki, $tnid, 'ciniki.blog');
+            if( $rc['stat'] != 'ok' ) {
+                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.84', 'msg'=>'Error looking up url', 'err'=>$rc['err']));
+            }
+            if( isset($rc['base_url']) && $rc['base_url'] != '' ) {
+                $post['linkback'] = array('text'=>'View full article online', 'url'=>$rc['base_url'] . '/' . $post['permalink']);
+            } else {
+                $post['linkback'] = array('text'=>'View full article online', 'url'=>'/blog/' . $post['permalink']);
+            }
         }
 
         //
