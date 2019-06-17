@@ -152,9 +152,9 @@ function ciniki_blog_web_ciListPosts($ciniki, $settings, $tnid, $args, $blogtype
     $strsql .= "ORDER BY ciniki_blog_posts.publish_date DESC ";
     if( isset($args['offset']) && $args['offset'] > 0 && $args['offset'] < 1000000000
         && isset($args['limit']) && $args['limit'] > 0 ) {
-        $strsql .= "LIMIT " . $args['offset'] . ', ' . $args['limit'];
+        $strsql .= "LIMIT " . intval($args['offset']) . ', ' . intval($args['limit']);
     } elseif( isset($args['limit']) && $args['limit'] > 0 && $args['limit'] < 1000000000 ) {
-        $strsql .= "LIMIT " . $args['limit'];
+        $strsql .= "LIMIT " . intval($args['limit']);
     }
 
     //

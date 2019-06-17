@@ -207,9 +207,9 @@ function ciniki_blog_web_posts($ciniki, $settings, $tnid, $args, $blogtype) {
     }
     if( isset($args['offset']) && $args['offset'] > 0 && $args['offset'] < 1000000000
         && isset($args['limit']) && $args['limit'] > 0 ) {
-        $strsql .= "LIMIT " . $args['offset'] . ', ' . $args['limit'];
+        $strsql .= "LIMIT " . intval($args['offset']) . ', ' . intval($args['limit']);
     } elseif( isset($args['limit']) && $args['limit'] > 0 && $args['limit'] < 1000000000 ) {
-        $strsql .= "LIMIT " . $args['limit'];
+        $strsql .= "LIMIT " . intval($args['limit']);
     }
     
     //

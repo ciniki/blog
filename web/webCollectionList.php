@@ -63,9 +63,9 @@ function ciniki_blog_web_webCollectionList($ciniki, $settings, $tnid, $args, $bl
     $strsql .= "ORDER BY ciniki_blog_posts.publish_date DESC, id ";
     if( isset($args['offset']) && $args['offset'] > 0 
         && isset($args['limit']) && $args['limit'] > 0 ) {
-        $strsql .= "LIMIT " . $args['offset'] . ', ' . $args['limit'];
+        $strsql .= "LIMIT " . intval($args['offset']) . ', ' . intval($args['limit']);
     } elseif( isset($args['limit']) && $args['limit'] > 0 ) {
-        $strsql .= "LIMIT " . $args['limit'];
+        $strsql .= "LIMIT " . intval($args['limit']);
     }
 
     //
