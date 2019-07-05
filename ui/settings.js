@@ -35,7 +35,7 @@ function ciniki_blog_settings() {
             });
     }
     this.main.save = function() {
-        var c = this.main.serializeForm('no');
+        var c = this.serializeForm('no');
         if( c != '' ) {
             var rsp = M.api.postJSONCb('ciniki.blog.settingsUpdate', 
                 {'tnid':M.curTenantID}, c, function(rsp) {
