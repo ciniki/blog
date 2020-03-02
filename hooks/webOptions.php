@@ -77,14 +77,21 @@ function ciniki_blog_hooks_webOptions(&$ciniki, $tnid, $args) {
     }
 
     $options[] = array(
-        'label'=>'Image Size',
-        'setting'=>'page-blog-list-image-version', 
+        'label'=>'Thumbnail Format',
+        'setting'=>'page-blog-thumbnail-format', 
         'type'=>'toggle',
-        'value'=>(isset($settings['page-blog-list-image-version'])?$settings['page-blog-list-image-version']:'thumbnail'),
+        'value'=>(isset($settings['page-blog-thumbnail-format'])?$settings['page-blog-thumbnail-format']:'thumbnail'),
         'toggles'=>array(
-            array('value'=>'thumbnail', 'label'=>'Square'),
-            array('value'=>'original', 'label'=>'Original'),
+            array('value'=>'square-cropped', 'label'=>'Cropped'),
+            array('value'=>'square-padded', 'label'=>'Padded'),
             ),
+        );
+
+    $options[] = array(
+        'label'=>'Padding Color',
+        'setting'=>'page-blog-thumbnail-padding-color', 
+        'type'=>'colour',
+        'value'=>(isset($settings['page-blog-thumbnail-padding-color'])?$settings['page-blog-thumbnail-padding-color']:'#ffffff'),
         );
 
     $options[] = array(
@@ -96,6 +103,14 @@ function ciniki_blog_hooks_webOptions(&$ciniki, $tnid, $args) {
             array('value'=>'no', 'label'=>'No'),
             array('value'=>'yes', 'label'=>'Yes'),
             ),
+    );
+
+    $options[] = array(
+        'label'=>'Number of Past Months',
+        'setting'=>'page-blog-num-past-months', 
+        'type'=>'text',
+        'size'=>'small',
+        'value'=>(isset($settings['page-blog-num-past-months'])?$settings['page-blog-num-past-months']:'no'),
     );
 
     $options[] = array(

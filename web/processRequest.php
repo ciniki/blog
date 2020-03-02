@@ -341,7 +341,8 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $tnid, $args) {
             // Setup the listing block
             //
             $page['blocks'][] = array('type'=>'imagelist', 
-                'image_version'=>((isset($settings['page-blog-list-image-version'])&&$settings['page-blog-list-image-version']=='original')?'original':'thumbnail'),
+//                'image_version'=>((isset($settings['page-blog-list-image-version'])&&$settings['page-blog-list-image-version']=='original')?'original':'thumbnail'),
+                'image_version'=>((isset($settings['page-blog-thumbnail-format'])&&$settings['page-blog-thumbnail-format']=='square-padded')?'original':'thumbnail'),
                 'image_width'=>'600',
                 'more_button_text'=>(isset($settings['page-blog-more-button-text'])?$settings['page-blog-more-button-text']:''),
                 'base_url'=>$args['base_url'], 'noimage'=>'yes', 
@@ -409,7 +410,8 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $tnid, $args) {
         } elseif( count($tags) > 0 ) {
             if( isset($settings['page-blog-categories-format']) && $settings['page-blog-categories-format'] == 'tagimagelist' ) {
                 $page['blocks'][] = array('type'=>'tagimagelist', 'base_url'=>$base_url, 'tags'=>$tags,
-                    'image_version'=>((isset($settings['page-blog-list-image-version'])&&$settings['page-blog-list-image-version']=='original')?'original':'thumbnail'),
+                //    'image_version'=>((isset($settings['page-blog-list-image-version'])&&$settings['page-blog-list-image-version']=='original')?'original':'thumbnail'),
+                    'image_version'=>((isset($settings['page-blog-thumbnail-format'])&&$settings['page-blog-thumbnail-format']=='square-padded')?'original':'thumbnail'),
                     'image_width'=>'400',
                     'noimage'=>'yes',
                     'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
@@ -627,7 +629,8 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $tnid, $args) {
                 }
             }
             $page['sidebar'][] = array('type'=>'imagelist', 'title'=>'Latest posts',
-                'image_version'=>((isset($settings['page-blog-list-image-version'])&&$settings['page-blog-list-image-version']=='original')?'original':'thumbnail'),
+                //'image_version'=>((isset($settings['page-blog-list-image-version'])&&$settings['page-blog-list-image-version']=='original')?'original':'thumbnail'),
+                'image_version'=>((isset($settings['page-blog-thumbnail-format'])&&$settings['page-blog-thumbnail-format']=='square-padded')?'original':'thumbnail'),
                 'image_width'=>'400',
                 'more_button_text'=>(isset($settings['page-blog-more-button-text'])?$settings['page-blog-more-button-text']:''),
                 'base_url'=>$args['base_url'], 'noimage'=>'yes', 'list'=>$posts,

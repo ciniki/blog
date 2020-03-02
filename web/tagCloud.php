@@ -31,6 +31,7 @@ function ciniki_blog_web_tagCloud($ciniki, $settings, $tnid, $type, $blogtype) {
 
     //
     // Build the query to get the tags
+    //
     $strsql = "SELECT ciniki_blog_post_tags.tag_name, "
         . "ciniki_blog_post_tags.permalink, "
         . "COUNT(ciniki_blog_posts.id) AS num_tags "
@@ -43,12 +44,29 @@ function ciniki_blog_web_tagCloud($ciniki, $settings, $tnid, $type, $blogtype) {
         . "";
     if( $blogtype == 'memberblog' ) {
         $strsql .= "AND (ciniki_blog_posts.publish_to&0x04) > 0 ";
+        if( isset($settings['page-memberblog-num-past-months']) && $settings['page-memberblog-num-past-months'] > 0 
+            && (!isset($args['year']) && !isset($args['month'])) 
+            ) {
+            $dt = new DateTime('now', new DateTimezone('UTC'));
+            $dt->sub(new DateInterval('P' . preg_replace('/[^0-9]/', '', $settings['page-memberblog-num-past-months']) . 'M'));
+            $strsql .= "AND ciniki_blog_posts.publish_date > '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "' ";
+            $strsql_count .= "AND ciniki_blog_posts.publish_date > '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "' ";
+        }
     } else {
         $strsql .= "AND (ciniki_blog_posts.publish_to&0x01) > 0 ";
+        if( isset($settings['page-blog-num-past-months']) && $settings['page-blog-num-past-months'] > 0 
+            && (!isset($args['year']) && !isset($args['month'])) 
+            ) {
+            $dt = new DateTime('now', new DateTimezone('UTC'));
+            $dt->sub(new DateInterval('P' . preg_replace('/[^0-9]/', '', $settings['page-blog-num-past-months']) . 'M'));
+            $strsql .= "AND ciniki_blog_posts.publish_date > '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "' ";
+            $strsql_count .= "AND ciniki_blog_posts.publish_date > '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "' ";
+        }
     }
     $strsql .= "GROUP BY tag_name "
         . "ORDER BY tag_name "
         . "";
+
     //
     // Get the list of posts, sorted by publish_date for use in the web CI List Categories
     //

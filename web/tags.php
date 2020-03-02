@@ -31,9 +31,25 @@ function ciniki_blog_web_tags($ciniki, $settings, $tnid, $tag_type, $blogtype) {
         . "AND ciniki_blog_posts.publish_date < UTC_TIMESTAMP() "
         . "";
     if( $blogtype == 'memberblog' ) {
-        $strsql .= "AND (ciniki_blog_posts.publish_to&0x04) = 0x04 ";
+        $strsql .= "AND (ciniki_blog_posts.publish_to&0x04) > 0 ";
+        if( isset($settings['page-memberblog-num-past-months']) && $settings['page-memberblog-num-past-months'] > 0 
+            && (!isset($args['year']) && !isset($args['month'])) 
+            ) {
+            $dt = new DateTime('now', new DateTimezone('UTC'));
+            $dt->sub(new DateInterval('P' . preg_replace('/[^0-9]/', '', $settings['page-memberblog-num-past-months']) . 'M'));
+            $strsql .= "AND ciniki_blog_posts.publish_date > '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "' ";
+            $strsql_count .= "AND ciniki_blog_posts.publish_date > '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "' ";
+        }
     } else {
-        $strsql .= "AND (ciniki_blog_posts.publish_to&0x01) = 0x01 ";
+        $strsql .= "AND (ciniki_blog_posts.publish_to&0x01) > 0 ";
+        if( isset($settings['page-blog-num-past-months']) && $settings['page-blog-num-past-months'] > 0 
+            && (!isset($args['year']) && !isset($args['month'])) 
+            ) {
+            $dt = new DateTime('now', new DateTimezone('UTC'));
+            $dt->sub(new DateInterval('P' . preg_replace('/[^0-9]/', '', $settings['page-blog-num-past-months']) . 'M'));
+            $strsql .= "AND ciniki_blog_posts.publish_date > '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "' ";
+            $strsql_count .= "AND ciniki_blog_posts.publish_date > '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "' ";
+        }
     }
     $strsql .= "GROUP BY ciniki_blog_post_tags.tag_type, ciniki_blog_post_tags.tag_name "
         . "ORDER BY ciniki_blog_post_tags.tag_type, ciniki_blog_post_tags.tag_name, ciniki_blog_posts.primary_image_id ASC, ciniki_blog_posts.date_added DESC "
