@@ -16,79 +16,109 @@ function ciniki_blog_postedit() {
 //      '2':{'name':'Customers'},
         '3':{'name':'Members'},
         };
-    this.init = function() {
-        //
-        // The edit panel
-        //
-        this.edit = new M.panel('Blog Post',
-            'ciniki_blog_postedit', 'edit',
-            'mc', 'medium mediumaside', 'sectioned', 'ciniki.blog.postedit.edit');
-        this.edit.data = {};
-        this.edit.post_id = 0;
-        this.edit.blogtype = 'blog';
+
+    //
+    // The edit panel
+    //
+    this.edit = new M.panel('Blog Post',
+        'ciniki_blog_postedit', 'edit',
+        'mc', 'medium mediumaside', 'sectioned', 'ciniki.blog.postedit.edit');
+    this.edit.data = {};
+    this.edit.post_id = 0;
+    this.edit.blogtype = 'blog';
 //      this.edit.formtab = 'generic';
 //      this.edit.formtabs = {'label':'', 'field':'type', 'tabs':{
 //          'generic':{'label':'Generic', 'field_id':1, 'form':'generic'},
 //          'winekit':{'label':'Wine Kit', 'field_id':64, 'form':'winekit'},
 //          }};
-        this.edit.forms = {};
-        this.edit.forms.generic = {
-            '_image':{'label':'', 'aside':'yes', 'type':'imageform', 'fields':{
-                'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 
-                    'controls':'all', 'history':'no'},
-                }},
-            '_image_caption':{'label':'', 'aside':'yes', 'fields':{
-                'primary_image_caption':{'label':'Caption', 'type':'text'},
-                }},
-            'info':{'label':'', 'aside':'yes', 'fields':{
-                'title':{'label':'Title', 'hint':'', 'type':'text'},
-                'subtitle':{'label':'Subtitle', 'hint':'', 'type':'text'},
-                'publish_date':{'label':'Date', 'type':'date', 'size':'medium'},
-                'status':{'label':'Status', 'type':'toggle', 'default':'10', 'toggles':this.statusOptions},
-                'publish_to':{'label':'Publish To', 'active':'no', 'type':'flags', 'none':'no', 'join':'yes', 'flags':this.publishtoFlags},
-                }},
-            'subscriptions':{'label':'Subscriptions', 'active':'no', 'aside':'yes', 'fields':{
-                }},
-            '_webcollections':{'label':'Web Collections', 'aside':'yes', 'active':'no', 'fields':{
-                'webcollections':{'label':'', 'hidelabel':'yes', 'type':'collection'},
-                }},
-            '_categories':{'label':'Categories', 'aside':'yes', 'visible':'no', 'fields':{
-                'categories':{'label':'', 'hidelabel':'yes', 'active':'no', 'type':'tags', 'tags':[], 'hint':'Enter a new category:'},
-                }},
-            '_tags':{'label':'Keywords', 'aside':'yes', 'visible':'no', 'fields':{
-                'tags':{'label':'', 'hidelabel':'yes', 'active':'no', 'type':'tags', 'tags':[], 'hint':'Enter a new tag:'},
-                }},
-            '_excerpt':{'label':'Synopsis', 'fields':{
-                'excerpt':{'label':'', 'hidelabel':'yes', 'hint':'', 'type':'textarea', 'size':'small'},
-                }},
-            '_content':{'label':'Post', 'fields':{
-                'content':{'label':'', 'hidelabel':'yes', 'hint':'', 'type':'textarea', 'size':'large'},
-                }},
-            '_buttons':{'label':'', 'buttons':{
-                'save':{'label':'Save', 'fn':'M.ciniki_blog_postedit.savePost();'},
-                'delete':{'label':'Delete', 'fn':'M.ciniki_blog_postedit.deletePost();'},
-                }},
-            };
-        this.edit.sections = this.edit.forms.generic;
-        this.edit.fieldValue = function(s, i, d) {
-            if( this.data[i] != null ) { return this.data[i]; }
-            return '';
+    this.edit.forms = {};
+    this.edit.forms.generic = {
+        '_image':{'label':'', 'aside':'yes', 'type':'imageform', 'fields':{
+            'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 
+                'controls':'all', 'history':'no'},
+            }},
+        '_image_caption':{'label':'', 'aside':'yes', 'fields':{
+            'primary_image_caption':{'label':'Caption', 'type':'text'},
+            }},
+        'info':{'label':'', 'aside':'yes', 'fields':{
+            'title':{'label':'Title', 'hint':'', 'required':'yes', 'type':'text'},
+            'subtitle':{'label':'Subtitle', 'hint':'', 'type':'text'},
+            'publish_date':{'label':'Date', 'type':'date', 'size':'medium'},
+            'status':{'label':'Status', 'type':'toggle', 'default':'10', 'toggles':this.statusOptions},
+            'publish_to':{'label':'Publish To', 'active':'no', 'type':'flags', 'none':'no', 'join':'yes', 'flags':this.publishtoFlags},
+            }},
+        'subscriptions':{'label':'Subscriptions', 'active':'no', 'aside':'yes', 'fields':{
+            }},
+        '_webcollections':{'label':'Web Collections', 'aside':'yes', 'active':'no', 'fields':{
+            'webcollections':{'label':'', 'hidelabel':'yes', 'type':'collection'},
+            }},
+        '_categories':{'label':'Categories', 'aside':'yes', 'visible':'no', 'fields':{
+            'categories':{'label':'', 'hidelabel':'yes', 'active':'no', 'type':'tags', 'tags':[], 'hint':'Enter a new category:'},
+            }},
+        '_tags':{'label':'Keywords', 'aside':'yes', 'visible':'no', 'fields':{
+            'tags':{'label':'', 'hidelabel':'yes', 'active':'no', 'type':'tags', 'tags':[], 'hint':'Enter a new tag:'},
+            }},
+        '_excerpt':{'label':'Synopsis', 'fields':{
+            'excerpt':{'label':'', 'hidelabel':'yes', 'hint':'', 'type':'textarea', 'size':'small'},
+            }},
+        '_content':{'label':'Post', 'fields':{
+            'content':{'label':'', 'hidelabel':'yes', 'hint':'', 'type':'textarea', 'size':'large'},
+            }},
+        '_buttons':{'label':'', 'buttons':{
+            'save':{'label':'Save', 'fn':'M.ciniki_blog_postedit.edit.save();'},
+            'delete':{'label':'Delete', 'fn':'M.ciniki_blog_postedit.deletePost();'},
+            }},
         };
-        this.edit.fieldHistoryArgs = function(s, i) {
-            return {'method':'ciniki.blog.postHistory', 'args':{'tnid':M.curTenantID,
-                'post_id':this.post_id, 'field':i}};
-        }
-        this.edit.addDropImage = function(iid) {
-            M.ciniki_blog_postedit.edit.setFieldValue('primary_image_id', iid, null, null);
-            return true;
-        };
-        this.edit.deleteImage = function(fid) {
-            this.setFieldValue(fid, 0, null, null);
-            return true;
-        };
-        this.edit.addButton('save', 'Save', 'M.ciniki_blog_postedit.savePost();');
-        this.edit.addClose('Cancel');
+    this.edit.sections = this.edit.forms.generic;
+    this.edit.fieldValue = function(s, i, d) {
+        if( this.data[i] != null ) { return this.data[i]; }
+        return '';
     };
+    this.edit.fieldHistoryArgs = function(s, i) {
+        return {'method':'ciniki.blog.postHistory', 'args':{'tnid':M.curTenantID,
+            'post_id':this.post_id, 'field':i}};
+    }
+    this.edit.addDropImage = function(iid) {
+        M.ciniki_blog_postedit.edit.setFieldValue('primary_image_id', iid, null, null);
+        return true;
+    };
+    this.edit.deleteImage = function(fid) {
+        this.setFieldValue(fid, 0, null, null);
+        return true;
+    };
+    this.edit.save = function() {
+        if( !this.checkForm() ) { return false; }
+        if( this.post_id > 0 ) {
+            var c = this.serializeForm('no');
+            if( c != '' ) {
+                M.api.postJSONCb('ciniki.blog.postUpdate',
+                    {'tnid':M.curTenantID, 'post_id':this.post_id}, c, function(rsp) {
+                        if( rsp.stat != 'ok' ) {
+                            M.api.err(rsp);
+                            return false;
+                        }
+                        M.ciniki_blog_postedit.edit.close();
+                    });
+            } else {
+                this.close();
+            }
+        } else {
+            var c = this.serializeForm('yes');
+            if( this.sections.info.fields.publish_to.active == 'no' ) {
+                c += '&publish_to=' + this.data.publish_to;
+            }
+            M.api.postJSONCb('ciniki.blog.postAdd',
+                {'tnid':M.curTenantID}, c, function(rsp) {
+                    if( rsp.stat != 'ok' ) {
+                        M.api.err(rsp);
+                        return false;
+                    }
+                    M.ciniki_blog_postedit.edit.close();
+                });
+        }
+    };
+    this.edit.addButton('save', 'Save', 'M.ciniki_blog_postedit.edit.save();');
+    this.edit.addClose('Cancel');
 
     this.start = function(cb, aP, aG) {
         args = {};
@@ -254,36 +284,6 @@ function ciniki_blog_postedit() {
         }*/
     };
 
-    this.savePost = function() {
-        if( this.edit.post_id > 0 ) {
-            var c = this.edit.serializeForm('no');
-            if( c != '' ) {
-                M.api.postJSONCb('ciniki.blog.postUpdate',
-                    {'tnid':M.curTenantID, 'post_id':this.edit.post_id}, c, function(rsp) {
-                        if( rsp.stat != 'ok' ) {
-                            M.api.err(rsp);
-                            return false;
-                        }
-                        M.ciniki_blog_postedit.edit.close();
-                    });
-            } else {
-                this.edit.close();
-            }
-        } else {
-            var c = this.edit.serializeForm('yes');
-            if( this.edit.sections.info.fields.publish_to.active == 'no' ) {
-                c += '&publish_to=' + this.edit.data.publish_to;
-            }
-            M.api.postJSONCb('ciniki.blog.postAdd',
-                {'tnid':M.curTenantID}, c, function(rsp) {
-                    if( rsp.stat != 'ok' ) {
-                        M.api.err(rsp);
-                        return false;
-                    }
-                    M.ciniki_blog_postedit.edit.close();
-                });
-        }
-    };
 
     this.deletePost = function() {
         if( confirm('Are you sure you want to delete this post? All information about it will be removed and unrecoverable.') ) {
