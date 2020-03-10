@@ -38,7 +38,6 @@ function ciniki_blog_web_tags($ciniki, $settings, $tnid, $tag_type, $blogtype) {
             $dt = new DateTime('now', new DateTimezone('UTC'));
             $dt->sub(new DateInterval('P' . preg_replace('/[^0-9]/', '', $settings['page-memberblog-num-past-months']) . 'M'));
             $strsql .= "AND ciniki_blog_posts.publish_date > '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "' ";
-            $strsql_count .= "AND ciniki_blog_posts.publish_date > '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "' ";
         }
     } else {
         $strsql .= "AND (ciniki_blog_posts.publish_to&0x01) > 0 ";
@@ -48,7 +47,6 @@ function ciniki_blog_web_tags($ciniki, $settings, $tnid, $tag_type, $blogtype) {
             $dt = new DateTime('now', new DateTimezone('UTC'));
             $dt->sub(new DateInterval('P' . preg_replace('/[^0-9]/', '', $settings['page-blog-num-past-months']) . 'M'));
             $strsql .= "AND ciniki_blog_posts.publish_date > '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "' ";
-            $strsql_count .= "AND ciniki_blog_posts.publish_date > '" . ciniki_core_dbQuote($ciniki, $dt->format('Y-m-d')) . "' ";
         }
     }
     $strsql .= "GROUP BY ciniki_blog_post_tags.tag_type, ciniki_blog_post_tags.tag_name "
