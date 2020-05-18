@@ -131,7 +131,7 @@ function ciniki_blog_main() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_blog_main', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
 

@@ -56,7 +56,7 @@ function ciniki_blog_postimages() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_blog_postimages', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         }
 

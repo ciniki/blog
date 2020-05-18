@@ -159,9 +159,9 @@ function ciniki_blog_post() {
                             return false;
                         }
                         if( test == 'yes' ) {
-                            alert('Email sent, please check your email');
+                            M.alert('Email sent, please check your email');
                         } else {
-                            alert('Queueing and sending emails');
+                            M.alert('Queueing and sending emails');
                         }
                     });
             }
@@ -403,7 +403,7 @@ function ciniki_blog_post() {
         if( aG != null ) { args = eval(aG); }
         var aC = M.createContainer(aP, 'ciniki_blog_post', 'yes');
         if( aC == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         }
 

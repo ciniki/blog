@@ -48,7 +48,7 @@ function ciniki_blog_postlinks() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_blog_postlinks', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
 

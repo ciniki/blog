@@ -74,7 +74,7 @@ function ciniki_blog_postfiles() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_blog_postfiles', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         }
 
@@ -83,7 +83,7 @@ function ciniki_blog_postfiles() {
         } else if( args.post_id != null && args.post_id > 0 && args.add != null && args.add == 'yes' ) {
             this.showAdd(cb, args.post_id);
         } else {
-            alert('Invalid request');
+            M.alert('Invalid request');
         }
     }
 
