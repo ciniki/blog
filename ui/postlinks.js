@@ -120,15 +120,15 @@ function ciniki_blog_postlinks() {
     };
 
     this.deleteLink = function() {
-        if( confirm("Are you sure you want to remove this link?") ) {
-            var rsp = M.api.getJSONCb('ciniki.blog.postLinkDelete', 
-                {'tnid':M.curTenantID, 'link_id':this.edit.link_id}, function(rsp) {
+        M.confirm("Are you sure you want to remove this link?",null,function() {
+            M.api.getJSONCb('ciniki.blog.postLinkDelete', 
+                {'tnid':M.curTenantID, 'link_id':M.ciniki_blog_postlinks.edit.link_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
                     }
                     M.ciniki_blog_postlinks.edit.close();
                 });
-        }   
+        });
     };
 }

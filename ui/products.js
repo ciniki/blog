@@ -144,15 +144,15 @@ function ciniki_blog_postproducts() {
     };
 
     this.deleteRef = function() {
-        if( confirm("Are you sure you want to remove this product?") ) {
-            var rsp = M.api.getJSONCb('ciniki.blog.postRefDelete', 
-                {'tnid':M.curTenantID, 'ref_id':this.edit.ref_id}, function(rsp) {
+        M.confirm("Are you sure you want to remove this product?",null,function() {
+            M.api.getJSONCb('ciniki.blog.postRefDelete', 
+                {'tnid':M.curTenantID, 'ref_id':M.ciniki_blog_postproducts.edit.ref_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
                     }
                     M.ciniki_blog_postproducts.edit.close();
                 });
-        }   
+        });
     };
 }

@@ -151,9 +151,9 @@ function ciniki_blog_post() {
     }
     this.post.emailSubscribers = function(test) {
         if( this.data.mailing_id != null && this.data.mailing_id > 0 ) {
-            if( confirm('Are you sure the article is correct and ready to send?') ) {
+            M.confirm('Are you sure the article is correct and ready to send?',null,function() {
                 M.api.getJSONCb('ciniki.mail.mailingSend', {'tnid':M.curTenantID,
-                    'mailing_id':this.data.mailing_id, 'test':test}, function(rsp) {
+                    'mailing_id':M.ciniki_blog_post.post.data.mailing_id, 'test':test}, function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
                             return false;
@@ -164,7 +164,7 @@ function ciniki_blog_post() {
                             M.alert('Queueing and sending emails');
                         }
                     });
-            }
+            });
         }
     }
     this.post.open = function(cb, pid) {
@@ -385,15 +385,15 @@ function ciniki_blog_post() {
         }
     }
     this.audio.remove = function() {
-        if( confirm('Are you sure you want to delete this audio?') ) {
-            M.api.getJSONCb('ciniki.blog.postAudioDelete', {'tnid':M.curTenantID, 'post_audio_id':this.post_audio_id}, function(rsp) {
+        M.confirm('Are you sure you want to delete this audio?',null,function() {
+            M.api.getJSONCb('ciniki.blog.postAudioDelete', {'tnid':M.curTenantID, 'post_audio_id':M.ciniki_blog_post.audio.post_audio_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
                 }
                 M.ciniki_blog_post.audio.close();
             });
-        }
+        });
     }
     this.audio.addButton('save', 'Save', 'M.ciniki_blog_post.audio.save();');
     this.audio.addClose('Cancel');

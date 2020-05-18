@@ -286,7 +286,7 @@ function ciniki_blog_postedit() {
 
 
     this.deletePost = function() {
-        if( confirm('Are you sure you want to delete this post? All information about it will be removed and unrecoverable.') ) {
+        M.confirm('Are you sure you want to delete this post? All information about it will be removed and unrecoverable.',null,function() {
             M.api.getJSONCb('ciniki.blog.postDelete', {'tnid':M.curTenantID, 
                 'post_id':M.ciniki_blog_postedit.edit.post_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
@@ -295,6 +295,6 @@ function ciniki_blog_postedit() {
                     } 
                     M.ciniki_blog_post.post.close();
                 });
-        }
+        });
     };
 }

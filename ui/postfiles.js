@@ -151,7 +151,7 @@ function ciniki_blog_postfiles() {
     };
 
     this.deleteFile = function() {
-        if( confirm('Are you sure you want to delete \'' + this.edit.data.name + '\'?  All information about it will be removed and unrecoverable.') ) {
+        M.confirm('Are you sure you want to delete \'' + this.edit.data.name + '\'?  All information about it will be removed and unrecoverable.',null,function() {
             M.api.getJSONCb('ciniki.blog.postFileDelete', {'tnid':M.curTenantID, 
                 'file_id':M.ciniki_blog_postfiles.edit.file_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
@@ -160,7 +160,7 @@ function ciniki_blog_postfiles() {
                     } 
                     M.ciniki_blog_postfiles.edit.close();
                 });
-        }
+        });
     };
 
     this.downloadFile = function(fid) {
