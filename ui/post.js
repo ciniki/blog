@@ -59,6 +59,7 @@ function ciniki_blog_post() {
             'addFn':'M.startApp(\'ciniki.blog.postfiles\',null,\'M.ciniki_blog_post.post.open();\',\'mc\',{\'post_id\':M.ciniki_blog_post.post.post_id,\'add\':\'yes\'});',
             },
         'audio':{'label':'Audio', 'type':'simplegrid', 'num_cols':1,
+            'visible':function() { return M.modFlagSet('ciniki.blog', 0x020000); },
             'headerValues':null,
             'cellClasses':['multiline'],
             'noData':'No audio files',
