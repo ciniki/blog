@@ -78,17 +78,17 @@ function ciniki_blog_processAudio(&$ciniki, $tnid, $file_id) {
     $ogg_filename = $tmp_filename . '/' . $file['uuid'] . '.ogg';
 
     //
-    // Use the checksum from the main file as checksum will be different each time a file is transcoded to mp3/ogg/wav
-    //
-    $checksum = hash_file('md5', $tmp_filename);
-
-    //
     // Setup filename from storage
     //
     $storage_filename = $ciniki['config']['ciniki.core']['storage_dir'] . '/'
         . $tenant_uuid[0] . '/' . $tenant_uuid
         . "/ciniki.blog/audio/"
         . $file['uuid'][0] . '/' . $file['uuid'];
+
+    //
+    // Use the checksum from the main file as checksum will be different each time a file is transcoded to mp3/ogg/wav
+    //
+    $checksum = hash_file('md5', $storage_filename);
 
     //
     // Convert
