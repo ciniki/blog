@@ -53,7 +53,7 @@ function ciniki_blog_web_postDetails($ciniki, $settings, $tnid, $args) {
     } else {
         $strsql .= "AND ciniki_blog_posts.permalink = '" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "' ";
     }
-    if( $args['blogtype'] == 'memberblog' ) {
+    if( isset($args['blogtype']) && $args['blogtype'] == 'memberblog' ) {
         $strsql .= "AND (ciniki_blog_posts.publish_to&0x04) > 0 ";
     } else {
         $strsql .= "AND (ciniki_blog_posts.publish_to&0x01) > 0 ";
