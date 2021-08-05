@@ -34,6 +34,9 @@ function ciniki_blog_hooks_uiSettings($ciniki, $tnid, $args) {
             'label'=>'Blog', 
             'edit'=>array('app'=>'ciniki.blog.main', 'args'=>array('blogtype'=>'"\'blog\'"')),
             );
+        if( ciniki_core_checkModuleFlags($ciniki, 'ciniki.blog', 0x08) ) {
+            $menu_item['label'] = 'News';
+        }
         $rsp['menu_items'][] = $menu_item;
     } 
     //

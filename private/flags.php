@@ -16,7 +16,7 @@ function ciniki_blog_flags($ciniki, $modules) {
         array('flag'=>array('bit'=>'1', 'name'=>'Public Blog')),
         array('flag'=>array('bit'=>'2', 'name'=>'Public Categories')),
         array('flag'=>array('bit'=>'3', 'name'=>'Public Tags')),
-//      array('flag'=>array('bit'=>'4', 'name'=>'')),
+        array('flag'=>array('bit'=>'4', 'name'=>'Latest News')),
         // 0x10
 //      array('flag'=>array('bit'=>'5', 'name'=>'Customer Blog')),
 //      array('flag'=>array('bit'=>'6', 'name'=>'Customer Categories')),

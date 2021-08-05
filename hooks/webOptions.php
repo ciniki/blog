@@ -165,9 +165,15 @@ function ciniki_blog_hooks_webOptions(&$ciniki, $tnid, $args) {
             );
     }
 
-    $pages['ciniki.blog'] = array('name'=>'Public Blog', 'options'=>$options);
-    $pages['ciniki.blog.latest'] = array('name'=>'Public Blog - Latest', 'options'=>$options);
-    $pages['ciniki.blog.archive'] = array('name'=>'Public Blog - Archive', 'options'=>$options);
+    if( ciniki_core_checkModuleFlags($ciniki, 'ciniki.blog', 0x08) ) {
+        $pages['ciniki.blog'] = array('name'=>'News', 'options'=>$options);
+        $pages['ciniki.blog.latest'] = array('name'=>'News - Latest', 'options'=>$options);
+        $pages['ciniki.blog.archive'] = array('name'=>'News - Archive', 'options'=>$options);
+    } else {
+        $pages['ciniki.blog'] = array('name'=>'Public Blog', 'options'=>$options);
+        $pages['ciniki.blog.latest'] = array('name'=>'Public Blog - Latest', 'options'=>$options);
+        $pages['ciniki.blog.archive'] = array('name'=>'Public Blog - Archive', 'options'=>$options);
+    }
 
     return array('stat'=>'ok', 'pages'=>$pages);
 }
