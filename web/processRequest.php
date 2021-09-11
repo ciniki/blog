@@ -24,6 +24,7 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $tnid, $args) {
     $page = array(
         'title'=>$args['page_title'],
         'breadcrumbs'=>$args['breadcrumbs'],
+        'article-class'=>'ciniki-blog',
         'blocks'=>array(),
         );
     if( !isset($args['blogtype']) || $args['blogtype'] == '' ) {
