@@ -141,9 +141,7 @@ function ciniki_blog_wng_postLoad($ciniki, $tnid, $request, $post_permalink) {
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
-    if( isset($rc['files']) ) {
-        $post['files'] = $rc['files'];
-    }
+    $files = isset($rc['files']) ? $rc['files'] : array();
 
     //
     // Get the links for the post
@@ -160,11 +158,7 @@ function ciniki_blog_wng_postLoad($ciniki, $tnid, $request, $post_permalink) {
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
-    if( isset($rc['links']) ) {
-        $post['links'] = $rc['links'];
-    } else {
-        $post['links'] = array();
-    }
+    $links = isset($rc['links']) ? $rc['links'] : array();
 
     //
     // Check for any audio files
