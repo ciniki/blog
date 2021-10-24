@@ -22,7 +22,7 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $tnid, $args) {
         return array('stat'=>'404', 'err'=>array('code'=>'ciniki.blog.48', 'msg'=>"I'm sorry, the page you requested does not exist."));
     }
     $page = array(
-        'title'=>$args['page_title'],
+        'title'=>($args['page_title'] != '' ? $args['page_title'] : 'Blog'),
         'breadcrumbs'=>$args['breadcrumbs'],
         'article-class'=>'ciniki-blog',
         'blocks'=>array(),
