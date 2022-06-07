@@ -56,7 +56,26 @@ function ciniki_blog_wng_postProcess(&$ciniki, $tnid, $request, $section) {
 
     $content = $post['content'] != '' ? $post['content'] : $post['synopsis'];
 
-    if( $post['image_id'] != '' && $post['image_id'] > 0 && $content != '' ) {
+    //
+    // Check if image selected
+    //
+    if( isset($request['uri_split'][($request['cur_uri_pos'] + 2)])
+        && $request['uri_split'][($request['cur_uri_pos'] + 1)] == 'gallery'
+        && $request['uri_split'][($request['cur_uri_pos'] + 2)] != ''
+        && isset($post['images'][$request['uri_split'][($request['cur_uri_pos'] + 2)]])  // Check requested image exists
+        ) {
+        $image = $post['images'][$request['uri_split'][($request['cur_uri_pos'] + 2)]];
+        $blocks[] = array(
+            'type' => 'image',
+            'title' => $post['title'] . ($image['title'] != '' ? ' - ' . $image['title'] : ''),
+            'image-id' => $image['image-id'],
+            'image-list' => $post['images'],
+            'image-permalink' => $image['permalink'],
+            'base-url' => $request['page']['path'] . '/' . $post['permalink'] . '/gallery',
+            );
+        return array('stat'=>'ok', 'clear'=>'yes', 'last'=>'yes', 'blocks'=>$blocks);
+    }
+    elseif( $post['image_id'] != '' && $post['image_id'] > 0 && $content != '' ) {
         $block = array(
             'type' => 'contentphoto',
             'sequence' => 1,
@@ -66,7 +85,8 @@ function ciniki_blog_wng_postProcess(&$ciniki, $tnid, $request, $section) {
             'title' => $post['title'],
             'content' => $content,
             );
-    } elseif( $post['image_id'] != '' && $post['image_id'] > 0 ) {
+    } 
+    elseif( $post['image_id'] != '' && $post['image_id'] > 0 ) {
         $block = array(
             'type' => 'image',
             'sequence' => 1,
@@ -74,7 +94,8 @@ function ciniki_blog_wng_postProcess(&$ciniki, $tnid, $request, $section) {
             'image-id' => $post['image_id'],
             'title' => $post['title'],
             );
-    } else {
+    } 
+    else {
         $block = array(
             'type' => 'text',
             'title' => $post['title'],
@@ -90,6 +111,22 @@ function ciniki_blog_wng_postProcess(&$ciniki, $tnid, $request, $section) {
     }
 
     $blocks[] = $block;
+
+    //
+    // Check if images
+    //
+    if( isset($post['images']) && count($post['images']) > 0 ) {
+        foreach($post['images'] as $iid => $image) {
+            $post['images'][$iid]['url'] = $request['page']['path'] . '/' . $post['permalink'] . '/gallery/' . $image['permalink'];
+        }
+        $blocks[] = array(
+            'type' => 'gallery',
+            'title' => 'Additional Images',
+            'class' => 'limit-width',
+            'items' => $post['images'],
+            );
+    }
+
 
     return array('stat'=>'ok', 'clear'=>'yes', 'last'=>'yes', 'blocks'=>$blocks);
 }

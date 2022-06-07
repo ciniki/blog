@@ -113,8 +113,8 @@ function ciniki_blog_wng_postLoad($ciniki, $tnid, $request, $post_permalink) {
             . "ciniki_blog_post_images.name "
         . "";
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.blog', array(
-        array('container'=>'images', 'fname'=>'id',
-            'fields'=>array('id', 'image_id', 'title'=>'name', 'permalink', 
+        array('container'=>'images', 'fname'=>'permalink',
+            'fields'=>array('id', 'image-id'=>'image_id', 'title'=>'name', 'permalink', 
                 'sequence', 'description', 'last_updated')),
         ));
     if( $rc['stat'] != 'ok' ) { 
