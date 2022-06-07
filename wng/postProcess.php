@@ -57,7 +57,7 @@ function ciniki_blog_wng_postProcess(&$ciniki, $tnid, $request, $section) {
     $content = $post['content'] != '' ? $post['content'] : $post['synopsis'];
 
     if( $post['image_id'] != '' && $post['image_id'] > 0 && $content != '' ) {
-        $blocks[] = array(
+        $block = array(
             'type' => 'contentphoto',
             'sequence' => 1,
             'image-id' => $post['image_id'],
@@ -67,7 +67,7 @@ function ciniki_blog_wng_postProcess(&$ciniki, $tnid, $request, $section) {
             'content' => $content,
             );
     } elseif( $post['image_id'] != '' && $post['image_id'] > 0 ) {
-        $blocks[] = array(
+        $block = array(
             'type' => 'image',
             'sequence' => 1,
             'class' => 'limit-width center',
@@ -75,12 +75,21 @@ function ciniki_blog_wng_postProcess(&$ciniki, $tnid, $request, $section) {
             'title' => $post['title'],
             );
     } else {
-        $blocks[] = array(
+        $block = array(
             'type' => 'text',
             'title' => $post['title'],
             'content' => $content,
             );
     }
+
+    //
+    // Add links
+    //
+    if( isset($post['links']) && count($post['links']) > 0 ) {
+        $block['links'] = $post['links'];
+    }
+
+    $blocks[] = $block;
 
     return array('stat'=>'ok', 'clear'=>'yes', 'last'=>'yes', 'blocks'=>$blocks);
 }
