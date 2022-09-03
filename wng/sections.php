@@ -21,6 +21,26 @@ function ciniki_blog_wng_sections(&$ciniki, $tnid, $args) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.85', 'msg'=>'Module not enabled'));
     }
 
+    //
+    // Get the list of categories
+    //
+    $strsql = "SELECT DISTINCT tags.tag_name AS category "
+        . "FROM ciniki_blog_post_tags AS tags "
+        . "WHERE tags.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+        . "AND tags.tag_type = 10 "
+        . "ORDER BY category "
+        . "";
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+    $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.blog', array(
+        array('container'=>'categories', 'fname'=>'category', 
+            'fields'=>array('id'=>'category', 'name'=>'category')),
+        ));
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.94', 'msg'=>'Unable to load ', 'err'=>$rc['err']));
+    }
+    $categories = isset($rc['categories']) ? $rc['categories'] : array();
+    array_unshift($categories, array('id'=>'', 'name'=>'All'));
+
     $sections = array();
 
     //
@@ -31,6 +51,7 @@ function ciniki_blog_wng_sections(&$ciniki, $tnid, $args) {
         'module' => 'Blog',
         'settings' => array(
             'title' => array('label'=>'Title', 'type'=>'text'),
+            'category' => array('label'=>'Category', 'type'=>'select', 'idnames'=>'yes', 'options'=>$categories),
             'thumbnail-format' => array('label'=>'Thumbnail Format', 'type'=>'toggle', 'default'=>'square-cropped', 
                 'toggles'=>array(
                     'square-cropped' => 'Cropped',
@@ -51,6 +72,9 @@ function ciniki_blog_wng_sections(&$ciniki, $tnid, $args) {
             ),
         );
 
+    if( !ciniki_core_checkModuleFlags($ciniki, 'ciniki.blog', 0x02) ) {
+        unset($sections['ciniki.blog.latest']['settings']['category']);
+    }
     if( ciniki_core_checkModuleFlags($ciniki, 'ciniki.blog', 0x08) ) {
         $sections['ciniki.blog.latest']['module'] = 'News';
     }

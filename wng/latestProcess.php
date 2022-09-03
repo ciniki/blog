@@ -67,7 +67,16 @@ function ciniki_blog_wng_latestProcess(&$ciniki, $tnid, $request, $section) {
         . "posts.excerpt AS synopsis, "
         . "IF(posts.content<>'','yes','no') AS is_details "
         . "FROM ciniki_blog_posts AS posts "
-        . "WHERE posts.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+        . "";
+    if( isset($s['category']) && $s['category'] != '' ) {
+        $strsql .= "INNER JOIN ciniki_blog_post_tags AS tags ON ("
+            . "posts.id = tags.post_id "
+            . "AND tags.tag_name = '" . ciniki_core_dbQuote($ciniki, $s['category']) . "' "
+            . "AND tags.tag_type = 10 "
+            . "AND tags.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+            . ") ";
+    }
+    $strsql .= "WHERE posts.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND posts.status = 40 "
         . "AND posts.publish_date < UTC_TIMESTAMP() "
         . "AND (posts.publish_to&0x01) = 0x01 "
