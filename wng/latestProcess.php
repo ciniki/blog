@@ -116,6 +116,14 @@ function ciniki_blog_wng_latestProcess(&$ciniki, $tnid, $request, $section) {
         $posts[$pid]['button-1-text'] = isset($s['button-text']) && $s['button-text'] != '' ? $s['button-text'] : 'read more';
         $posts[$pid]['button-1-url'] = $request['page']['path'] . '/' . $post['permalink'];
     }
+    
+    if( isset($s['title']) && $s['title'] != '' ) {
+        $blocks[] = array(
+            'type' => 'title',
+            'title' => $s['title'],
+            );
+    }
+
     $blocks[] = array(
         'type' => 'tradingcards',
         'padding' => $padding,
