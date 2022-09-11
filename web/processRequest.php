@@ -46,6 +46,13 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $tnid, $args) {
             );
     }
 
+    $display_format = 'imagelist';
+    if( isset($settings['site-theme']) && $settings['site-theme'] == 'twentyone' 
+        && isset($settings['page-blog-display-format']) && $settings['page-blog-display-format'] == 'tradingcards' 
+        ) {
+        $display_format = 'tradingcards';
+    }
+
     //
     // Check for image format
     //
@@ -341,15 +348,26 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $tnid, $args) {
             //
             // Setup the listing block
             //
-            $page['blocks'][] = array('type'=>'imagelist', 
-//                'image_version'=>((isset($settings['page-blog-list-image-version'])&&$settings['page-blog-list-image-version']=='original')?'original':'thumbnail'),
-                'image_version'=>((isset($settings['page-blog-thumbnail-format'])&&$settings['page-blog-thumbnail-format']=='square-padded')?'original':'thumbnail'),
-                'image_width'=>'600',
-                'more_button_text'=>(isset($settings['page-blog-more-button-text'])?$settings['page-blog-more-button-text']:''),
-                'base_url'=>$args['base_url'], 'noimage'=>'yes', 
-                'limit'=>($display != 'archive' ? $page_post_limit : 0), 
-                'list'=>$posts,
-                'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
+            if( $display_format == 'tradingcards' ) {
+                $page['blocks'][] = array('type'=>'tradingcards', 
+                    'image_version'=>((isset($settings['page-blog-thumbnail-format'])&&$settings['page-blog-thumbnail-format']=='square-padded')?'original':'thumbnail'),
+                    'image_width'=>'600',
+                    'more_button_text'=>(isset($settings['page-blog-more-button-text'])?$settings['page-blog-more-button-text']:''),
+                    'base_url'=>$args['base_url'], 'noimage'=>'yes', 
+                    'limit'=>($display != 'archive' ? $page_post_limit : 0), 
+                    'cards'=>$posts,
+                    'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
+
+            } else {
+                $page['blocks'][] = array('type'=>'imagelist', 
+                    'image_version'=>((isset($settings['page-blog-thumbnail-format'])&&$settings['page-blog-thumbnail-format']=='square-padded')?'original':'thumbnail'),
+                    'image_width'=>'600',
+                    'more_button_text'=>(isset($settings['page-blog-more-button-text'])?$settings['page-blog-more-button-text']:''),
+                    'base_url'=>$args['base_url'], 'noimage'=>'yes', 
+                    'limit'=>($display != 'archive' ? $page_post_limit : 0), 
+                    'list'=>$posts,
+                    'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
+            }
             
             //
             // check if pagination is required

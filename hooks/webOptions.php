@@ -29,7 +29,7 @@ function ciniki_blog_hooks_webOptions(&$ciniki, $tnid, $args) {
     // Get the settings from the database
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash');
-    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_web_settings', 'tnid', $tnid, 'ciniki.web', 'settings', 'page-blog');
+    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_web_settings', 'tnid', $tnid, 'ciniki.web', 'settings', '');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -162,6 +162,19 @@ function ciniki_blog_hooks_webOptions(&$ciniki, $tnid, $args) {
             'type'=>'text',
             'value'=>(isset($settings['page-blog-meta-tags-prefix'])?$settings['page-blog-meta-tags-prefix']:''),
             'hint'=>'',
+            );
+    }
+    
+    if( isset($settings['site-theme']) && $settings['site-theme'] == 'twentyone' ) {
+        $options[] = array(
+            'label'=>'Display Format',
+            'setting'=>'page-blog-display-format', 
+            'type'=>'toggle',
+            'value'=>(isset($settings['page-blog-display-format'])?$settings['page-blog-display-format']:'cilist'),
+            'toggles'=>array(
+                array('value'=>'imagelist', 'label'=>'Image List'),
+                array('value'=>'tradingcards', 'label'=>'Trading Cards'),
+                ),
             );
     }
 
