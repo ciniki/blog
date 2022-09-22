@@ -9,6 +9,9 @@ function ciniki_blog_settings() {
     this.main.sections = {
         'options':{'label':'', 'fields':{
             'mailing-subject-prepend':{'label':'Mailing Subject', 'type':'text'},
+            'mailing-base-url':{'label':'Mailing Base URL', 'type':'text',
+                'visible':function() { return (M.modOn('ciniki.wng') && (M.userPerms&0x01) == 0x01 ? 'yes' : 'no'); },
+            },
         }},
     };
     this.main.fieldValue = function(s, i, d) { 

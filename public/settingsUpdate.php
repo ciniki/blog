@@ -63,6 +63,7 @@ function ciniki_blog_settingsUpdate(&$ciniki) {
     //
     $changelog_fields = array(
         'mailing-subject-prepend',
+        'mailing-base-url',
         );
     //
     // Check each valid setting and see if a new value was passed in the arguments for it.
