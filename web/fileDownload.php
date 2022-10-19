@@ -41,7 +41,6 @@ function ciniki_blog_web_fileDownload($ciniki, $tnid, $post_permalink, $file_per
         $strsql .= "AND (ciniki_blog_posts.publish_to&0x01) > 0 ";
     }
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.blog', 'file');
-    error_log(print_r($rc,true));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
