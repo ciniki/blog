@@ -129,13 +129,13 @@ function ciniki_blog_wng_postLoad($ciniki, $tnid, $request, $post_permalink) {
     //
     // Check if any files are attached to the post
     //
-    $strsql = "SELECT id, name, extension, permalink, description "
+    $strsql = "SELECT id, name, extension, CONCAT_WS('.', permalink, extension) AS permalink, description "
         . "FROM ciniki_blog_post_files "
         . "WHERE ciniki_blog_post_files.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_blog_post_files.post_id = '" . ciniki_core_dbQuote($ciniki, $post['id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.blog', array(
-        array('container'=>'files', 'fname'=>'id', 
+        array('container'=>'files', 'fname'=>'permalink', 
             'fields'=>array('id', 'name', 'extension', 'permalink', 'description')),
         ));
     if( $rc['stat'] != 'ok' ) {

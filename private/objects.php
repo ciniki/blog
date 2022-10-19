@@ -83,7 +83,7 @@ function ciniki_blog_objects($ciniki) {
             'permalink'=>array(),
             'description'=>array(),
             'org_filename'=>array(),
-            'binary_content'=>array('history'=>'no'),
+            'binary_content'=>array('history'=>'no', 'default'=>''),
             ),
         'history_table'=>'ciniki_blog_history',
         );

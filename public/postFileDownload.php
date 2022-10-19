@@ -40,11 +40,23 @@ function ciniki_blog_postFileDownload($ciniki) {
     }   
 
     //
+    // Get the tenant storage directory
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'hooks', 'storageDir');
+    $rc = ciniki_tenants_hooks_storageDir($ciniki, $args['tnid'], array());
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    $tenant_storage_dir = $rc['storage_dir'];
+
+    //
     // Get the uuid for the file
     //
-    $strsql = "SELECT ciniki_blog_post_files.id, "
-        . "ciniki_blog_post_files.name, ciniki_blog_post_files.extension, "
-        . "ciniki_blog_post_files.binary_content "
+    $strsql = "SELECT id, "
+        . "uuid, "
+        . "name, "
+        . "extension, "
+        . "binary_content "
         . "FROM ciniki_blog_post_files "
         . "WHERE id = '" . ciniki_core_dbQuote($ciniki, $args['file_id']) . "' "
         . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
@@ -69,6 +81,15 @@ function ciniki_blog_postFileDownload($ciniki) {
     } else {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.17', 'msg'=>'Unsupported file type'));
     }
+
+    //
+    // Get the storage filename
+    //
+    $storage_filename = $tenant_storage_dir . '/ciniki.blog/files/' . $rc['file']['uuid'][0] . '/' . $rc['file']['uuid'];
+    if( file_exists($storage_filename) ) {  
+        $rc['file']['binary_content'] = file_get_contents($storage_filename);    
+    }
+
     // Specify Filename
     header('Content-Disposition: attachment;filename="' . $filename . '"');
     header('Content-Length: ' . strlen($rc['file']['binary_content']));

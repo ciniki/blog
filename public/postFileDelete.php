@@ -36,6 +36,16 @@ function ciniki_blog_postFileDelete(&$ciniki) {
     }   
 
     //
+    // Get the tenant storage directory
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'hooks', 'storageDir');
+    $rc = ciniki_tenants_hooks_storageDir($ciniki, $args['tnid'], array());
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    $tenant_storage_dir = $rc['storage_dir'];
+
+    //
     // Get the existing file information
     //
     $strsql = "SELECT id, uuid "
@@ -50,13 +60,16 @@ function ciniki_blog_postFileDelete(&$ciniki) {
     if( !isset($rc['item']) ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.15', 'msg'=>'Post file does not exist'));
     }
-    $item = $rc['item'];
+    $file = $rc['item'];
+
+    $storage_filename = $tenant_storage_dir . '/ciniki.blog/files/' . $file['uuid'][0] . '/' . $file['uuid'];
+    unlink($storage_filename);
 
     //
     // Delete the object
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectDelete');
     return ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.blog.postfile', 
-        $args['file_id'], $item['uuid'], 0x07);
+        $args['file_id'], $file['uuid'], 0x07);
 }
 ?>

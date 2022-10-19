@@ -57,6 +57,42 @@ function ciniki_blog_wng_postProcess(&$ciniki, $tnid, $request, $section) {
     $content = $post['content'] != '' ? $post['content'] : $post['synopsis'];
 
     //
+    // FIXME: Add links
+    //
+    if( isset($post['links']) && count($post['links']) > 0 ) {
+        $content .= "\n\n";
+        foreach($post['links'] as $link) {
+            if( $link['url'] != '' ) {
+                if( isset($link['url'][0]) && $link['url'][0] != '/' ) {
+                    $content .= "<a class='link' target='_blank' href='{$link['url']}'>"
+                        . ($link['name'] != '' ? $link['name'] : $link['url'])
+                        . "</a>\n";
+                } else {
+                    $content .= "<a class='link' target='_blank' href='{$request['ssl_domain_base_url']}{$link['url']}'>"
+                        . ($link['name'] != '' ? $link['name'] : $link['url'])
+                        . "</a>\n";
+                }
+            }
+        }
+    }
+
+    //
+    // Add files
+    //
+    if( isset($post['files']) && count($post['files']) > 0 ) {
+        $content .= "\n\n";
+        foreach($post['files'] as $file) {
+            if( $file['permalink'] != '' ) {
+                ciniki_core_loadMethod($ciniki, 'ciniki', 'wng', 'private', 'urlProcess');
+                $rc = ciniki_wng_urlProcess($ciniki, $tnid, $request, 0, $request['page']['path'] . '/' . $post['permalink'] . '/file/' . $file['permalink']);
+                if( $rc['stat'] == 'ok' ) {
+                    $content .= "<a class='link' target='_blank' href='{$rc['url']}'>{$file['name']}</a>\n";
+                }
+            }
+        }
+    }
+
+    //
     // Check if image selected
     //
     if( isset($request['uri_split'][($request['cur_uri_pos'] + 2)])
@@ -75,8 +111,40 @@ function ciniki_blog_wng_postProcess(&$ciniki, $tnid, $request, $section) {
             );
         return array('stat'=>'ok', 'clear'=>'yes', 'last'=>'yes', 'blocks'=>$blocks);
     }
+    elseif( isset($request['uri_split'][($request['cur_uri_pos'] + 2)])
+        && $request['uri_split'][($request['cur_uri_pos'] + 1)] == 'file'
+        && $request['uri_split'][($request['cur_uri_pos'] + 2)] != ''
+        && isset($post['files'][$request['uri_split'][($request['cur_uri_pos'] + 2)]])  // Check requested file exists
+        ) {
+        $post_permalink = $request['uri_split'][($request['cur_uri_pos'])];
+        $file_permalink = $request['uri_split'][($request['cur_uri_pos'] + 2)];
+
+        //
+        // Generate download
+        //
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'blog', 'web', 'fileDownload');
+        $rc = ciniki_blog_web_fileDownload($ciniki, $tnid, $post_permalink, $file_permalink, '');
+        if( $rc['stat'] != 'ok' ) {
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.98', 'msg'=>'Unable to download file', 'err'=>$rc['err']));
+        }
+        $file = $rc['file'];
+
+        header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+        header("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Pragma: no-cache');
+        $file = $rc['file'];
+        if( $file['extension'] == 'pdf' ) {
+            header('Content-Type: application/pdf');
+        }
+        header('Content-Length: ' . strlen($file['binary_content']));
+        header('Cache-Control: max-age=0');
+
+        print $file['binary_content'];
+        return array('stat'=>'exit');
+    }
     elseif( $post['image_id'] != '' && $post['image_id'] > 0 && $content != '' ) {
-        $block = array(
+        $blocks[] = array(
             'type' => 'contentphoto',
             'sequence' => 1,
             'image-id' => $post['image_id'],
@@ -85,32 +153,27 @@ function ciniki_blog_wng_postProcess(&$ciniki, $tnid, $request, $section) {
             'title' => $post['title'],
             'content' => $content,
             );
+        return array('stat'=>'ok', 'clear'=>'yes', 'last'=>'yes', 'blocks'=>$blocks);
     } 
     elseif( $post['image_id'] != '' && $post['image_id'] > 0 ) {
-        $block = array(
+        $blocks[] = array(
             'type' => 'image',
             'sequence' => 1,
             'class' => 'limit-width center',
             'image-id' => $post['image_id'],
             'title' => $post['title'],
             );
+        return array('stat'=>'ok', 'clear'=>'yes', 'last'=>'yes', 'blocks'=>$blocks);
     } 
     else {
-        $block = array(
+        $blocks[] = array(
             'type' => 'text',
             'title' => $post['title'],
             'content' => $content,
             );
+
     }
 
-    //
-    // Add links
-    //
-    if( isset($post['links']) && count($post['links']) > 0 ) {
-        $block['links'] = $post['links'];
-    }
-
-    $blocks[] = $block;
 
     //
     // Check if images
