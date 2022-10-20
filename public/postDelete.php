@@ -175,7 +175,6 @@ function ciniki_blog_postDelete(&$ciniki) {
     if( isset($rc['rows']) ) {
         $files = $rc['rows'];
         foreach($files as $file) {
-
             //
             // Remove file from disk
             //
