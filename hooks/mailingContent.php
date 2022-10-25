@@ -39,6 +39,16 @@ function ciniki_blog_hooks_mailingContent($ciniki, $tnid, $args) {
         $settings = $rc['settings'];
 
         //
+        // Get the tenant storage directory
+        //
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'hooks', 'storageDir');
+        $rc = ciniki_tenants_hooks_storageDir($ciniki, $tnid, array());
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+        $tenant_storage_dir = $rc['storage_dir'];
+
+        //
         // Load the post details
         //
         $strsql = "SELECT ciniki_blog_posts.id, "
@@ -138,20 +148,29 @@ function ciniki_blog_hooks_mailingContent($ciniki, $tnid, $args) {
         //
         // Check if any files are attached to the post
         //
-        $strsql = "SELECT id, name, extension, permalink, description, binary_content "
+        $strsql = "SELECT id, uuid, name, extension, permalink, description, binary_content "
             . "FROM ciniki_blog_post_files "
             . "WHERE ciniki_blog_post_files.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_blog_post_files.post_id = '" . ciniki_core_dbQuote($ciniki, $post['id']) . "' "
             . "";
         $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.blog', array(
             array('container'=>'files', 'fname'=>'id', 
-                'fields'=>array('id', 'name', 'extension', 'permalink', 'description', 'binary_content')),
+                'fields'=>array('id', 'uuid', 'name', 'extension', 'permalink', 'description', 'binary_content')),
             ));
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
         if( isset($rc['files']) ) {
             $post['files'] = $rc['files'];
+            foreach($post['files'] as $fid => $file) {
+                //
+                // Get the storage filename
+                //
+                $storage_filename = $tenant_storage_dir . '/ciniki.blog/files/' . $file['uuid'][0] . '/' . $file['uuid'];
+                if( file_exists($storage_filename) ) {
+                    $post['files'][$fid]['binary_content'] = file_get_contents($storage_filename);    
+                }
+            }
         }
 
         //
