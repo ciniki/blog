@@ -333,7 +333,9 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $tnid, $args) {
             //
             foreach($posts as $pid => $post) {
                 $posts[$pid]['meta'] = array();
-                if( isset($post['publish_date']) && $post['publish_date'] != '' ) {
+                if( isset($post['publish_date']) && $post['publish_date'] != '' 
+                    && (!isset($settings['page-blog-hide-date']) || $settings['page-blog-hide-date'] != 'yes')
+                    ) {
                     $posts[$pid]['meta']['date'] = $post['publish_date'];
                 }
                 if( isset($post['categories']) && count($post['categories']) > 0 ) {    
@@ -497,7 +499,9 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $tnid, $args) {
             $page['article_header_share_buttons'] = $settings['page-blog-post-header-share-buttons'];
         }
         $page['meta'] = array();
-        $page['meta']['date'] = $post['publish_date'];
+        if( !isset($settings['page-blog-hide-date']) || $settings['page-blog-hide-date'] != 'yes' ) {
+            $page['meta']['date'] = $post['publish_date'];
+        }
         if( isset($post['categories']) ) {
             $page['meta']['categories'] = $post['categories'];
             $page['meta']['divider'] = (isset($settings['page-blog-meta-divider'])?$settings['page-blog-meta-divider']:' | ');

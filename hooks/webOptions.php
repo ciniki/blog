@@ -106,6 +106,17 @@ function ciniki_blog_hooks_webOptions(&$ciniki, $tnid, $args) {
     );
 
     $options[] = array(
+        'label'=>'Hide Published Date',
+        'setting'=>'page-blog-hide-date', 
+        'type'=>'toggle',
+        'value'=>(isset($settings['page-blog-hide-date'])?$settings['page-blog-hide-date']:'no'),
+        'toggles'=>array(
+            array('value'=>'no', 'label'=>'No'),
+            array('value'=>'yes', 'label'=>'Yes'),
+            ),
+    );
+
+    $options[] = array(
         'label'=>'Number of Past Months',
         'setting'=>'page-blog-num-past-months', 
         'type'=>'text',
