@@ -153,7 +153,7 @@ function ciniki_blog_wng_postProcess(&$ciniki, $tnid, $request, $section) {
             'title' => $post['title'],
             'content' => $content,
             );
-        return array('stat'=>'ok', 'clear'=>'yes', 'last'=>'yes', 'blocks'=>$blocks);
+//        return array('stat'=>'ok', 'clear'=>'yes', 'last'=>'yes', 'blocks'=>$blocks);
     } 
     elseif( $post['image_id'] != '' && $post['image_id'] > 0 ) {
         $blocks[] = array(
@@ -163,7 +163,7 @@ function ciniki_blog_wng_postProcess(&$ciniki, $tnid, $request, $section) {
             'image-id' => $post['image_id'],
             'title' => $post['title'],
             );
-        return array('stat'=>'ok', 'clear'=>'yes', 'last'=>'yes', 'blocks'=>$blocks);
+//        return array('stat'=>'ok', 'clear'=>'yes', 'last'=>'yes', 'blocks'=>$blocks);
     } 
     else {
         $blocks[] = array(
