@@ -184,6 +184,7 @@ function ciniki_blog_wng_postProcess(&$ciniki, $tnid, $request, $section) {
         }
         $blocks[] = array(
             'type' => 'gallery',
+            'layout' => 'originals',
             'title' => 'Additional Images',
             'class' => 'limit-width',
             'items' => $post['images'],
