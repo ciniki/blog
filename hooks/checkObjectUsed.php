@@ -37,6 +37,43 @@ function ciniki_blog_hooks_checkObjectUsed($ciniki, $tnid, $args) {
             $msg .= ($msg!=''?' ':'') . "There " . ($count==1?'is':'are') . " $count blog post" . ($count==1?'':'s') . " for this subscription.";
         }
     }
+    elseif( $args['object'] == 'ciniki.images.image' ) {
+        //
+        // Check the posts for images
+        //
+        $strsql = "SELECT 'items', COUNT(*) "
+            . "FROM ciniki_blog_posts "
+            . "WHERE primary_image_id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
+            . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+            . "";
+        $rc = ciniki_core_dbCount($ciniki, $strsql, 'ciniki.blogs', 'num');
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+        if( isset($rc['num']['items']) && $rc['num']['items'] > 0 ) {
+            $used = 'yes';
+            $count += $rc['num']['items'];
+        }
+        //
+        // Check the posts for images
+        //
+        $strsql = "SELECT 'items', COUNT(*) "
+            . "FROM ciniki_blog_post_images "
+            . "WHERE image_id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
+            . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+            . "";
+        $rc = ciniki_core_dbCount($ciniki, $strsql, 'ciniki.blogs', 'num');
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+        if( isset($rc['num']['items']) && $rc['num']['items'] > 0 ) {
+            $used = 'yes';
+            $count += $rc['num']['items'];
+        }
+        if( $count > 0 ) {
+            $msg .= ($msg!=''?' ':'') . "There " . ($count==1?'is':'are') . " $count blog post" . ($count==1?'':'s') . " for this image.";
+        }
+    }
 
     return array('stat'=>'ok', 'used'=>$used, 'count'=>$count, 'msg'=>$msg);
 }
