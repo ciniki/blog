@@ -112,6 +112,7 @@ function ciniki_blog_wng_latestProcess(&$ciniki, $tnid, $request, $section) {
     $base_url = $request['base_url'] . $request['page']['path'];
     foreach($posts as $pid => $post) {
         $posts[$pid]['url'] = $request['page']['path'] . '/' . $post['permalink'];
+        $posts[$pid]['image-ratio'] = isset($s['image-ratio']) ? $s['image-ratio'] : '1-1';
         $posts[$pid]['button-class'] = isset($s['button-class']) && $s['button-class'] != '' ? $s['button-class'] : 'button';
         $posts[$pid]['button-1-text'] = isset($s['button-text']) && $s['button-text'] != '' ? $s['button-text'] : 'read more';
         $posts[$pid]['button-1-url'] = $request['page']['path'] . '/' . $post['permalink'];
@@ -127,6 +128,7 @@ function ciniki_blog_wng_latestProcess(&$ciniki, $tnid, $request, $section) {
     $blocks[] = array(
         'type' => 'tradingcards',
         'padding' => $padding,
+        'size' => isset($s['size']) ? $s['size'] : '',
         'items' => $posts,
         );
 
