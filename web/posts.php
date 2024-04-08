@@ -120,7 +120,7 @@ function ciniki_blog_web_posts($ciniki, $settings, $tnid, $args, $blogtype) {
             . "AND ciniki_blog_post_tags.permalink = '" . ciniki_core_dbQuote($ciniki, $args['tag_permalink']) . "' "
             . "";
     } elseif( isset($args['year']) && $args['year'] != '' ) {
-        if( isset($args['month']) && $args['month'] != '' ) {
+        if( isset($args['month']) && $args['month'] != '' && $args['month'] > 0 && $args['month'] < 13 ) {
             // Build the start and end datetimes
             $tz = new DateTimeZone($intl_timezone);
             $start_date = new DateTime($args['year'] . '-' . $args['month'] . '-01 00.00.00', $tz);
