@@ -24,8 +24,6 @@ function ciniki_blog_web_archive($ciniki, $settings, $tnid, $blogtype) {
         return $rc;
     }
     $intl_timezone = $rc['settings']['intl-default-timezone'];
-    $intl_currency_fmt = numfmt_create($rc['settings']['intl-default-locale'], NumberFormatter::CURRENCY);
-    $intl_currency = $rc['settings']['intl-default-currency'];
 
     //
     // Build the query to get the tags
