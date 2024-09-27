@@ -31,6 +31,14 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $tnid, $args) {
         $args['blogtype'] = 'blog';
     }
 
+    if( isset($args['module_page']) && (
+        $args['module_page'] == 'ciniki.blog.membersonly' 
+        || $args['module_page'] == 'ciniki.blog.membersonly.latest' 
+        || $args['module_page'] == 'ciniki.blog.membersonly.archive' 
+        )) {
+        $args['blogtype'] = 'memberblog';
+    }
+
     //
     // Setup the various tag types that will turn into menus
     //
@@ -138,6 +146,7 @@ function ciniki_blog_web_processRequest(&$ciniki, $settings, $tnid, $args) {
     $display = '';
     if( (isset($args['uri_split'][0]) && $args['uri_split'][0] == 'archive')
         || $args['module_page'] == 'ciniki.blog.archive'
+        || $args['module_page'] == 'ciniki.blog.membersonly.archive'
         ) {
         $display = 'archive';
         $year = '';

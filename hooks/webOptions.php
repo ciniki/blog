@@ -198,6 +198,11 @@ function ciniki_blog_hooks_webOptions(&$ciniki, $tnid, $args) {
         $pages['ciniki.blog.latest'] = array('name'=>'Public Blog - Latest', 'options'=>$options);
         $pages['ciniki.blog.archive'] = array('name'=>'Public Blog - Archive', 'options'=>$options);
     }
+    if( ciniki_core_checkModuleFlags($ciniki, 'ciniki.blog', 0x0100) ) {
+        $pages['ciniki.blog.membersonly'] = array('name'=>'Member Blog', 'options'=>$options);
+        $pages['ciniki.blog.membersonly.latest'] = array('name'=>'Member Blog - Latest', 'options'=>$options);
+        $pages['ciniki.blog.membersonly.archive'] = array('name'=>'Member Blog - Archive', 'options'=>$options);
+    }
 
     return array('stat'=>'ok', 'pages'=>$pages);
 }
