@@ -203,7 +203,7 @@ function ciniki_blog_post() {
                     && M.curTenant.modules['ciniki.subscriptions'] != null 
                     && (M.curTenant.modules['ciniki.blog'].flags&0x7000) > 0  // Blog subscriptions active
                     && p.data.subscriptions != null && p.data.subscriptions.length > 0  // There are subscriptions
-                    && (rsp.post.publish_to&0x01) == 1  // Published to public blog
+//                    && (rsp.post.publish_to&0x01) == 1  // Published to public blog
                     ) {
                     p.sections._subscription_buttons.buttons.emailtest.visible = 'no';
                     p.sections._subscription_buttons.buttons.email.visible = 'no';
