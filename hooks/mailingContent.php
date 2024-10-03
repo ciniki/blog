@@ -57,20 +57,21 @@ function ciniki_blog_hooks_mailingContent($ciniki, $tnid, $args) {
             . "content, "
             . "primary_image_id, "
             . "status, status AS status_text, "
+            . "publish_to, "
             . "publish_date AS publish_datetime, "
             . "publish_date, "
             . "publish_date AS publish_time "
             . "FROM ciniki_blog_posts "
             . "WHERE ciniki_blog_posts.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_blog_posts.id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
-            . "AND (ciniki_blog_posts.publish_to&0x01) > 0 "
+//            . "AND (ciniki_blog_posts.publish_to&0x01) > 0 "
             . "";
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
         $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.blog', array(
             array('container'=>'posts', 'fname'=>'id',
                 'fields'=>array('id', 'title', 'subject'=>'title', 'permalink', 'format', 'synopsis'=>'excerpt', 'content', 
                     'image_id'=>'primary_image_id', 'status', 'status_text', 
-                    'publish_datetime', 'publish_date', 'publish_time'),
+                    'publish_to', 'publish_datetime', 'publish_date', 'publish_time'),
                 'utctotz'=>array(
                     'publish_datetime'=>array('timezone'=>$intl_timezone, 'format'=>'Y-m-d'),
                     'publish_date'=>array('timezone'=>$intl_timezone, 'format'=>'M j, Y'),
@@ -98,7 +99,7 @@ function ciniki_blog_hooks_mailingContent($ciniki, $tnid, $args) {
                 if( isset($settings['mailing-base-url']) && $settings['mailing-base-url'] != '' ) {
                     $post['linkback'] = array('text'=>'View full article online', 'url'=>$settings['mailing-base-url'] . '/' . $post['permalink']);
                 }
-            } else {
+            } elseif( ($post['publish_to']&0x01) == 0x01 ) {
                 ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'indexModuleBaseURL');
                 $rc = ciniki_web_indexModuleBaseURL($ciniki, $tnid, 'ciniki.blog');
                 if( $rc['stat'] != 'ok' ) {
