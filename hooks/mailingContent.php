@@ -110,6 +110,17 @@ function ciniki_blog_hooks_mailingContent($ciniki, $tnid, $args) {
                 } else {
                     $post['linkback'] = array('text'=>'View full article online', 'url'=>'/blog/' . $post['permalink']);
                 }
+            } elseif( ($post['publish_to']&0x04) == 0x04 ) {
+                ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'indexModuleBaseURL');
+                $rc = ciniki_web_indexModuleBaseURL($ciniki, $tnid, 'ciniki.blog.membersonly');
+                if( $rc['stat'] != 'ok' ) {
+                    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.blog.99', 'msg'=>'Error looking up url', 'err'=>$rc['err']));
+                }
+                if( isset($rc['base_url']) && $rc['base_url'] != '' ) {
+                    $post['linkback'] = array('text'=>'View full article online', 'url'=>$rc['base_url'] . '/' . $post['permalink']);
+                } else {
+                    $post['linkback'] = array('text'=>'View full article online', 'url'=>'/blog/' . $post['permalink']);
+                }
             }
         }
 
